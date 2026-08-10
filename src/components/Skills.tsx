@@ -22,7 +22,7 @@ export default function Skills() {
           {t.categories.map(({ title, items }, i) => {
             const Icon = ICONS[i];
             return (
-              <RevealItem key={title} hover={false} className="bg-white p-6">
+              <RevealItem key={i} hover={false} className="bg-white p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Icon className="h-4 w-4 text-zinc-500" strokeWidth={1.75} />
                   <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">

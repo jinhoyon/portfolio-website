@@ -22,7 +22,7 @@ export default function Philosophy() {
           {t.values.map(({ title, description }, i) => {
             const Icon = ICONS[i];
             return (
-              <RevealItem key={title} className="border border-zinc-200 bg-white p-7">
+              <RevealItem key={i} className="border border-zinc-200 bg-white p-7">
                 <div className="h-10 w-10 flex items-center justify-center border border-zinc-300 mb-5">
                   <Icon className="h-5 w-5 text-zinc-700" strokeWidth={1.5} />
                 </div>

@@ -62,9 +62,9 @@ export default function Projects() {
         <SectionHeader eyebrow={t.eyebrow} title={t.title} subtitle={t.subtitle} />
 
         <RevealGroup className="flex flex-col gap-8">
-          {projects.map((project) => (
+          {projects.map((project, i) => (
             <RevealItem
-              key={project.title}
+              key={i}
               as="article"
               className="grid md:grid-cols-2 border border-zinc-200 bg-white"
             >

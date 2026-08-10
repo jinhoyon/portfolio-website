@@ -18,7 +18,7 @@ export default function Experience() {
         <RevealGroup className="flex flex-col">
           {t.roles.map((role, i) => (
             <RevealItem
-              key={role.title}
+              key={i}
               hover={false}
               className="grid md:grid-cols-[200px_1fr] gap-4 md:gap-10 relative pb-12"
             >
@@ -36,8 +36,8 @@ export default function Experience() {
                 <h3 className="text-lg font-semibold text-zinc-900">{role.title}</h3>
                 <p className="text-sm text-zinc-500 mt-1">{role.company}</p>
                 <ul className="mt-4 flex flex-col gap-2.5">
-                  {role.achievements.map((a) => (
-                    <li key={a} className="text-sm text-zinc-600 leading-relaxed pl-4 relative before:content-['—'] before:absolute before:left-0 before:text-zinc-300">
+                  {role.achievements.map((a, j) => (
+                    <li key={j} className="text-sm text-zinc-600 leading-relaxed pl-4 relative before:content-['—'] before:absolute before:left-0 before:text-zinc-300">
                       {a}
                     </li>
                   ))}
