@@ -49,7 +49,7 @@ export default function Nav() {
   return (
     <header
       className={`sticky top-0 z-50 border-b backdrop-blur transition-colors duration-300 ${
-        isDark ? "border-white/10 bg-black/60" : "border-zinc-200 bg-white/90"
+        isDark ? "border-white/10 bg-black/90" : "border-zinc-200 bg-white/90"
       }`}
     >
       <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
