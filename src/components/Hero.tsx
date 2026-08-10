@@ -80,19 +80,6 @@ export default function Hero() {
             {t.contactMe}
           </motion.a>
         </motion.div>
-
-        <motion.dl
-          variants={item}
-          className="mt-12 grid max-w-md grid-cols-3 border-t border-white/15 pt-6"
-        >
-          {t.metrics.map((m) => (
-            <div key={m.label}>
-              <dt className="sr-only">{m.label}</dt>
-              <dd className="text-2xl font-semibold text-white">{m.value}</dd>
-              <dd className="mt-1 text-xs text-zinc-400">{m.label}</dd>
-            </div>
-          ))}
-        </motion.dl>
       </motion.div>
     </section>
   );

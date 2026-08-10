@@ -20,11 +20,6 @@ export const translations = {
         "UC Davis Computer Science & Engineering graduate specializing in fullstack development and applied AI/LLM systems — from HCI research shipped as production Android and React apps to LLM-driven analysis platforms. I like turning that work into something a non-engineer can pick up and run with, not just something that ships.",
       viewProjects: "View Projects",
       contactMe: "Contact Me",
-      metrics: [
-        { value: "2025", label: "UC Davis CS&E Grad" },
-        { value: "4", label: "Projects Shipped" },
-        { value: "2", label: "Publications (ACM/INTERACT)" },
-      ],
     },
     projects: {
       eyebrow: "Selected Work",
@@ -167,11 +162,6 @@ export const translations = {
         "UC Davis 컴퓨터공학과를 졸업하고 풀스택 개발과 응용 AI/LLM 시스템을 전문으로 합니다. HCI 연구를 실제 프로덕션 Android·React 앱으로 구현한 경험부터 LLM 기반 분석 플랫폼까지 다뤘습니다. 결과물을 출시하는 데서 그치지 않고, 비개발 직군 동료도 바로 이해하고 활용할 수 있게 만드는 일을 좋아합니다.",
       viewProjects: "프로젝트 보기",
       contactMe: "연락하기",
-      metrics: [
-        { value: "2025", label: "UC Davis 컴퓨터공학 졸업" },
-        { value: "4", label: "완료 프로젝트" },
-        { value: "2", label: "논문 게재 (ACM/INTERACT)" },
-      ],
     },
     projects: {
       eyebrow: "대표 작업",
