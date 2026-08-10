@@ -46,13 +46,6 @@ export default function Hero() {
         animate="show"
         variants={container}
       >
-        <motion.span
-          variants={item}
-          className="mb-6 inline-block w-fit rounded-full border border-white/15 px-3 py-1 font-mono text-xs uppercase tracking-widest text-zinc-300 backdrop-blur-sm"
-        >
-          {t.badge}
-        </motion.span>
-
         <motion.h1
           variants={item}
           className="max-w-2xl text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl"

@@ -28,7 +28,7 @@ export default function Nav() {
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur">
       <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
         <a href="#top" className="shrink-0 whitespace-nowrap font-semibold tracking-tight text-zinc-900">
-          {t.name} <span className="text-zinc-400 font-normal">| {t.role}</span>
+          {t.name}
         </a>
 
         <nav className="hidden lg:flex items-center gap-6">
