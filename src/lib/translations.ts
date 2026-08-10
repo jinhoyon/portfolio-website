@@ -27,6 +27,9 @@ export const translations = {
       subtitle:
         "Fullstack and AI/LLM-powered systems, plus HCI research work shipped as production apps.",
       githubLabel: "GitHub Repo",
+      viewDetails: "View Details",
+      backToProjects: "Back to Projects",
+      techStackLabel: "Tech Stack",
       items: [
         {
           category: "AI-Powered Fullstack Platform",
@@ -168,6 +171,9 @@ export const translations = {
       title: "주요 프로젝트",
       subtitle: "풀스택 및 AI/LLM 기반 시스템과, 프로덕션 앱으로 구현한 HCI 연구 작업입니다.",
       githubLabel: "GitHub 저장소",
+      viewDetails: "자세히 보기",
+      backToProjects: "프로젝트 목록으로",
+      techStackLabel: "기술 스택",
       items: [
         {
           category: "AI 기반 풀스택 플랫폼",

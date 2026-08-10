@@ -1,60 +1,19 @@
 "use client";
 
-import { Github } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Github } from "lucide-react";
 import ProjectImageCarousel from "./ProjectImageCarousel";
 import SectionHeader from "./SectionHeader";
 import RevealGroup from "./motion/RevealGroup";
 import RevealItem from "./motion/RevealItem";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations } from "@/lib/translations";
-
-const PROJECT_META = [
-  {
-    stack: ["React", "Spring Boot", "Java", "Python", "MySQL", "Google Gemini API"],
-    images: [
-      "[Placeholder: Add screenshot — financial trends view]",
-      "[Placeholder: Add screenshot — risk analysis view]",
-      "[Placeholder: Add screenshot — business segments view]",
-      "[Placeholder: Add screenshot — shareholder status view]",
-    ],
-    githubUrl: "https://github.com/darfin-ai",
-  },
-  {
-    stack: ["React", "Node.js", "Google Gemini API", "GitHub REST API (Octokit)", "Mermaid.js", "D3.js", "XYFlow"],
-    images: [
-      "[Placeholder: Add screenshot — auto-generated documentation]",
-      "[Placeholder: Add screenshot — interactive UML diagram]",
-      "[Placeholder: Add screenshot — repository quiz]",
-      "[Placeholder: Add screenshot — architecture breakdown view]",
-    ],
-    githubUrl: "https://github.com/jinhoyon/Seenior",
-  },
-  {
-    stack: ["Java", "Servlets", "MyBatis", "MySQL", "REST APIs", "AJAX", "Toss Payments"],
-    images: [
-      "[Placeholder: Add screenshot — booking calendar]",
-      "[Placeholder: Add screenshot — reservation flow]",
-      "[Placeholder: Add screenshot — session history]",
-      "[Placeholder: Add screenshot — Toss payment checkout]",
-    ],
-    githubUrl: "https://github.com/jinhoyon/fitsbug",
-  },
-  {
-    stack: ["Kotlin", "XML", "Android Studio"],
-    images: [
-      "[Placeholder: Add screenshot — pH reading screen]",
-      "[Placeholder: Add screenshot — reading history]",
-      "[Placeholder: Add screenshot — sensor pairing flow]",
-      "[Placeholder: Add screenshot — app onboarding]",
-    ],
-    githubUrl: "https://github.com/jinhoyon/Nail-pHolish-App",
-  },
-];
+import { PROJECTS_META } from "@/lib/projectsMeta";
 
 export default function Projects() {
   const { language } = useLanguage();
   const t = translations[language].projects;
-  const projects = t.items.map((item, i) => ({ ...item, ...PROJECT_META[i] }));
+  const projects = t.items.map((item, i) => ({ ...item, ...PROJECTS_META[i] }));
 
   return (
     <section id="projects" className="border-b border-zinc-200">
@@ -74,9 +33,11 @@ export default function Projects() {
                 <span className="text-xs font-mono uppercase tracking-widest text-zinc-500">
                   {project.category} · {project.period}
                 </span>
-                <h3 className="mt-2 text-xl font-semibold text-zinc-900">
-                  {project.title}
-                </h3>
+                <Link href={`/projects/${project.slug}`}>
+                  <h3 className="mt-2 text-xl font-semibold text-zinc-900 hover:text-zinc-600 transition-colors">
+                    {project.title}
+                  </h3>
+                </Link>
                 <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
                   {project.summary}
                 </p>
@@ -97,6 +58,13 @@ export default function Projects() {
                 </div>
 
                 <div className="mt-auto pt-6 flex flex-wrap gap-5 text-sm">
+                  <Link
+                    href={`/projects/${project.slug}`}
+                    className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-zinc-900 font-medium"
+                  >
+                    {t.viewDetails}
+                    <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} />
+                  </Link>
                   <a
                     href={project.githubUrl}
                     target="_blank"

@@ -9,7 +9,7 @@ export default function ProjectImageCarousel({
   className = "",
   aspect = "aspect-4/3",
 }: {
-  images: string[];
+  images: readonly string[];
   className?: string;
   aspect?: string;
 }) {

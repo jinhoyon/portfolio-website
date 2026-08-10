@@ -1,0 +1,86 @@
+"use client";
+
+import Link from "next/link";
+import { ArrowLeft, Github } from "lucide-react";
+import Nav from "./Nav";
+import Footer from "./Footer";
+import ProjectImageCarousel from "./ProjectImageCarousel";
+import { useLanguage } from "@/lib/LanguageContext";
+import { translations } from "@/lib/translations";
+import { PROJECTS_META, type ProjectSlug } from "@/lib/projectsMeta";
+
+export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
+  const { language } = useLanguage();
+  const t = translations[language].projects;
+  const metaIndex = PROJECTS_META.findIndex((p) => p.slug === slug);
+  const meta = PROJECTS_META[metaIndex];
+  const item = t.items[metaIndex];
+  const project = { ...item, ...meta };
+
+  return (
+    <>
+      <Nav />
+      <main className="flex-1">
+        <div className="mx-auto max-w-4xl px-6 py-16">
+          <Link
+            href="/#projects"
+            className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.75} />
+            {t.backToProjects}
+          </Link>
+
+          <span className="mt-6 block text-xs font-mono uppercase tracking-widest text-zinc-500">
+            {project.category} · {project.period}
+          </span>
+          <h1 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900">
+            {project.title}
+          </h1>
+
+          <span className="mt-4 inline-block w-fit text-xs font-medium bg-zinc-900 text-white px-3 py-1.5">
+            {project.metric}
+          </span>
+
+          <ProjectImageCarousel
+            aspect="aspect-16/9"
+            images={project.images}
+            className="mt-8 border border-zinc-200"
+          />
+
+          <p className="mt-8 text-base text-zinc-600 leading-relaxed max-w-3xl">
+            {project.summary}
+          </p>
+
+          <div className="mt-8">
+            <span className="text-xs font-mono uppercase tracking-widest text-zinc-500">
+              {t.techStackLabel}
+            </span>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {project.stack.map((tech) => (
+                <span
+                  key={tech}
+                  className="text-xs text-zinc-600 border border-zinc-200 px-2.5 py-1"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-wrap gap-5 text-sm border-t border-zinc-200 pt-8">
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-zinc-900 font-medium"
+            >
+              <Github className="h-3.5 w-3.5" strokeWidth={1.75} />
+              {t.githubLabel}
+            </a>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
