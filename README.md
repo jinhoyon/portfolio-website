@@ -29,6 +29,20 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Commit Messages
+
+This repo uses [Conventional Commits](https://www.conventionalcommits.org/), enforced by a
+`commit-msg` git hook (husky + commitlint). Format:
+
+```
+<type>: <description>
+
+[optional body]
+```
+
+Common types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`. The hook installs
+automatically via `npm install` (the `prepare` script runs `husky`).
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
