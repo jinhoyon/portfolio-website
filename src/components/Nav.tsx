@@ -62,13 +62,23 @@ export default function Nav() {
           </motion.a>
         </nav>
 
-        <button
-          className="lg:hidden text-zinc-700"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex lg:hidden items-center gap-4">
+          <button
+            onClick={toggleLanguage}
+            className="inline-flex items-center gap-1.5 whitespace-nowrap text-sm text-zinc-600 hover:text-zinc-900 transition-colors"
+            aria-label="Toggle language"
+          >
+            <Languages className="h-4 w-4" strokeWidth={1.75} />
+            {t.langToggle}
+          </button>
+          <button
+            className="text-zinc-700"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {mounted &&
@@ -103,14 +113,6 @@ export default function Nav() {
                         {link.label}
                       </a>
                     ))}
-                    <button
-                      onClick={toggleLanguage}
-                      className="inline-flex items-center gap-1.5 text-sm text-zinc-600 hover:text-zinc-900 w-fit"
-                      aria-label="Toggle language"
-                    >
-                      <Languages className="h-4 w-4" strokeWidth={1.75} />
-                      {t.langToggle}
-                    </button>
                     <a
                       href="/resume.pdf"
                       target="_blank"
