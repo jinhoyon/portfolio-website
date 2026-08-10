@@ -74,7 +74,7 @@ export default function Hero() {
             href="#contact"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 border border-white/25 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-white/60"
+            className="inline-flex items-center gap-2 border border-white/25 bg-black px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-900 hover:border-white/60"
           >
             <Mail className="h-4 w-4" strokeWidth={1.75} />
             {t.contactMe}
