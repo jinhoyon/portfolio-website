@@ -1,28 +1,22 @@
+"use client";
+
 import SectionHeader from "./SectionHeader";
 import RevealGroup from "./motion/RevealGroup";
 import RevealItem from "./motion/RevealItem";
-
-const ROLES = [
-  {
-    period: "Mar 2025 — Sep 2025",
-    title: "Software Developer, Research Assistant",
-    company: "Interactive Organisms Lab — Dr. Katia Vega, UC Davis",
-    achievements: [
-      "Shipped the front-end of Nail pHolish, an Android app surfacing oral pH readings from a Nix Color Sensor; built screens and flows in Kotlin/XML via Android Studio, iterating with hardware/backend teammates on debugging and usability feedback.",
-      "Prototyped UX flows in Figma for DiabetiCat, a feline-health monitoring app, partnering cross-functionally on screen architecture, API contracts, and front-end requirements.",
-      "Co-authored 2 peer-reviewed publications (ACM & INTERACT 2025), writing design and test documentation that translated research findings into shipped product behavior across hardware, backend, and UI teams.",
-    ],
-  },
-];
+import { useLanguage } from "@/lib/LanguageContext";
+import { translations } from "@/lib/translations";
 
 export default function Experience() {
+  const { language } = useLanguage();
+  const t = translations[language].experience;
+
   return (
     <section id="experience" className="border-b border-zinc-200 bg-zinc-50">
       <div className="mx-auto max-w-6xl px-6 py-20">
-        <SectionHeader eyebrow="Career" title="Work History" />
+        <SectionHeader eyebrow={t.eyebrow} title={t.title} />
 
         <RevealGroup className="flex flex-col">
-          {ROLES.map((role, i) => (
+          {t.roles.map((role, i) => (
             <RevealItem
               key={role.title}
               hover={false}
@@ -31,7 +25,7 @@ export default function Experience() {
               <div className="flex md:block gap-3 items-start">
                 <div className="hidden md:flex flex-col items-center h-full absolute -left-[9px] top-1">
                   <span className="h-3 w-3 rounded-full border-2 border-zinc-900 bg-white shrink-0" />
-                  {i < ROLES.length - 1 && (
+                  {i < t.roles.length - 1 && (
                     <span className="w-px flex-1 bg-zinc-300 mt-1" />
                   )}
                 </div>

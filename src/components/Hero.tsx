@@ -3,12 +3,8 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Mail } from "lucide-react";
 import ChladniBackground from "./hero/chladni/ChladniBackground";
-
-const METRICS = [
-  { value: "2025", label: "UC Davis CS&E Grad" },
-  { value: "4", label: "Projects Shipped" },
-  { value: "2", label: "Publications (ACM/INTERACT)" },
-];
+import { useLanguage } from "@/lib/LanguageContext";
+import { translations } from "@/lib/translations";
 
 const container = {
   hidden: {},
@@ -25,6 +21,9 @@ const item = {
 };
 
 export default function Hero() {
+  const { language } = useLanguage();
+  const t = translations[language].hero;
+
   return (
     <section
       id="top"
@@ -51,25 +50,21 @@ export default function Hero() {
           variants={item}
           className="mb-6 inline-block w-fit rounded-full border border-white/15 px-3 py-1 font-mono text-xs uppercase tracking-widest text-zinc-300 backdrop-blur-sm"
         >
-          Software Engineer
+          {t.badge}
         </motion.span>
 
         <motion.h1
           variants={item}
           className="max-w-2xl text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl"
         >
-          Building fullstack products and AI-powered systems.
+          {t.heading}
         </motion.h1>
 
         <motion.p
           variants={item}
           className="mt-6 max-w-lg text-lg leading-relaxed text-zinc-300"
         >
-          UC Davis Computer Science &amp; Engineering graduate specializing in fullstack
-          development and applied AI/LLM systems — from HCI research shipped as
-          production Android and React apps to LLM-driven analysis platforms. I like
-          turning that work into something a non-engineer can pick up and run with,
-          not just something that ships.
+          {t.paragraph}
         </motion.p>
 
         <motion.div variants={item} className="mt-8 flex flex-wrap gap-4">
@@ -79,7 +74,7 @@ export default function Hero() {
             whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2 bg-white px-5 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-200"
           >
-            View Projects
+            {t.viewProjects}
             <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
           </motion.a>
           <motion.a
@@ -89,7 +84,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 border border-white/25 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-white/60"
           >
             <Mail className="h-4 w-4" strokeWidth={1.75} />
-            Contact Me
+            {t.contactMe}
           </motion.a>
         </motion.div>
 
@@ -97,7 +92,7 @@ export default function Hero() {
           variants={item}
           className="mt-12 grid max-w-md grid-cols-3 border-t border-white/15 pt-6"
         >
-          {METRICS.map((m) => (
+          {t.metrics.map((m) => (
             <div key={m.label}>
               <dt className="sr-only">{m.label}</dt>
               <dd className="text-2xl font-semibold text-white">{m.value}</dd>

@@ -1,17 +1,15 @@
+"use client";
+
 import { Github } from "lucide-react";
 import ProjectImageCarousel from "./ProjectImageCarousel";
 import SectionHeader from "./SectionHeader";
 import RevealGroup from "./motion/RevealGroup";
 import RevealItem from "./motion/RevealItem";
+import { useLanguage } from "@/lib/LanguageContext";
+import { translations } from "@/lib/translations";
 
-const PROJECTS = [
+const PROJECT_META = [
   {
-    category: "AI-Powered Fullstack Platform",
-    period: "Jun 2026 – Jul 2026",
-    title: "Darfin — AI-Powered Company Analysis Platform",
-    summary:
-      "Built the DART filing pipeline in Python: API collection → XML parsing → diff vs. prior filing → Gemini-powered summarization and risk analysis, run twice daily via APScheduler plus an on-demand LLM worker queue. Also built the React frontend (financial trends, risk, business segments, shareholder status) against a Spring Boot query API, the landing page, and a shared design system.",
-    metric: "Automated twice-daily DART filing analysis (06:00 / 18:00 KST)",
     stack: ["React", "Spring Boot", "Java", "Python", "MySQL", "Google Gemini API"],
     images: [
       "[Placeholder: Add screenshot — financial trends view]",
@@ -22,12 +20,6 @@ const PROJECTS = [
     githubUrl: "https://github.com/darfin-ai",
   },
   {
-    category: "AI-Powered Developer Tooling — IBM Bob Hackathon",
-    period: "May 2026",
-    title: "Seenior — AI-Powered Developer Onboarding",
-    summary:
-      "End-to-end LLM app that cuts codebase ramp-up time from hours to under 60 seconds by integrating Google Gemini 2.5 with the GitHub REST API to auto-generate documentation, UML diagrams, and quizzes from any public repository. Rendered as interactive, clickable diagrams via a custom Mermaid.js validation pipeline built with D3.js and XYFlow.",
-    metric: "Ramp-up time: hours → under 60 seconds",
     stack: ["React", "Node.js", "Google Gemini API", "GitHub REST API (Octokit)", "Mermaid.js", "D3.js", "XYFlow"],
     images: [
       "[Placeholder: Add screenshot — auto-generated documentation]",
@@ -38,12 +30,6 @@ const PROJECTS = [
     githubUrl: "https://github.com/jinhoyon/Seenior",
   },
   {
-    category: "Fullstack Marketplace Platform",
-    period: "Apr 2026 – May 2026",
-    title: "Fitsbug — Fitness Marketplace Platform",
-    summary:
-      "Designed relational database schemas and built an end-to-end personal-training reservation flow (calendars, booking, session history) backed by 20+ Java servlets and 10+ MyBatis mappers. Integrated Toss Payment Gateway for the full payment lifecycle, validated through end-to-end manual testing across cancellation and refund edge cases.",
-    metric: "Full payment lifecycle: ready → success → cancel → refund",
     stack: ["Java", "Servlets", "MyBatis", "MySQL", "REST APIs", "AJAX", "Toss Payments"],
     images: [
       "[Placeholder: Add screenshot — booking calendar]",
@@ -54,12 +40,6 @@ const PROJECTS = [
     githubUrl: "https://github.com/jinhoyon/fitsbug",
   },
   {
-    category: "HCI Research — Android App",
-    period: "Mar 2025 – Sep 2025",
-    title: "Nail pHolish — Wearable pH Sensing App",
-    summary:
-      "Shipped the front-end for an Android app surfacing real-time oral pH readings from a Nix Color Sensor, built in Kotlin/XML via Android Studio while iterating with hardware and backend teammates on debugging and usability. Work was co-authored into 2 peer-reviewed publications (ACM & INTERACT 2025).",
-    metric: "Co-authored 2 peer-reviewed publications (ACM, INTERACT 2025)",
     stack: ["Kotlin", "XML", "Android Studio"],
     images: [
       "[Placeholder: Add screenshot — pH reading screen]",
@@ -72,17 +52,17 @@ const PROJECTS = [
 ];
 
 export default function Projects() {
+  const { language } = useLanguage();
+  const t = translations[language].projects;
+  const projects = t.items.map((item, i) => ({ ...item, ...PROJECT_META[i] }));
+
   return (
     <section id="projects" className="border-b border-zinc-200">
       <div className="mx-auto max-w-6xl px-6 py-20">
-        <SectionHeader
-          eyebrow="Selected Work"
-          title="Featured Projects"
-          subtitle="Fullstack and AI/LLM-powered systems, plus HCI research work shipped as production apps."
-        />
+        <SectionHeader eyebrow={t.eyebrow} title={t.title} subtitle={t.subtitle} />
 
         <RevealGroup className="flex flex-col gap-8">
-          {PROJECTS.map((project) => (
+          {projects.map((project) => (
             <RevealItem
               key={project.title}
               as="article"
@@ -124,7 +104,7 @@ export default function Projects() {
                     className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-zinc-900 font-medium"
                   >
                     <Github className="h-3.5 w-3.5" strokeWidth={1.75} />
-                    GitHub Repo
+                    {t.githubLabel}
                   </a>
                 </div>
               </div>
