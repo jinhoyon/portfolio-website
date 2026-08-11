@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import SmoothAnchorScroll from "@/components/SmoothAnchorScroll";
+import PostHogProvider from "@/components/analytics/PostHogProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,10 +28,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-white text-zinc-900">
-        <LanguageProvider>
-          <SmoothAnchorScroll />
-          {children}
-        </LanguageProvider>
+        <PostHogProvider>
+          <LanguageProvider>
+            <SmoothAnchorScroll />
+            {children}
+          </LanguageProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
