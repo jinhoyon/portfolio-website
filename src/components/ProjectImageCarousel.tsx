@@ -1,8 +1,15 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ImagePlaceholder from "./ImagePlaceholder";
+
+function altFromSrc(src: string) {
+  const filename = src.split("/").pop() ?? "";
+  const name = filename.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
 
 export default function ProjectImageCarousel({
   images,
@@ -40,7 +47,19 @@ export default function ProjectImageCarousel({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <ImagePlaceholder aspect={aspect} label={images[index]} className="border-0" />
+      {images[index].startsWith("/") ? (
+        <div className={`relative w-full ${aspect} overflow-hidden bg-zinc-100`}>
+          <Image
+            src={images[index]}
+            alt={altFromSrc(images[index])}
+            fill
+            className="object-cover object-top"
+            sizes="(min-width: 768px) 50vw, 100vw"
+          />
+        </div>
+      ) : (
+        <ImagePlaceholder aspect={aspect} label={images[index]} className="border-0" />
+      )}
 
       {images.length > 1 && (
         <>
