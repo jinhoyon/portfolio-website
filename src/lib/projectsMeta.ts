@@ -30,7 +30,7 @@ export const PROJECTS_META = [
   {
     slug: "fitsbug",
     stack: ["Java", "Servlets", "MyBatis", "MySQL", "REST APIs", "AJAX", "Toss Payments"],
-    imageAspect: "aspect-[682/1468]",
+    imageAspect: "aspect-4/3",
     images: [
       "/images/projects/fitsbug/dashboard.png",
       "/images/projects/fitsbug/member-management.png",
