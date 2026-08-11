@@ -31,11 +31,11 @@ export default function Nav() {
   }, []);
 
   const LINKS = [
-    { href: "#projects", label: t.links.projects },
-    { href: "#architecture", label: t.links.approach },
-    { href: "#skills", label: t.links.skills },
-    { href: "#experience", label: t.links.experience },
-    { href: "#contact", label: t.links.contact },
+    { href: "/#projects", label: t.links.projects },
+    { href: "/#architecture", label: t.links.approach },
+    { href: "/#skills", label: t.links.skills },
+    { href: "/#experience", label: t.links.experience },
+    { href: "/#contact", label: t.links.contact },
   ];
 
   const linkClass = isDark
@@ -54,7 +54,7 @@ export default function Nav() {
     >
       <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
         <a
-          href="#top"
+          href="/#top"
           className={`shrink-0 whitespace-nowrap font-semibold tracking-tight transition-colors duration-300 ${
             isDark ? "text-white" : "text-zinc-900"
           }`}
