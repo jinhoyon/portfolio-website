@@ -53,7 +53,7 @@ export default function ProjectImageCarousel({
             src={images[index]}
             alt={altFromSrc(images[index])}
             fill
-            className="object-cover object-top"
+            className="object-contain"
             sizes="(min-width: 768px) 50vw, 100vw"
           />
         </div>

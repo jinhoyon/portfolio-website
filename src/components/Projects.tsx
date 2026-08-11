@@ -27,7 +27,7 @@ export default function Projects() {
               as="article"
               className="grid md:grid-cols-2 border border-zinc-200 bg-white"
             >
-              <ProjectImageCarousel aspect="aspect-4/3" images={project.images} className="border-0 border-b md:border-b-0 md:border-r border-zinc-200" />
+              <ProjectImageCarousel aspect="aspect-16/9" images={project.images} className="border-0 border-b md:border-b-0 md:border-r border-zinc-200" />
 
               <div className="p-8 flex flex-col">
                 <span className="text-xs font-mono uppercase tracking-widest text-zinc-500">
