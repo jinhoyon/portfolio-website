@@ -19,7 +19,12 @@ export default function Nav() {
 
   useEffect(() => {
     const hero = document.getElementById("top");
-    if (!hero) return;
+    if (!hero) {
+      // No hero on this page (e.g. project detail pages) — background is
+      // always light, so the nav should be too.
+      setIsDark(false);
+      return;
+    }
     // Nav is "dark mode" (transparent over the black hero) as long as the hero
     // still extends below the 64px header; once it scrolls past, flip to light.
     const observer = new IntersectionObserver(

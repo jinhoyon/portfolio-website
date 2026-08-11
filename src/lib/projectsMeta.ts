@@ -3,6 +3,7 @@ export const PROJECTS_META = [
   {
     slug: "darfin",
     stack: ["React", "Spring Boot", "Java", "Python", "MySQL", "Google Gemini API"],
+    imageAspect: "aspect-[1600/871]",
     images: [
       "/images/projects/darfin/landing.png",
       "/images/projects/darfin/watchlist.png",
@@ -17,6 +18,7 @@ export const PROJECTS_META = [
   {
     slug: "seenior",
     stack: ["React", "Node.js", "Google Gemini API", "GitHub REST API (Octokit)", "Mermaid.js", "D3.js", "XYFlow"],
+    imageAspect: "aspect-[1600/873]",
     images: [
       "/images/projects/seenior/landing.png",
       "/images/projects/seenior/documentation.png",
@@ -28,6 +30,7 @@ export const PROJECTS_META = [
   {
     slug: "fitsbug",
     stack: ["Java", "Servlets", "MyBatis", "MySQL", "REST APIs", "AJAX", "Toss Payments"],
+    imageAspect: "aspect-[682/1468]",
     images: [
       "/images/projects/fitsbug/dashboard.png",
       "/images/projects/fitsbug/member-management.png",
@@ -38,6 +41,7 @@ export const PROJECTS_META = [
   {
     slug: "nail-pholish",
     stack: ["Kotlin", "XML", "Android Studio"],
+    imageAspect: "aspect-16/9",
     images: [
       "[Placeholder: Add screenshot — pH reading screen]",
       "[Placeholder: Add screenshot — reading history]",

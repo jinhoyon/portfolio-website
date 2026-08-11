@@ -42,7 +42,7 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
           </span>
 
           <ProjectImageCarousel
-            aspect="aspect-16/9"
+            aspect={meta.imageAspect}
             images={project.images}
             className="mt-8 border border-zinc-200"
           />
