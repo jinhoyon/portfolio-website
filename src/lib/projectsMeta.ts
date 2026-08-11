@@ -19,9 +19,9 @@ export const PROJECTS_META = [
     stack: ["React", "Node.js", "Google Gemini API", "GitHub REST API (Octokit)", "Mermaid.js", "D3.js", "XYFlow"],
     images: [
       "/images/projects/seenior/landing.png",
-      "[Placeholder: Add screenshot — interactive UML diagram]",
-      "[Placeholder: Add screenshot — repository quiz]",
-      "[Placeholder: Add screenshot — architecture breakdown view]",
+      "/images/projects/seenior/documentation.png",
+      "/images/projects/seenior/uml-flowchart.png",
+      "/images/projects/seenior/quiz.png",
     ],
     githubUrl: "https://github.com/jinhoyon/Seenior",
   },
