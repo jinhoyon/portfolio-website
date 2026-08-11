@@ -67,6 +67,63 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
             </div>
           </div>
 
+          <div className="mt-12 border-t border-zinc-200 pt-10 grid gap-10 sm:grid-cols-2 max-w-3xl">
+            <div>
+              <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-500">
+                {t.objectiveLabel}
+              </h2>
+              <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
+                {project.objective}
+              </p>
+            </div>
+            <div>
+              <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-500">
+                {t.problemLabel}
+              </h2>
+              <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
+                {project.problem}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-10 max-w-3xl">
+            <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-500">
+              {t.approachLabel}
+            </h2>
+            <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
+              {project.approach}
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-10 sm:grid-cols-2 max-w-3xl">
+            <div>
+              <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-500">
+                {t.challengesLabel}
+              </h2>
+              <ul className="mt-3 space-y-2.5">
+                {project.challenges.map((challenge, i) => (
+                  <li key={i} className="flex gap-2.5 text-sm text-zinc-600 leading-relaxed">
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-zinc-400" />
+                    {challenge}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-500">
+                {t.learningsLabel}
+              </h2>
+              <ul className="mt-3 space-y-2.5">
+                {project.learnings.map((learning, i) => (
+                  <li key={i} className="flex gap-2.5 text-sm text-zinc-600 leading-relaxed">
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-zinc-400" />
+                    {learning}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
           <div className="mt-10 flex flex-wrap gap-5 text-sm border-t border-zinc-200 pt-8">
             <a
               href={project.githubUrl}
