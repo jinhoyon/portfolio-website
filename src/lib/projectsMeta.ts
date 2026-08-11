@@ -29,10 +29,9 @@ export const PROJECTS_META = [
     slug: "fitsbug",
     stack: ["Java", "Servlets", "MyBatis", "MySQL", "REST APIs", "AJAX", "Toss Payments"],
     images: [
-      "[Placeholder: Add screenshot — booking calendar]",
-      "[Placeholder: Add screenshot — reservation flow]",
-      "[Placeholder: Add screenshot — session history]",
-      "[Placeholder: Add screenshot — Toss payment checkout]",
+      "/images/projects/fitsbug/dashboard.png",
+      "/images/projects/fitsbug/member-management.png",
+      "/images/projects/fitsbug/revenue.png",
     ],
     githubUrl: "https://github.com/jinhoyon/fitsbug",
   },
