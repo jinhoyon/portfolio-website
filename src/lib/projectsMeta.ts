@@ -18,7 +18,7 @@ export const PROJECTS_META = [
     slug: "seenior",
     stack: ["React", "Node.js", "Google Gemini API", "GitHub REST API (Octokit)", "Mermaid.js", "D3.js", "XYFlow"],
     images: [
-      "[Placeholder: Add screenshot — auto-generated documentation]",
+      "/images/projects/seenior/landing.png",
       "[Placeholder: Add screenshot — interactive UML diagram]",
       "[Placeholder: Add screenshot — repository quiz]",
       "[Placeholder: Add screenshot — architecture breakdown view]",
