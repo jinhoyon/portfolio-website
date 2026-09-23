@@ -261,10 +261,14 @@ export default function ParticleBust({ className = "" }: { className?: string })
     } catch {
       return; // No WebGL: the hero simply shows without the illustration.
     }
-    const pixelRatio = Math.min(window.devicePixelRatio, 2);
+    // Phones get a lighter render so frames don't drop while scrolling.
+    const isSmallScreen = window.matchMedia("(max-width: 767px)").matches;
+    const pixelRatio = Math.min(window.devicePixelRatio, isSmallScreen ? 1.5 : 2);
     renderer.setPixelRatio(pixelRatio);
     renderer.setClearColor(0x000000, 0);
     renderer.domElement.style.display = "block";
+    // Own compositing layer: avoids flicker when the blurred sticky nav scrolls over it.
+    renderer.domElement.style.transform = "translateZ(0)";
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -330,19 +334,61 @@ export default function ParticleBust({ className = "" }: { className?: string })
         /* Illustration is decorative; leave the icons if the bust fails to load. */
       });
 
-    // Pointer: turn toward the cursor anywhere on the page.
+    // Pointer: turn toward the cursor anywhere on the page. Touch is ignored:
+    // every scroll starts with a touch, which would yank the bust around.
     const target = { x: 0, y: 0 };
     let pointerActive = false;
     const onPointerMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
       pointerActive = true;
       target.x = (e.clientX / window.innerWidth) * 2 - 1;
       target.y = (e.clientY / window.innerHeight) * 2 - 1;
     };
     window.addEventListener("pointermove", onPointerMove, { passive: true });
 
+    // Phones: follow the device tilt instead. Left/right tilt turns the bust;
+    // forward/back is measured against a slowly drifting baseline so it reacts
+    // to changes rather than to however the phone happens to be held.
+    const TILT_RANGE = 30; // degrees of tilt for a full turn
+    let tiltBaseBeta: number | null = null;
+    const onOrientation = (e: DeviceOrientationEvent) => {
+      if (e.beta == null || e.gamma == null) return;
+      const angle = screen.orientation?.angle ?? 0;
+      // Map to screen axes so landscape works too.
+      let lr = e.gamma;
+      let fb = e.beta;
+      if (angle === 90) [lr, fb] = [e.beta, -e.gamma];
+      else if (angle === 270 || angle === -90) [lr, fb] = [-e.beta, e.gamma];
+      tiltBaseBeta = tiltBaseBeta == null ? fb : tiltBaseBeta + (fb - tiltBaseBeta) * 0.02;
+      pointerActive = true;
+      target.x = THREE.MathUtils.clamp(lr / TILT_RANGE, -1, 1);
+      target.y = THREE.MathUtils.clamp((fb - tiltBaseBeta) / TILT_RANGE, -1, 1);
+    };
+    window.addEventListener("deviceorientation", onOrientation);
+
+    // iOS only delivers orientation after permission, which must be requested
+    // from a tap: ask once, on the first tap anywhere.
+    type OrientationPermission = { requestPermission?: () => Promise<"granted" | "denied"> };
+    const needsPermission =
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof (DeviceOrientationEvent as unknown as OrientationPermission).requestPermission === "function";
+    const requestTilt = () => {
+      window.removeEventListener("touchend", requestTilt);
+      (DeviceOrientationEvent as unknown as OrientationPermission).requestPermission?.().catch(() => {
+        /* Declined or unavailable: keep the idle sway. */
+      });
+    };
+    if (needsPermission) window.addEventListener("touchend", requestTilt, { passive: true });
+
+    let lastW = 0;
+    let lastH = 0;
     const resize = () => {
       const { clientWidth: w, clientHeight: h } = container;
-      if (!w || !h) return;
+      // setSize clears the canvas, so skip no-op resizes (mobile browsers fire
+      // them as the address bar shows/hides during scroll).
+      if (!w || !h || (w === lastW && h === lastH)) return;
+      lastW = w;
+      lastH = h;
       renderer.setSize(w, h, false);
       renderer.domElement.style.width = `${w}px`;
       renderer.domElement.style.height = `${h}px`;
@@ -366,7 +412,8 @@ export default function ParticleBust({ className = "" }: { className?: string })
         icon.base.set(place[0] * halfAtDepth * aspect, place[1] * halfAtDepth, z);
         icon.object.scale.setScalar(icon.shape.scale * (narrow ? 0.75 : 1));
       }
-      if (reduceMotion) renderer.render(scene, camera);
+      // Redraw right away so the cleared canvas is never shown for a frame.
+      renderer.render(scene, camera);
     };
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(container);
@@ -431,6 +478,8 @@ export default function ParticleBust({ className = "" }: { className?: string })
       resizeObserver.disconnect();
       visibility.disconnect();
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("deviceorientation", onOrientation);
+      window.removeEventListener("touchend", requestTilt);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       scene.traverse((obj) => {
         if (obj instanceof THREE.Points) obj.geometry.dispose();
