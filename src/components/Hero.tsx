@@ -1,13 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { ArrowRight, Mail } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations } from "@/lib/translations";
 
+// WebGL illustration: client-only and code-split so three.js stays out of the main bundle.
+const ParticleBust = dynamic(() => import("./hero/ParticleBust"), { ssr: false });
+
 const container = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } },
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.4 } },
 };
 
 const item = {
@@ -26,34 +30,30 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative w-full break-keep border-b border-zinc-200 bg-background"
+      className="relative h-[calc(100svh-4rem)] min-h-[560px] w-full overflow-hidden break-keep border-b border-zinc-200 bg-background"
     >
+      <ParticleBust className="absolute inset-0" />
+
+      {/* Fade the scene out behind the title so it stays legible. */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-background via-background/80 to-transparent"
+        aria-hidden="true"
+      />
+
       <motion.div
-        className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col justify-center px-6 py-24"
+        className="relative mx-auto flex h-full max-w-6xl flex-col justify-end gap-8 px-6 pb-12 sm:pb-16"
         initial="hidden"
         animate="show"
         variants={container}
       >
         <motion.h1
           variants={item}
-          className="max-w-2xl text-4xl font-semibold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl"
+          className="max-w-2xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight text-foreground sm:text-4xl lg:text-5xl"
         >
           {t.heading}
         </motion.h1>
 
-        <motion.div variants={item} className="mt-6 max-w-xl text-lg text-zinc-600">
-          <p className="leading-relaxed">{t.intro}</p>
-          <ul className="mt-4 flex flex-col gap-2.5">
-            {t.points.map((point) => (
-              <li key={point} className="flex gap-3 leading-relaxed">
-                <span className="mt-[0.7em] h-1.5 w-1.5 shrink-0 bg-zinc-400" aria-hidden="true" />
-                {point}
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-
-        <motion.div variants={item} className="mt-8 flex flex-wrap gap-4">
+        <motion.div variants={item} className="flex flex-wrap gap-4">
           <motion.a
             href="#projects"
             whileHover={{ scale: 1.03 }}

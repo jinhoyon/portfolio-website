@@ -16,12 +16,6 @@ export const translations = {
     },
     hero: {
       heading: "Building fullstack products and AI-powered systems.",
-      intro: "UC Davis Computer Science & Engineering graduate.",
-      points: [
-        "Fullstack development and applied AI/LLM systems",
-        "HCI research shipped as production Android and React apps, plus LLM-driven analysis platforms",
-        "Building things non-engineers can pick up and run with, not just ship",
-      ],
       viewProjects: "View Projects",
       contactMe: "Contact Me",
     },
@@ -220,12 +214,6 @@ export const translations = {
     },
     hero: {
       heading: "풀스택 제품과 AI 기반 시스템을 만듭니다.",
-      intro: "UC Davis 컴퓨터공학과 졸업.",
-      points: [
-        "풀스택 개발 및 응용 AI/LLM 시스템 전문",
-        "HCI 연구 기반 프로덕션 Android·React 앱부터 LLM 분석 플랫폼까지",
-        "출시에서 그치지 않고, 비개발 직군 동료도 바로 활용할 수 있는 결과물을 만듭니다",
-      ],
       viewProjects: "프로젝트 보기",
       contactMe: "연락하기",
     },
