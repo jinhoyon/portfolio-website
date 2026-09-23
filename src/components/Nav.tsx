@@ -10,30 +10,11 @@ import { translations } from "@/lib/translations";
 export default function Nav() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isDark, setIsDark] = useState(true);
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language].nav;
 
   // eslint-disable-next-line react-hooks/set-state-in-effect -- portal target (document.body) only exists client-side
   useEffect(() => setMounted(true), []);
-
-  useEffect(() => {
-    const hero = document.getElementById("top");
-    if (!hero) {
-      // No hero on this page (e.g. project detail pages) — background is
-      // always light, so the nav should be too.
-      setIsDark(false);
-      return;
-    }
-    // Nav is "dark mode" (transparent over the black hero) as long as the hero
-    // still extends below the 64px header; once it scrolls past, flip to light.
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsDark(entry.isIntersecting),
-      { rootMargin: "-64px 0px 0px 0px", threshold: 0 }
-    );
-    observer.observe(hero);
-    return () => observer.disconnect();
-  }, []);
 
   const LINKS = [
     { href: "/#projects", label: t.links.projects },
@@ -43,26 +24,20 @@ export default function Nav() {
     { href: "/#contact", label: t.links.contact },
   ];
 
-  const linkClass = isDark
-    ? "whitespace-nowrap text-sm text-zinc-300 hover:text-white transition-colors"
-    : "whitespace-nowrap text-sm text-zinc-600 hover:text-zinc-900 transition-colors";
+  const linkClass =
+    "whitespace-nowrap text-sm text-zinc-600 hover:text-zinc-900 transition-colors";
 
-  const resumeClass = isDark
-    ? "inline-flex shrink-0 items-center gap-2 whitespace-nowrap border border-white/40 bg-white text-zinc-900 text-sm px-4 py-2 hover:bg-zinc-200 transition-colors"
-    : "inline-flex shrink-0 items-center gap-2 whitespace-nowrap border border-zinc-900 bg-zinc-900 text-white text-sm px-4 py-2 hover:bg-zinc-700 hover:border-zinc-700 transition-colors";
+  const resumeClass =
+    "inline-flex shrink-0 items-center gap-2 whitespace-nowrap border border-zinc-900 bg-zinc-900 text-white text-sm px-4 py-2 hover:bg-zinc-700 hover:border-zinc-700 transition-colors";
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b backdrop-blur transition-colors duration-300 ${
-        isDark ? "border-white/10 bg-black/90" : "border-zinc-200 bg-white/90"
-      }`}
+      className="sticky top-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur"
     >
       <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
         <a
           href="/#top"
-          className={`shrink-0 whitespace-nowrap font-semibold tracking-tight transition-colors duration-300 ${
-            isDark ? "text-white" : "text-zinc-900"
-          }`}
+          className="shrink-0 whitespace-nowrap font-semibold tracking-tight text-zinc-900"
         >
           {t.name}
         </a>
@@ -104,7 +79,7 @@ export default function Nav() {
             {t.langToggle}
           </button>
           <button
-            className={`transition-colors duration-300 ${isDark ? "text-white" : "text-zinc-700"}`}
+            className="text-zinc-700"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
           >
