@@ -24,7 +24,7 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
         <div className="mx-auto max-w-4xl px-6 py-16">
           <Link
             href="/#projects"
-            className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.75} />
             {t.backToProjects}
@@ -33,11 +33,11 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
           <span className="mt-6 block text-xs font-mono uppercase tracking-widest text-zinc-500">
             {project.category} · {project.period}
           </span>
-          <h1 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900">
+          <h1 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
             {project.title}
           </h1>
 
-          <span className="mt-4 inline-block w-fit text-xs font-medium bg-zinc-900 text-white px-3 py-1.5">
+          <span className="mt-4 inline-block w-fit text-xs font-medium bg-zinc-800 text-white px-3 py-1.5">
             {project.metric}
           </span>
 
@@ -129,7 +129,7 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-zinc-900 font-medium"
+              className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-foreground font-medium"
             >
               <Github className="h-3.5 w-3.5" strokeWidth={1.75} />
               {t.githubLabel}

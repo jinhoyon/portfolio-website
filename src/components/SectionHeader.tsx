@@ -24,7 +24,7 @@ export default function SectionHeader({
           {eyebrow}
         </span>
       )}
-      <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900">
+      <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
         {title}
       </h2>
       {subtitle && <p className="mt-3 text-zinc-500 leading-relaxed">{subtitle}</p>}

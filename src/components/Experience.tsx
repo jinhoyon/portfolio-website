@@ -24,7 +24,7 @@ export default function Experience() {
             >
               <div className="flex md:block gap-3 items-start">
                 <div className="hidden md:flex flex-col items-center h-full absolute -left-[9px] top-1">
-                  <span className="h-3 w-3 rounded-full border-2 border-zinc-900 bg-white shrink-0" />
+                  <span className="h-3 w-3 rounded-full border-2 border-zinc-800 bg-white shrink-0" />
                   {i < t.roles.length - 1 && (
                     <span className="w-px flex-1 bg-zinc-300 mt-1" />
                   )}
@@ -33,7 +33,7 @@ export default function Experience() {
               </div>
 
               <div className="border border-zinc-200 bg-white p-7 -mt-1">
-                <h3 className="text-lg font-semibold text-zinc-900">{role.title}</h3>
+                <h3 className="text-lg font-semibold text-foreground">{role.title}</h3>
                 <p className="text-sm text-zinc-500 mt-1">{role.company}</p>
                 <ul className="mt-4 flex flex-col gap-2.5">
                   {role.achievements.map((a, j) => (

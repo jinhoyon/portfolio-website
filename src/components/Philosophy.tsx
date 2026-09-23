@@ -26,7 +26,7 @@ export default function Philosophy() {
                 <div className="h-10 w-10 flex items-center justify-center border border-zinc-300 mb-5">
                   <Icon className="h-5 w-5 text-zinc-700" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-base font-semibold text-zinc-900">{title}</h3>
+                <h3 className="text-base font-semibold text-foreground">{title}</h3>
                 <p className="mt-2.5 text-sm text-zinc-500 leading-relaxed">
                   {description}
                 </p>

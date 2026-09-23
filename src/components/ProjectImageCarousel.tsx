@@ -67,7 +67,7 @@ export default function ProjectImageCarousel({
             type="button"
             onClick={prev}
             aria-label="Previous image"
-            className="absolute left-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-300 bg-white/90 text-zinc-600 transition-colors hover:bg-white hover:text-zinc-900"
+            className="absolute left-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-300 bg-white/90 text-zinc-600 transition-colors hover:bg-white hover:text-foreground"
           >
             <ChevronLeft className="h-4 w-4" strokeWidth={2} />
           </button>
@@ -75,7 +75,7 @@ export default function ProjectImageCarousel({
             type="button"
             onClick={next}
             aria-label="Next image"
-            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-300 bg-white/90 text-zinc-600 transition-colors hover:bg-white hover:text-zinc-900"
+            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-300 bg-white/90 text-zinc-600 transition-colors hover:bg-white hover:text-foreground"
           >
             <ChevronRight className="h-4 w-4" strokeWidth={2} />
           </button>

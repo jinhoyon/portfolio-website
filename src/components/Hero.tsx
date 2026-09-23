@@ -26,7 +26,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative w-full border-b border-zinc-200 bg-white"
+      className="relative w-full border-b border-zinc-200 bg-background"
     >
       <motion.div
         className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col justify-center px-6 py-24"
@@ -36,7 +36,7 @@ export default function Hero() {
       >
         <motion.h1
           variants={item}
-          className="max-w-2xl text-4xl font-semibold leading-[1.1] tracking-tight text-zinc-900 sm:text-5xl md:text-6xl"
+          className="max-w-2xl text-4xl font-semibold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl"
         >
           {t.heading}
         </motion.h1>
@@ -53,7 +53,7 @@ export default function Hero() {
             href="#projects"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-zinc-900 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+            className="inline-flex items-center gap-2 bg-zinc-800 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-600"
           >
             {t.viewProjects}
             <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
@@ -62,7 +62,7 @@ export default function Hero() {
             href="#contact"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 border border-zinc-300 bg-white px-5 py-3 text-sm font-medium text-zinc-900 transition-colors hover:border-zinc-900"
+            className="inline-flex items-center gap-2 border border-zinc-300 bg-white px-5 py-3 text-sm font-medium text-foreground transition-colors hover:border-zinc-800"
           >
             <Mail className="h-4 w-4" strokeWidth={1.75} />
             {t.contactMe}

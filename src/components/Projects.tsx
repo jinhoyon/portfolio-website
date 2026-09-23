@@ -34,7 +34,7 @@ export default function Projects() {
                   {project.category} · {project.period}
                 </span>
                 <Link href={`/projects/${project.slug}`}>
-                  <h3 className="mt-2 text-xl font-semibold text-zinc-900 hover:text-zinc-600 transition-colors">
+                  <h3 className="mt-2 text-xl font-semibold text-foreground hover:text-zinc-600 transition-colors">
                     {project.title}
                   </h3>
                 </Link>
@@ -42,7 +42,7 @@ export default function Projects() {
                   {project.summary}
                 </p>
 
-                <span className="mt-4 inline-block w-fit text-xs font-medium bg-zinc-900 text-white px-3 py-1.5">
+                <span className="mt-4 inline-block w-fit text-xs font-medium bg-zinc-800 text-white px-3 py-1.5">
                   {project.metric}
                 </span>
 
@@ -60,7 +60,7 @@ export default function Projects() {
                 <div className="mt-auto pt-6 flex flex-wrap gap-5 text-sm">
                   <Link
                     href={`/projects/${project.slug}`}
-                    className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-zinc-900 font-medium"
+                    className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-foreground font-medium"
                   >
                     {t.viewDetails}
                     <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -69,7 +69,7 @@ export default function Projects() {
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-zinc-900 font-medium"
+                    className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-foreground font-medium"
                   >
                     <Github className="h-3.5 w-3.5" strokeWidth={1.75} />
                     {t.githubLabel}

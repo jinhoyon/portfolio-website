@@ -25,19 +25,19 @@ export default function Nav() {
   ];
 
   const linkClass =
-    "whitespace-nowrap text-sm text-zinc-600 hover:text-zinc-900 transition-colors";
+    "whitespace-nowrap text-sm text-zinc-600 hover:text-foreground transition-colors";
 
   const resumeClass =
-    "inline-flex shrink-0 items-center gap-2 whitespace-nowrap border border-zinc-900 bg-zinc-900 text-white text-sm px-4 py-2 hover:bg-zinc-700 hover:border-zinc-700 transition-colors";
+    "inline-flex shrink-0 items-center gap-2 whitespace-nowrap border border-zinc-800 bg-zinc-800 text-white text-sm px-4 py-2 hover:bg-zinc-600 hover:border-zinc-600 transition-colors";
 
   return (
     <header
-      className="sticky top-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur"
+      className="sticky top-0 z-50 border-b border-zinc-200 bg-background/90 backdrop-blur"
     >
       <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
         <a
           href="/#top"
-          className="shrink-0 whitespace-nowrap font-semibold tracking-tight text-zinc-900"
+          className="shrink-0 whitespace-nowrap font-semibold tracking-tight text-foreground"
         >
           {t.name}
         </a>
@@ -107,7 +107,7 @@ export default function Nav() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                  className="lg:hidden fixed inset-x-0 top-16 z-40 border-b border-zinc-200 bg-white/85 backdrop-blur-xl shadow-lg"
+                  className="lg:hidden fixed inset-x-0 top-16 z-40 border-b border-zinc-200 bg-background/85 backdrop-blur-xl shadow-lg"
                 >
                   <div className="px-6 py-4 flex flex-col gap-4">
                     {LINKS.map((link) => (
@@ -115,7 +115,7 @@ export default function Nav() {
                         key={link.href}
                         href={link.href}
                         onClick={() => setOpen(false)}
-                        className="text-sm text-zinc-600 hover:text-zinc-900"
+                        className="text-sm text-zinc-600 hover:text-foreground"
                       >
                         {link.label}
                       </a>
@@ -124,7 +124,7 @@ export default function Nav() {
                       href="/resume.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 border border-zinc-900 bg-zinc-900 text-white text-sm px-4 py-2"
+                      className="inline-flex items-center justify-center gap-2 border border-zinc-800 bg-zinc-800 text-white text-sm px-4 py-2"
                     >
                       <FileText className="h-4 w-4" strokeWidth={1.75} />
                       {t.resume}
