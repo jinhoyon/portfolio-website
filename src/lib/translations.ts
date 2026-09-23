@@ -16,8 +16,12 @@ export const translations = {
     },
     hero: {
       heading: "Building fullstack products and AI-powered systems.",
-      paragraph:
-        "UC Davis Computer Science & Engineering graduate specializing in fullstack development and applied AI/LLM systems — from HCI research shipped as production Android and React apps to LLM-driven analysis platforms. I like turning that work into something a non-engineer can pick up and run with, not just something that ships.",
+      intro: "UC Davis Computer Science & Engineering graduate.",
+      points: [
+        "Fullstack development and applied AI/LLM systems",
+        "HCI research shipped as production Android and React apps, plus LLM-driven analysis platforms",
+        "Building things non-engineers can pick up and run with, not just ship",
+      ],
       viewProjects: "View Projects",
       contactMe: "Contact Me",
     },
@@ -41,7 +45,7 @@ export const translations = {
           period: "Jun 2026 – Jul 2026",
           title: "Darfin — AI-Powered Company Analysis Platform",
           summary:
-            "Built the DART filing pipeline in Python: API collection → XML parsing → diff vs. prior filing → Gemini-powered summarization and risk analysis, run twice daily via APScheduler plus an on-demand LLM worker queue. Also built the React frontend (financial trends, risk, business segments, shareholder status) against a Spring Boot query API, the landing page, and a shared design system.",
+            "Python pipeline that diffs DART filings against the prior version and uses Gemini to summarize changes and flag risks, served to a React dashboard through a Spring Boot API.",
           metric: "Automated twice-daily DART filing analysis (06:00 / 18:00 KST)",
           objective:
             "Give retail investors a fast way to understand a KOSPI/KOSDAQ company's DART filings without reading full regulatory disclosures.",
@@ -64,7 +68,7 @@ export const translations = {
           period: "May 2026",
           title: "Seenior — AI-Powered Developer Onboarding",
           summary:
-            "End-to-end LLM app that cuts codebase ramp-up time from hours to under 60 seconds by integrating Google Gemini 2.5 with the GitHub REST API to auto-generate documentation, UML diagrams, and quizzes from any public repository. Rendered as interactive, clickable diagrams via a custom Mermaid.js validation pipeline built with D3.js and XYFlow.",
+            "LLM app that turns any public GitHub repo into documentation, interactive UML diagrams, and quizzes, cutting codebase ramp-up from hours to under 60 seconds.",
           metric: "Ramp-up time: hours → under 60 seconds",
           objective:
             "Cut the time it takes a developer to understand an unfamiliar codebase from hours of manual file-reading to under a minute.",
@@ -86,7 +90,7 @@ export const translations = {
           period: "Apr 2026 – May 2026",
           title: "Fitsbug — Fitness Marketplace Platform",
           summary:
-            "Designed relational database schemas and built an end-to-end personal-training reservation flow (calendars, booking, session history) backed by 20+ Java servlets and 10+ MyBatis mappers. Integrated Toss Payment Gateway for the full payment lifecycle, validated through end-to-end manual testing across cancellation and refund edge cases.",
+            "Personal-training marketplace with an end-to-end booking flow (calendars, reservations, session history) and full Toss Payments integration, including cancellations and refunds.",
           metric: "Full payment lifecycle: ready → success → cancel → refund",
           objective:
             "Give independent personal trainers one place to manage bookings, clients, and payments instead of juggling manual scheduling and separate payment tools.",
@@ -108,7 +112,7 @@ export const translations = {
           period: "Mar 2025 – Sep 2025",
           title: "Nail pHolish — Wearable pH Sensing App",
           summary:
-            "Shipped the front-end for an Android app surfacing real-time oral pH readings from a Nix Color Sensor, built in Kotlin/XML via Android Studio while iterating with hardware and backend teammates on debugging and usability. Work was co-authored into 2 peer-reviewed publications (ACM & INTERACT 2025).",
+            "Android front-end for a wearable that shows real-time oral pH readings from a color sensor. The work was co-authored into 2 peer-reviewed publications.",
           metric: "Co-authored 2 peer-reviewed publications (ACM, INTERACT 2025)",
           objective:
             "Turn a hardware research prototype into a usable mobile app that gives people real-time feedback on oral pH from a wearable sensor.",
@@ -216,8 +220,12 @@ export const translations = {
     },
     hero: {
       heading: "풀스택 제품과 AI 기반 시스템을 만듭니다.",
-      paragraph:
-        "UC Davis 컴퓨터공학과를 졸업하고 풀스택 개발과 응용 AI/LLM 시스템을 전문으로 합니다. HCI 연구를 실제 프로덕션 Android·React 앱으로 구현한 경험부터 LLM 기반 분석 플랫폼까지 다뤘습니다. 결과물을 출시하는 데서 그치지 않고, 비개발 직군 동료도 바로 이해하고 활용할 수 있게 만드는 일을 좋아합니다.",
+      intro: "UC Davis 컴퓨터공학과 졸업.",
+      points: [
+        "풀스택 개발 및 응용 AI/LLM 시스템 전문",
+        "HCI 연구 기반 프로덕션 Android·React 앱부터 LLM 분석 플랫폼까지",
+        "출시에서 그치지 않고, 비개발 직군 동료도 바로 활용할 수 있는 결과물을 만듭니다",
+      ],
       viewProjects: "프로젝트 보기",
       contactMe: "연락하기",
     },
@@ -240,7 +248,7 @@ export const translations = {
           period: "2026.06 – 2026.07",
           title: "Darfin — AI 기반 기업 분석 플랫폼",
           summary:
-            "Python으로 DART 공시 파이프라인을 구축했습니다: API 수집 → XML 파싱 → 이전 공시와의 diff 비교 → Gemini 기반 요약·리스크 분석까지 이어지며, APScheduler로 하루 두 번 자동 실행되고 온디맨드 LLM 워커 큐도 함께 운영됩니다. Spring Boot 조회 API와 연동되는 React 프론트엔드(재무 추이, 리스크, 사업 부문, 주주 현황)와 랜딩 페이지, 공용 디자인 시스템도 함께 구축했습니다.",
+            "DART 공시를 이전 공시와 비교해 Gemini로 변경 사항을 요약하고 리스크를 짚어내는 Python 파이프라인으로, Spring Boot API를 거쳐 React 대시보드로 제공합니다.",
           metric: "DART 공시 분석 자동화 (매일 06:00 / 18:00 KST)",
           objective:
             "개인 투자자가 전체 공시 원문을 읽지 않고도 KOSPI·KOSDAQ 기업의 DART 공시를 빠르게 파악할 수 있게 하는 것이 목표였습니다.",
@@ -263,7 +271,7 @@ export const translations = {
           period: "2026.05",
           title: "Seenior — AI 기반 개발자 온보딩 도구",
           summary:
-            "Google Gemini 2.5와 GitHub REST API를 연동해 공개 저장소로부터 문서, UML 다이어그램, 퀴즈를 자동 생성하는 엔드투엔드 LLM 애플리케이션으로, 코드베이스 파악 시간을 수 시간에서 60초 이내로 단축했습니다. D3.js와 XYFlow로 구축한 자체 Mermaid.js 검증 파이프라인을 통해 클릭 가능한 인터랙티브 다이어그램으로 렌더링했습니다.",
+            "공개 GitHub 저장소를 문서, 인터랙티브 UML 다이어그램, 퀴즈로 변환하는 LLM 앱으로, 코드베이스 파악 시간을 수 시간에서 60초 이내로 줄였습니다.",
           metric: "코드베이스 파악 시간: 수 시간 → 60초 이내",
           objective:
             "낯선 코드베이스를 파악하는 데 걸리는 시간을 수 시간의 수동 파일 읽기에서 1분 이내로 단축하는 것이 목표였습니다.",
@@ -285,7 +293,7 @@ export const translations = {
           period: "2026.04 – 2026.05",
           title: "Fitsbug — 피트니스 마켓플레이스 플랫폼",
           summary:
-            "관계형 데이터베이스 스키마를 설계하고, 20개 이상의 Java 서블릿과 10개 이상의 MyBatis 매퍼를 기반으로 개인 트레이닝 예약 플로우(캘린더, 예약, 세션 이력)를 엔드투엔드로 구축했습니다. 토스페이먼츠를 연동해 결제 전체 생명주기를 구현하고, 취소·환불 엣지 케이스까지 수동 테스트로 검증했습니다.",
+            "캘린더, 예약, 세션 이력까지 아우르는 개인 트레이닝 예약 플로우와 취소·환불을 포함한 토스페이먼츠 결제를 구현한 피트니스 마켓플레이스입니다.",
           metric: "결제 전체 생명주기 구현: 준비 → 성공 → 취소 → 환불",
           objective:
             "개인 트레이너가 수동 스케줄링과 별도의 결제 도구를 오가는 대신, 예약·회원·결제를 한곳에서 관리할 수 있게 하는 것이 목표였습니다.",
@@ -307,7 +315,7 @@ export const translations = {
           period: "2025.03 – 2025.09",
           title: "Nail pHolish — 웨어러블 pH 센싱 앱",
           summary:
-            "Nix Color Sensor로 측정한 실시간 구강 pH 수치를 보여주는 Android 앱의 프론트엔드를 Kotlin/XML(Android Studio)로 구현했으며, 하드웨어·백엔드 팀원들과 디버깅 및 사용성 피드백을 함께 반복했습니다. 이 작업은 동료 심사를 거친 논문 2편(ACM, INTERACT 2025)에 공동 저자로 참여하는 성과로 이어졌습니다.",
+            "컬러 센서로 측정한 실시간 구강 pH 수치를 보여주는 웨어러블용 Android 앱의 프론트엔드를 구현했으며, 이 작업으로 동료 심사 논문 2편의 공동 저자로 참여했습니다.",
           metric: "동료 심사 논문 2편 공동 저술 (ACM, INTERACT 2025)",
           objective:
             "하드웨어 연구 프로토타입을, 웨어러블 센서로 측정한 구강 pH를 실시간으로 알려주는 실사용 가능한 모바일 앱으로 만드는 것이 목표였습니다.",

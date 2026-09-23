@@ -42,7 +42,7 @@ export default function Projects() {
                   {project.summary}
                 </p>
 
-                <span className="mt-4 inline-block w-fit text-xs font-medium bg-zinc-800 text-white px-3 py-1.5">
+                <span className="mt-4 block w-fit border-l-2 border-zinc-800 pl-3 text-sm font-medium text-zinc-700">
                   {project.metric}
                 </span>
 
@@ -57,21 +57,21 @@ export default function Projects() {
                   ))}
                 </div>
 
-                <div className="mt-auto pt-6 flex flex-wrap gap-5 text-sm">
+                <div className="mt-auto pt-6 flex flex-wrap gap-3 text-sm">
                   <Link
                     href={`/projects/${project.slug}`}
-                    className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-foreground font-medium"
+                    className="inline-flex items-center gap-2 bg-zinc-800 px-4 py-2.5 font-medium text-white transition-colors hover:bg-zinc-600"
                   >
                     {t.viewDetails}
-                    <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} />
+                    <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
                   </Link>
                   <a
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-zinc-800 hover:text-foreground font-medium"
+                    className="inline-flex items-center gap-2 border border-zinc-300 bg-white px-4 py-2.5 font-medium text-foreground transition-colors hover:border-zinc-800"
                   >
-                    <Github className="h-3.5 w-3.5" strokeWidth={1.75} />
+                    <Github className="h-4 w-4" strokeWidth={1.75} />
                     {t.githubLabel}
                   </a>
                 </div>

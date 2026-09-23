@@ -26,7 +26,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative w-full border-b border-zinc-200 bg-background"
+      className="relative w-full break-keep border-b border-zinc-200 bg-background"
     >
       <motion.div
         className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col justify-center px-6 py-24"
@@ -41,12 +41,17 @@ export default function Hero() {
           {t.heading}
         </motion.h1>
 
-        <motion.p
-          variants={item}
-          className="mt-6 max-w-lg text-lg leading-relaxed text-zinc-600"
-        >
-          {t.paragraph}
-        </motion.p>
+        <motion.div variants={item} className="mt-6 max-w-xl text-lg text-zinc-600">
+          <p className="leading-relaxed">{t.intro}</p>
+          <ul className="mt-4 flex flex-col gap-2.5">
+            {t.points.map((point) => (
+              <li key={point} className="flex gap-3 leading-relaxed">
+                <span className="mt-[0.7em] h-1.5 w-1.5 shrink-0 bg-zinc-400" aria-hidden="true" />
+                {point}
+              </li>
+            ))}
+          </ul>
+        </motion.div>
 
         <motion.div variants={item} className="mt-8 flex flex-wrap gap-4">
           <motion.a
