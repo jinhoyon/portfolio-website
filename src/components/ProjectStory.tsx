@@ -27,6 +27,8 @@ function Figure({ figure, aspect, priority = false }: { figure: StoryFigure; asp
 }
 
 function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
+  // Tables style their first column as a short mono key unless marked as prose.
+  const keyColumn = block.type === "table" && block.firstColumn !== "text";
   switch (block.type) {
     case "p":
       return <p className="mt-5 max-w-2xl text-base leading-relaxed text-zinc-700">{block.text}</p>;
@@ -85,7 +87,7 @@ function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
       );
     case "paths":
       return (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <div className={`mt-8 grid gap-4 ${block.items.length === 3 ? "md:grid-cols-3" : "sm:grid-cols-2"}`}>
           {block.items.map((item) => (
             <div key={item.label} className="border border-zinc-200 bg-zinc-50 p-6">
               <h3 className="text-base font-semibold text-foreground">{item.label}</h3>
@@ -199,7 +201,7 @@ function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
               {block.rows.map((row) => (
                 <tr key={row[0]} className="border-b border-zinc-200">
                   {row.map((cell, i) => (
-                    <td key={i} className={`py-3 pr-4 align-top leading-relaxed ${i === 0 ? "whitespace-nowrap font-mono text-xs text-zinc-500" : i === row.length - 1 ? "text-zinc-800" : "text-zinc-600"}`}>
+                    <td key={i} className={`py-3 pr-4 align-top leading-relaxed ${i === 0 ? (keyColumn ? "whitespace-nowrap font-mono text-xs text-zinc-500" : "font-medium text-foreground") : i === row.length - 1 ? "text-zinc-800" : "text-zinc-600"}`}>
                       {cell}
                     </td>
                   ))}
@@ -220,7 +222,7 @@ function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
             {block.rows.map((row) => (
               <tbody key={row[0]} className="border-b border-zinc-200">
                 <tr>
-                  <th scope="colgroup" colSpan={row.length - 1} className="pt-3 font-mono text-xs font-normal text-zinc-500">
+                  <th scope="colgroup" colSpan={row.length - 1} className={`pt-3 ${keyColumn ? "font-mono text-xs font-normal text-zinc-500" : "text-sm font-medium text-foreground"}`}>
                     {row[0]}
                   </th>
                 </tr>

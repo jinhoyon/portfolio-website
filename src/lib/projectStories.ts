@@ -23,7 +23,8 @@ export type StoryBlock =
   | { type: "gallery"; caption: string; openLabel: string; items: (StoryFigure & { width: number; height: number })[] }
   | { type: "overview"; items: { label: string; title: string; text: string }[] }
   | { type: "stats"; items: { value: string; label: string }[] }
-  | { type: "table"; caption: string; columns: string[]; rows: string[][] }
+  // firstColumn "key" (default) styles the first column as a short mono label; "text" keeps it as prose.
+  | { type: "table"; caption: string; columns: string[]; rows: string[][]; firstColumn?: "key" | "text" }
   | { type: "details"; summary: string; blocks: StoryBlock[] }
   | {
       type: "annotatedFigure";
@@ -275,8 +276,55 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "id": "features",
+          "eyebrow": "Key features",
+          "heading": "Four features, one path from reading to deciding",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Our team defined the problem as three gaps: finding and comparing filings by hand, missing the changes that matter, and a research workflow scattered across different sites. Darfin answers them with four connected features."
+            },
+            {
+              "type": "table",
+              "caption": "What each feature does, and why it's there",
+              "firstColumn": "text",
+              "columns": [
+                "Feature",
+                "What it does",
+                "Why it matters for the problem"
+              ],
+              "rows": [
+                [
+                  "Company analysis",
+                  "Turns a company's annual, half-year, and quarterly reports into an overview, financial trends, and rule-based risk statuses.",
+                  "Removes the step of opening past reports and comparing them by hand, and surfaces changes that are easy to miss."
+                ],
+                [
+                  "Disclosure analysis",
+                  "Searches ad-hoc filings, such as major events, share issuances, and audit reports, and summarizes each one with AI.",
+                  "Ad-hoc filings are long and arrive at any time. A summary shows whether one is worth reading before you open it."
+                ],
+                [
+                  "Mock trading",
+                  "Trades with real-time prices and virtual money, then scores the portfolio on diversification, risk management, returns, and trading habits.",
+                  "Lets you act on what you learned and see the result, without risking real money."
+                ],
+                [
+                  "Community",
+                  "Q&A about a specific company, where the person who asked can accept the best answer.",
+                  "Gives beginners a place to ask people who already know how to read filings."
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Together they form one path: understand what a filing says, practice acting on it, and ask when you're stuck. I led company analysis; teammates led disclosure analysis, mock trading, and community."
+            }
+          ]
+        },
+        {
           "id": "product",
-          "eyebrow": "The product",
+          "eyebrow": "Company analysis",
           "heading": "One company, three focused views",
           "blocks": [
             {
@@ -445,6 +493,85 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               "text": "The calculations include liquidity and leverage ratios, cash-flow measures, DuPont components, Altman Z′, and a partial Piotroski F score. Separately, Gemini extracts risk-related information from narrative sections. It writes risk explanations from the computed states and signals; it does not decide the numerical risk status."
             },
             {
+              "type": "details",
+              "summary": "Show the calculations: 8 measures and what each one checks",
+              "blocks": [
+                {
+                  "type": "p",
+                  "text": "Each measure answers one plain question about the company, and each one feeds a specific risk card."
+                },
+                {
+                  "type": "table",
+                  "caption": "What Darfin calculates, and why",
+                  "columns": [
+                    "Measure",
+                    "The question it answers",
+                    "How Darfin uses it"
+                  ],
+                  "rows": [
+                    [
+                      "Current ratio",
+                      "Can it pay the bills due within a year? Current assets ÷ current liabilities.",
+                      "Liquidity: flagged below 1.0, or when it falls 1.5σ below the company's own 12-quarter average."
+                    ],
+                    [
+                      "Debt ratio",
+                      "How much of the business is funded by borrowing? Total liabilities ÷ equity.",
+                      "Leverage: flagged above 200%, or when equity is negative."
+                    ],
+                    [
+                      "Interest coverage",
+                      "Does operating profit cover interest payments? Operating income ÷ interest expense.",
+                      "Leverage: flagged below 1×."
+                    ],
+                    [
+                      "Accruals ratio",
+                      "Is reported profit backed by cash? (Net income − operating cash flow) ÷ total assets.",
+                      "Earnings quality: flagged above 10%, or when there's a profit but operating cash flow is negative."
+                    ],
+                    [
+                      "DuPont components",
+                      "What drives return on equity? ROE = net margin × asset turnover × leverage (assets ÷ equity), with margin and turnover over the trailing 12 months.",
+                      "Shows whether returns come from margins, efficiency, or borrowing. Asset turnover also feeds the operational card."
+                    ],
+                    [
+                      "Altman Z′",
+                      "How close is the company to financial distress? A weighted score of working capital, retained earnings, operating profit, equity, and sales, each scaled by assets or liabilities.",
+                      "Going concern: flagged below 1.1, the distress zone, or when equity is negative."
+                    ],
+                    [
+                      "Piotroski F (partial)",
+                      "Are the fundamentals getting stronger? Seven yes/no checks on profitability, cash flow, leverage, liquidity, and efficiency.",
+                      "Shown as supporting evidence on the earnings-quality card; it doesn't set a status."
+                    ],
+                    [
+                      "Cash conversion cycle",
+                      "How long is cash tied up in operations? Receivable days + inventory days − payable days.",
+                      "Operational: flagged when it rises 1.5σ above the company's own history, or when operating margin or asset turnover falls 1.5σ below it."
+                    ]
+                  ]
+                },
+                {
+                  "type": "details",
+                  "summary": "Why these measures, and what's approximated",
+                  "blocks": [
+                    {
+                      "type": "list",
+                      "items": [
+                        "They're standard, published formulas, so every status can be traced back to numbers in the filing. That's the reason the calculation lives in code instead of the model.",
+                        "A ratio that's normal for a bank can be alarming for a chipmaker. With no peer data yet, Darfin also compares each company to its own last 12 quarters (a z-score), and needs at least 8 quarters before judging at all.",
+                        "Altman Z′ is the private-company variant: book equity replaces market capitalization, so it only needs filing data.",
+                        "Piotroski F uses 7 of its 9 signals; new share issuance and gross margin weren't extracted.",
+                        "Working-capital days use revenue in place of cost of goods sold, which wasn't extracted, over a 91-day quarter.",
+                        "Annual reports give full-year totals, so Q4 is derived as the annual figure minus the first three quarters.",
+                        "The thresholds are provisional and were left for a team decision."
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
               "type": "annotatedFigure",
               "figure": {
                 "src": "/images/projects/darfin/ai-risk-analysis.png",
@@ -519,6 +646,88 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "id": "design-why",
+          "eyebrow": "Design rationale",
+          "heading": "Designed for reading the source, not watching the market",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Before designing anything, I looked at how people already reach this information: DART itself, DartPoint AI, and our own first mockup. Each one made a different part of the experience uncomfortable."
+            },
+            {
+              "type": "paths",
+              "items": [
+                {
+                  "label": "DART: you have to know the system first",
+                  "text": "Everything is public, but you choose from ten filing types before you see anything, then page through a long report. Our team counted seven stops between opening DART and knowing what changed."
+                },
+                {
+                  "label": "DartPoint AI: the market comes first",
+                  "text": "Its homepage opens with a live ticker of stock prices, then open, high, low, and trading volume, then an AI chat. Analysis arrives as AI-written reports and answers. It's closer to a market app with AI added than a place to read the filing."
+                },
+                {
+                  "label": "Our first mockup: a score without a basis",
+                  "text": "It followed the same pattern: a stock ticker, an AI score, and a promotional headline. A single AI score asks you to trust a number without showing where it came from."
+                }
+              ]
+            },
+            {
+              "type": "quote",
+              "text": "Check the basis for an interpretation before the opinion."
+            },
+            {
+              "type": "p",
+              "text": "That line from our presentation became the design brief. Darfin shouldn't replace the filing with a verdict. It should make the filing readable, keep the source in view, and make it obvious which parts were written by a model."
+            },
+            {
+              "type": "table",
+              "caption": "From discomfort to design decision",
+              "firstColumn": "text",
+              "columns": [
+                "What felt wrong",
+                "What Darfin does instead",
+                "Where it shows"
+              ],
+              "rows": [
+                [
+                  "You need to know DART to use DART",
+                  "Start from the company, not the filing type",
+                  "Company search is the main entry point; date and type filters are optional"
+                ],
+                [
+                  "Seven stops to find one change",
+                  "Put a company on one page, organized by question",
+                  "Three views: overview, AI analysis, and financial trends"
+                ],
+                [
+                  "Prices and scores lead the screen",
+                  "Lead with what the filing says",
+                  "The landing preview shows a filing excerpt beside its explanation"
+                ],
+                [
+                  "Unclear who wrote a sentence",
+                  "Mark every AI-written line",
+                  "The blue AI callout; blue is reserved for actions and AI"
+                ],
+                [
+                  "A verdict with no visible basis",
+                  "Show the status and how long it has lasted",
+                  "Risk cards show the state, its streak in quarters, and the explanation, with DART attribution kept visible"
+                ],
+                [
+                  "Long documents are tiring to read",
+                  "Keep the visuals quiet so the content leads",
+                  "Slate neutrals, nothing heavier than semibold, and borders instead of shadows"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "The redesign and design system below are where these decisions were applied."
+            }
+          ]
+        },
+        {
           "id": "ui-redesign",
           "eyebrow": "Before and after",
           "heading": "Making the entry points clearer",
@@ -541,13 +750,13 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "label": "Before · Initial mockup",
                 "src": "/images/projects/darfin/slide-31-landing.png",
                 "alt": "Original Darfin landing mockup with stock ticker, AI score card, and large promotional headline",
-                "caption": "Original landing-page mockup by sanghyxuk, shown on slide 31."
+                "caption": "Original landing-page mockup by sanghyxuk."
               },
               "after": {
                 "label": "After · My redesign",
                 "src": "/images/projects/darfin/slide-32-landing.png",
                 "alt": "Redesigned Darfin landing page with a filing excerpt and AI explanation side by side",
-                "caption": "Redesigned landing page, shown on slide 32. The preview includes an excerpt, explanation, and source reference."
+                "caption": "Redesigned landing page. The preview includes an excerpt, explanation, and source reference."
               }
             },
             {
@@ -559,13 +768,13 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "label": "Before · Original search UI",
                 "src": "/images/projects/darfin/slide-31-disclosure-search.png",
                 "alt": "Original disclosure search interface with a large form card containing company, date, and filing-type fields",
-                "caption": "The original form presents company, date, and disclosure type inside one large card. Slide 31."
+                "caption": "The original form presents company, date, and disclosure type inside one large card."
               },
               "after": {
                 "label": "After · My redesign",
                 "src": "/images/projects/darfin/slide-32-disclosure-search.png",
                 "alt": "Redesigned disclosure search with a central company input and date and filing-type filters below",
-                "caption": "The redesigned page separates the primary search input from the filter area. Slide 32."
+                "caption": "The redesigned page separates the primary search input from the filter area."
               }
             },
             {
@@ -584,154 +793,300 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               "text": "By early July, each feature had been built by a different teammate, and the pages had drifted apart: different blues, different card shapes, and paper trading running its own inline fintech palette. Before redesigning more screens, I wrote down the visual language we already had and turned it into code that every page could import."
             },
             {
-              "type": "steps",
-              "items": [
-                "Audit the company-analysis pages, the most complete surface, and inventory the classes they actually use",
-                "Write DESIGN_SYSTEM.md: principles, color, type, layout, components, motion, content rules, and audit notes",
-                "Encode the patterns as named constants in uiRecipes.js (CARD, BTN_PRIMARY, AI_CALLOUT, …)",
-                "Migrate account, auth, community, disclosure, company analysis, and the app shell in one change"
-              ]
-            },
-            {
-              "type": "stats",
-              "items": [
-                { "value": "53", "label": "shared class recipes" },
-                { "value": "80", "label": "files changed in one commit" },
-                { "value": "2", "label": "themes: light and dark" },
-                { "value": "2", "label": "languages: Korean and English" }
-              ]
-            },
-            {
-              "type": "quote",
-              "text": "If it's blue, you can click it or the AI wrote it."
-            },
-            {
-              "type": "p",
-              "text": "That rule from the design doc sums up the system. Neutrals are always slate, blue appears only on actions and AI-written insight, and nothing is heavier than semibold, so hierarchy comes from size, color, and space. Every color ships with a dark-mode pair."
-            },
-            {
-              "type": "swatches",
-              "caption": "Color tokens (Tailwind names, light theme)",
-              "groups": [
-                {
-                  "label": "Structure",
-                  "items": [
-                    { "name": "Page", "token": "slate-50", "hex": "#F8FAFC" },
-                    { "name": "Card", "token": "white", "hex": "#FFFFFF" },
-                    { "name": "Border", "token": "slate-200", "hex": "#E2E8F0" },
-                    { "name": "Secondary text", "token": "slate-500", "hex": "#64748B" },
-                    { "name": "Heading", "token": "slate-900", "hex": "#0F172A" }
-                  ]
-                },
-                {
-                  "label": "Action and AI",
-                  "items": [
-                    { "name": "Primary action", "token": "blue-600", "hex": "#2563EB" },
-                    { "name": "AI lead text", "token": "blue-700", "hex": "#1D4ED8" },
-                    { "name": "AI callout fill", "token": "blue-50", "hex": "#EFF6FF" }
-                  ]
-                },
-                {
-                  "label": "Korean market convention",
-                  "items": [
-                    { "name": "Up · buy", "token": "red-500", "hex": "#EF4444" },
-                    { "name": "Down · sell", "token": "blue-500", "hex": "#3B82F6" }
-                  ]
-                },
-                {
-                  "label": "Risk states (AI analysis tab)",
-                  "items": [
-                    { "name": "New", "token": "red-400", "hex": "#F87171" },
-                    { "name": "Worsening", "token": "red-500", "hex": "#EF4444" },
-                    { "name": "Persisting", "token": "amber-400", "hex": "#FBBF24" },
-                    { "name": "Improving", "token": "blue-400", "hex": "#60A5FA" },
-                    { "name": "Resolved", "token": "emerald-300", "hex": "#6EE7B7" },
-                    { "name": "Normal", "token": "emerald-200", "hex": "#A7F3D0" },
-                    { "name": "Insufficient data", "token": "slate-200", "hex": "#E2E8F0" }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "typeScale",
-              "caption": "Type scale (system sans, weights 500 and 600 only)",
-              "items": [
-                { "role": "Hero title", "spec": "56px · 600 · tight", "sample": "공시를 쉽게", "size": 56, "weight": 600 },
-                { "role": "Page title", "spec": "30px · 600", "sample": "삼성전자 기업 분석", "size": 30, "weight": 600 },
-                { "role": "Section title", "spec": "18px · 600", "sample": "주요 주주 현황", "size": 18, "weight": 600 },
-                { "role": "Body", "spec": "16px · 400 · relaxed", "sample": "최근 공시의 핵심 내용을 한 화면에서 확인하세요.", "size": 16, "weight": 400 },
-                { "role": "Label", "spec": "14px · 500", "sample": "분기보고서 · 2026.05.15", "size": 14, "weight": 500 },
-                { "role": "Eyebrow and meta", "spec": "12px · 500 · slate-400", "sample": "01 · 기업 분석", "size": 12, "weight": 500 }
-              ]
-            },
-            {
-              "type": "specimens",
-              "caption": "Signature components, rendered from the recipes (UI copy is Darfin's Korean)",
-              "items": [
-                { "component": "aiCallout", "label": "AI callout", "note": "The signature element. Marks every AI-written insight with a lightbulb and a blue tint." },
-                { "component": "riskStates", "label": "Risk-state badges", "note": "Seven states from the rule-based engine. Bad is red, watch is amber, improving is blue." },
-                { "component": "buttons", "label": "Buttons", "note": "Fixed 40px height. One primary action per section." },
-                { "component": "segmented", "label": "Segmented tabs", "note": "Used for the three company views." },
-                { "component": "badges", "label": "Badges", "note": "Pill shape; info, working, and neutral variants." },
-                { "component": "priceColors", "label": "Price colors", "note": "Red for gains and blue for losses, following Korean market convention." }
-              ]
-            },
-            {
-              "type": "compare",
-              "before": {
-                "label": "Avoid",
-                "points": [
-                  "Raw hex values or one-off class strings in page code",
-                  "Bold (700+) type; the wordmark is the only exception",
-                  "Blue on anything that isn't clickable or AI-written",
-                  "A light-only color without its dark pair",
-                  "Hard-coded copy instead of Korean and English locale keys"
-                ]
-              },
-              "after": {
-                "label": "Required",
-                "points": [
-                  "Cards: 1px slate-200 border, 12px radius, no shadow",
-                  "Tabular numerals for every price, count, and date",
-                  "word-break: keep-all so Korean words don't split",
-                  "Source markers (DART attribution, receipt numbers) kept visible",
-                  "Every animation collapses to its end state under reduced motion"
-                ]
-              }
-            },
-            {
-              "type": "evidence",
-              "title": "What the recipes look like in code",
-              "context": "Pages import named constants instead of retyping class strings.",
-              "note": "Source: darfin-front commit 392abc3 (Jul 8, 2026). The design doc was later removed from the repo during pre-deploy cleanup; uiRecipes.js remains.",
-              "items": [
-                {
-                  "title": "Shared recipe module",
-                  "file": "darfin-front/src/app/shared/lib/uiRecipes.js",
-                  "code": "export const CARD =\n  \"rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900\";\n\nexport const AI_CALLOUT =\n  \"flex gap-2 rounded-md border border-blue-100 dark:border-blue-900/50 bg-blue-50/60 dark:bg-blue-950/30 px-3.5 py-3\";\n\nexport const PRICE_UP = \"text-red-500 dark:text-red-400\";\nexport const PRICE_DOWN = \"text-blue-500 dark:text-blue-400\";",
-                  "finding": "Each constant carries its dark-mode pair, so a page can't ship a light-only color by accident.",
-                  "implication": "Changing a recipe restyles every screen that imports it, instead of hunting down copies of the same class string."
-                }
-              ]
-            },
-            {
               "type": "details",
-              "summary": "Inconsistencies I logged instead of fixing",
+              "summary": "Show the full design system: colors, type, components, and rules",
               "blocks": [
                 {
-                  "type": "list",
+                  "type": "steps",
                   "items": [
-                    "Two shades of the same \"example\" badge blue (blue-600 and blue-700) for one component role.",
-                    "Five card paddings in use; new cards should pick from those instead of adding a sixth.",
-                    "The shadcn theme tokens still pointed at near-black defaults, not Darfin blue, so only dialogs and dropdowns used them.",
-                    "Footer links were still placeholders."
+                    "Audit the company-analysis pages, the most complete surface, and inventory the classes they actually use",
+                    "Write DESIGN_SYSTEM.md: principles, color, type, layout, components, motion, content rules, and audit notes",
+                    "Encode the patterns as named constants in uiRecipes.js (CARD, BTN_PRIMARY, AI_CALLOUT, …)",
+                    "Migrate account, auth, community, disclosure, company analysis, and the app shell in one change"
                   ]
+                },
+                {
+                  "type": "stats",
+                  "items": [
+                    {
+                      "value": "53",
+                      "label": "shared class recipes"
+                    },
+                    {
+                      "value": "80",
+                      "label": "files changed in one commit"
+                    },
+                    {
+                      "value": "2",
+                      "label": "themes: light and dark"
+                    },
+                    {
+                      "value": "2",
+                      "label": "languages: Korean and English"
+                    }
+                  ]
+                },
+                {
+                  "type": "quote",
+                  "text": "If it's blue, you can click it or the AI wrote it."
+                },
+                {
+                  "type": "p",
+                  "text": "That rule from the design doc sums up the system. Neutrals are always slate, blue appears only on actions and AI-written insight, and nothing is heavier than semibold, so hierarchy comes from size, color, and space. Every color ships with a dark-mode pair."
+                },
+                {
+                  "type": "swatches",
+                  "caption": "Color tokens (Tailwind names, light theme)",
+                  "groups": [
+                    {
+                      "label": "Structure",
+                      "items": [
+                        {
+                          "name": "Page",
+                          "token": "slate-50",
+                          "hex": "#F8FAFC"
+                        },
+                        {
+                          "name": "Card",
+                          "token": "white",
+                          "hex": "#FFFFFF"
+                        },
+                        {
+                          "name": "Border",
+                          "token": "slate-200",
+                          "hex": "#E2E8F0"
+                        },
+                        {
+                          "name": "Secondary text",
+                          "token": "slate-500",
+                          "hex": "#64748B"
+                        },
+                        {
+                          "name": "Heading",
+                          "token": "slate-900",
+                          "hex": "#0F172A"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Action and AI",
+                      "items": [
+                        {
+                          "name": "Primary action",
+                          "token": "blue-600",
+                          "hex": "#2563EB"
+                        },
+                        {
+                          "name": "AI lead text",
+                          "token": "blue-700",
+                          "hex": "#1D4ED8"
+                        },
+                        {
+                          "name": "AI callout fill",
+                          "token": "blue-50",
+                          "hex": "#EFF6FF"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Korean market convention",
+                      "items": [
+                        {
+                          "name": "Up · buy",
+                          "token": "red-500",
+                          "hex": "#EF4444"
+                        },
+                        {
+                          "name": "Down · sell",
+                          "token": "blue-500",
+                          "hex": "#3B82F6"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Risk states (AI analysis tab)",
+                      "items": [
+                        {
+                          "name": "New",
+                          "token": "red-400",
+                          "hex": "#F87171"
+                        },
+                        {
+                          "name": "Worsening",
+                          "token": "red-500",
+                          "hex": "#EF4444"
+                        },
+                        {
+                          "name": "Persisting",
+                          "token": "amber-400",
+                          "hex": "#FBBF24"
+                        },
+                        {
+                          "name": "Improving",
+                          "token": "blue-400",
+                          "hex": "#60A5FA"
+                        },
+                        {
+                          "name": "Resolved",
+                          "token": "emerald-300",
+                          "hex": "#6EE7B7"
+                        },
+                        {
+                          "name": "Normal",
+                          "token": "emerald-200",
+                          "hex": "#A7F3D0"
+                        },
+                        {
+                          "name": "Insufficient data",
+                          "token": "slate-200",
+                          "hex": "#E2E8F0"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "typeScale",
+                  "caption": "Type scale (system sans, weights 500 and 600 only)",
+                  "items": [
+                    {
+                      "role": "Hero title",
+                      "spec": "56px · 600 · tight",
+                      "sample": "공시를 쉽게",
+                      "size": 56,
+                      "weight": 600
+                    },
+                    {
+                      "role": "Page title",
+                      "spec": "30px · 600",
+                      "sample": "삼성전자 기업 분석",
+                      "size": 30,
+                      "weight": 600
+                    },
+                    {
+                      "role": "Section title",
+                      "spec": "18px · 600",
+                      "sample": "주요 주주 현황",
+                      "size": 18,
+                      "weight": 600
+                    },
+                    {
+                      "role": "Body",
+                      "spec": "16px · 400 · relaxed",
+                      "sample": "최근 공시의 핵심 내용을 한 화면에서 확인하세요.",
+                      "size": 16,
+                      "weight": 400
+                    },
+                    {
+                      "role": "Label",
+                      "spec": "14px · 500",
+                      "sample": "분기보고서 · 2026.05.15",
+                      "size": 14,
+                      "weight": 500
+                    },
+                    {
+                      "role": "Eyebrow and meta",
+                      "spec": "12px · 500 · slate-400",
+                      "sample": "01 · 기업 분석",
+                      "size": 12,
+                      "weight": 500
+                    }
+                  ]
+                },
+                {
+                  "type": "specimens",
+                  "caption": "Signature components, rendered from the recipes (UI copy is Darfin's Korean)",
+                  "items": [
+                    {
+                      "component": "aiCallout",
+                      "label": "AI callout",
+                      "note": "The signature element. Marks every AI-written insight with a lightbulb and a blue tint."
+                    },
+                    {
+                      "component": "riskStates",
+                      "label": "Risk-state badges",
+                      "note": "Seven states from the rule-based engine. Bad is red, watch is amber, improving is blue."
+                    },
+                    {
+                      "component": "buttons",
+                      "label": "Buttons",
+                      "note": "Fixed 40px height. One primary action per section."
+                    },
+                    {
+                      "component": "segmented",
+                      "label": "Segmented tabs",
+                      "note": "Used for the three company views."
+                    },
+                    {
+                      "component": "badges",
+                      "label": "Badges",
+                      "note": "Pill shape; info, working, and neutral variants."
+                    },
+                    {
+                      "component": "priceColors",
+                      "label": "Price colors",
+                      "note": "Red for gains and blue for losses, following Korean market convention."
+                    }
+                  ]
+                },
+                {
+                  "type": "compare",
+                  "before": {
+                    "label": "Avoid",
+                    "points": [
+                      "Raw hex values or one-off class strings in page code",
+                      "Bold (700+) type; the wordmark is the only exception",
+                      "Blue on anything that isn't clickable or AI-written",
+                      "A light-only color without its dark pair",
+                      "Hard-coded copy instead of Korean and English locale keys"
+                    ]
+                  },
+                  "after": {
+                    "label": "Required",
+                    "points": [
+                      "Cards: 1px slate-200 border, 12px radius, no shadow",
+                      "Tabular numerals for every price, count, and date",
+                      "word-break: keep-all so Korean words don't split",
+                      "Source markers (DART attribution, receipt numbers) kept visible",
+                      "Every animation collapses to its end state under reduced motion"
+                    ]
+                  }
+                },
+                {
+                  "type": "evidence",
+                  "title": "What the recipes look like in code",
+                  "context": "Pages import named constants instead of retyping class strings.",
+                  "note": "Source: darfin-front commit 392abc3 (Jul 8, 2026). The design doc was later removed from the repo during pre-deploy cleanup; uiRecipes.js remains.",
+                  "items": [
+                    {
+                      "title": "Shared recipe module",
+                      "file": "darfin-front/src/app/shared/lib/uiRecipes.js",
+                      "code": "export const CARD =\n  \"rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900\";\n\nexport const AI_CALLOUT =\n  \"flex gap-2 rounded-md border border-blue-100 dark:border-blue-900/50 bg-blue-50/60 dark:bg-blue-950/30 px-3.5 py-3\";\n\nexport const PRICE_UP = \"text-red-500 dark:text-red-400\";\nexport const PRICE_DOWN = \"text-blue-500 dark:text-blue-400\";",
+                      "finding": "Each constant carries its dark-mode pair, so a page can't ship a light-only color by accident.",
+                      "implication": "Changing a recipe restyles every screen that imports it, instead of hunting down copies of the same class string."
+                    }
+                  ]
+                },
+                {
+                  "type": "details",
+                  "summary": "Inconsistencies I logged instead of fixing",
+                  "blocks": [
+                    {
+                      "type": "list",
+                      "items": [
+                        "Two shades of the same \"example\" badge blue (blue-600 and blue-700) for one component role.",
+                        "Five card paddings in use; new cards should pick from those instead of adding a sixth.",
+                        "The shadcn theme tokens still pointed at near-black defaults, not Darfin blue, so only dialogs and dropdowns used them.",
+                        "Footer links were still placeholders."
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "p",
+                  "text": "One limit: I also migrated the paper-trading pages, then reverted that change the same day. Trading's shared primitives use the recipes, but its pages keep their original styling."
                 }
               ]
-            },
-            {
-              "type": "p",
-              "text": "One limit: I also migrated the paper-trading pages, then reverted that change the same day. Trading's shared primitives use the recipes, but its pages keep their original styling."
             }
           ]
         },
@@ -806,7 +1161,8 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "description": "The problem and the product, for anyone",
           "sections": [
             { "id": "why", "label": "Why I built it" },
-            { "id": "product", "label": "The product" },
+            { "id": "features", "label": "Key features" },
+            { "id": "product", "label": "Company analysis" },
             { "id": "glance", "label": "At a glance" }
           ]
         },
@@ -814,6 +1170,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "label": "Design",
           "description": "The interface and its visual system",
           "sections": [
+            { "id": "design-why", "label": "Why this design" },
             { "id": "ui-redesign", "label": "Redesign" },
             { "id": "design-system", "label": "Design system" }
           ]
@@ -1029,8 +1386,55 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "id": "features",
+          "eyebrow": "주요 기능",
+          "heading": "공시를 읽는 것부터 판단까지, 네 가지 기능",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "우리 팀은 문제를 세 가지로 정의했습니다. 공시를 직접 찾아 비교해야 하는 수작업, 중요한 변화를 놓치는 것, 그리고 여러 사이트에 흩어진 비효율적인 사용 흐름입니다. Darfin은 서로 연결된 네 가지 기능으로 이에 답합니다."
+            },
+            {
+              "type": "table",
+              "caption": "각 기능이 하는 일과 필요한 이유",
+              "firstColumn": "text",
+              "columns": [
+                "기능",
+                "하는 일",
+                "문제와의 연결"
+              ],
+              "rows": [
+                [
+                  "기업 분석",
+                  "기업의 사업·반기·분기보고서를 개요, 재무 추이, 규칙 기반 리스크 상태로 정리합니다.",
+                  "과거 보고서를 직접 열어 비교하는 과정을 없애고, 놓치기 쉬운 변화를 드러냅니다."
+                ],
+                [
+                  "공시 분석",
+                  "주요사항보고서, 증권 발행, 감사보고서 등 수시공시를 검색하고 각 공시를 AI로 요약합니다.",
+                  "수시공시는 길고 언제든 올라옵니다. 요약을 먼저 보면 원문을 열어볼 가치가 있는지 판단할 수 있습니다."
+                ],
+                [
+                  "모의투자",
+                  "실시간 시세와 가상 자금으로 매매하고, 분산도·리스크 관리·수익률·매매 습관으로 포트폴리오를 평가합니다.",
+                  "실제 돈을 잃을 위험 없이, 배운 내용을 행동으로 옮기고 결과를 확인할 수 있습니다."
+                ],
+                [
+                  "커뮤니티",
+                  "특정 기업에 대해 질문하고, 질문자가 가장 좋은 답변을 채택하는 Q&A입니다.",
+                  "공시를 읽을 줄 아는 사람에게 초보자가 물어볼 수 있는 곳을 만듭니다."
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "네 기능은 하나의 흐름으로 이어집니다. 공시가 무엇을 말하는지 이해하고, 모의투자로 행동해 보고, 막히면 질문합니다. 기업 분석은 제가 이끌었고, 공시 분석·모의투자·커뮤니티는 팀원들이 이끌었습니다."
+            }
+          ]
+        },
+        {
           "id": "product",
-          "eyebrow": "제품 화면",
+          "eyebrow": "기업 분석",
           "heading": "한 기업을 세 가지 관점에서 살펴봅니다",
           "blocks": [
             {
@@ -1199,6 +1603,85 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               "text": "계산 대상에는 유동성·레버리지 비율, 현금흐름 지표, DuPont 구성 요소, Altman Z′, 일부 신호를 사용하는 Piotroski F 점수가 포함됩니다. 별도로 Gemini는 서술형 섹션에서 리스크 관련 정보를 추출합니다. 리스크 설명은 계산된 상태와 신호를 바탕으로 작성하며, 수치 기반 상태 자체를 결정하지 않습니다."
             },
             {
+              "type": "details",
+              "summary": "계산 지표 보기: 8가지 지표와 각각이 확인하는 것",
+              "blocks": [
+                {
+                  "type": "p",
+                  "text": "각 지표는 기업에 대한 한 가지 질문에 답하고, 특정 리스크 카드의 판단 근거가 됩니다."
+                },
+                {
+                  "type": "table",
+                  "caption": "Darfin이 계산하는 지표와 그 이유",
+                  "columns": [
+                    "지표",
+                    "답하는 질문",
+                    "Darfin에서의 활용"
+                  ],
+                  "rows": [
+                    [
+                      "유동비율",
+                      "1년 안에 갚아야 할 돈을 감당할 수 있는가? 유동자산 ÷ 유동부채.",
+                      "유동성: 1.0 미만이거나, 자사 최근 12분기 평균보다 1.5σ 이상 낮으면 표시."
+                    ],
+                    [
+                      "부채비율",
+                      "사업 자금 중 빌린 돈이 얼마나 되는가? 부채총계 ÷ 자본총계.",
+                      "레버리지: 200% 초과 또는 자본잠식(자본이 음수)이면 표시."
+                    ],
+                    [
+                      "이자보상배율",
+                      "영업이익으로 이자를 낼 수 있는가? 영업이익 ÷ 이자비용.",
+                      "레버리지: 1배 미만이면 표시."
+                    ],
+                    [
+                      "발생액 비율",
+                      "보고된 이익이 실제 현금으로 뒷받침되는가? (순이익 − 영업현금흐름) ÷ 자산총계.",
+                      "이익의 질: 10% 초과이거나, 이익은 났지만 영업현금흐름이 음수이면 표시."
+                    ],
+                    [
+                      "DuPont 구성 요소",
+                      "자기자본이익률(ROE)은 무엇으로 만들어지는가? ROE = 순이익률 × 총자산회전율 × 레버리지(자산 ÷ 자본). 순이익률과 회전율은 최근 12개월 기준.",
+                      "수익이 마진, 효율, 차입 중 어디에서 나오는지 보여줍니다. 총자산회전율은 영업 효율 카드에도 쓰입니다."
+                    ],
+                    [
+                      "Altman Z′",
+                      "재무적 부실에 얼마나 가까운가? 운전자본, 이익잉여금, 영업이익, 자본, 매출을 자산 또는 부채로 나눈 값의 가중합.",
+                      "계속기업: 부실 구간인 1.1 미만이거나 자본이 음수이면 표시."
+                    ],
+                    [
+                      "Piotroski F (일부)",
+                      "기초 체력이 좋아지고 있는가? 수익성, 현금흐름, 레버리지, 유동성, 효율에 대한 7가지 예/아니오 판정.",
+                      "이익의 질 카드의 보조 근거로 보여주며, 상태를 결정하지는 않습니다."
+                    ],
+                    [
+                      "현금전환주기",
+                      "영업에 현금이 얼마나 오래 묶여 있는가? 매출채권 회전일수 + 재고 회전일수 − 매입채무 회전일수.",
+                      "영업 효율: 자사 과거 대비 1.5σ 이상 길어지거나, 영업이익률 또는 총자산회전율이 1.5σ 이상 낮아지면 표시."
+                    ]
+                  ]
+                },
+                {
+                  "type": "details",
+                  "summary": "이 지표를 고른 이유와 근사한 부분",
+                  "blocks": [
+                    {
+                      "type": "list",
+                      "items": [
+                        "공개된 표준 공식이라 모든 상태를 공시 속 숫자까지 되짚어 확인할 수 있습니다. 계산을 모델이 아닌 코드에 맡긴 이유입니다.",
+                        "은행에는 정상인 비율이 반도체 기업에는 위험 신호일 수 있습니다. 아직 동종 업계 데이터가 없어, 각 기업을 자사의 최근 12분기와도 비교(z-score)하며, 최소 8분기 이력이 있어야 판단합니다.",
+                        "Altman Z′는 비상장 기업용 변형으로, 시가총액 대신 장부상 자본을 사용해 공시 데이터만으로 계산할 수 있습니다.",
+                        "Piotroski F는 9가지 신호 중 7가지를 사용합니다. 신주 발행과 매출총이익률은 추출하지 않았습니다.",
+                        "운전자본 회전일수는 추출하지 않은 매출원가 대신 매출을 사용하고, 분기를 91일로 계산합니다.",
+                        "사업보고서는 연간 합계를 제공하므로, 4분기 값은 연간 값에서 1~3분기를 뺀 값으로 구합니다.",
+                        "기준값은 잠정치이며, 팀 결정 사항으로 남겨 두었습니다."
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
               "type": "annotatedFigure",
               "figure": {
                 "src": "/images/projects/darfin/ai-risk-analysis.png",
@@ -1273,6 +1756,88 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "id": "design-why",
+          "eyebrow": "설계 이유",
+          "heading": "시세를 보는 화면이 아니라, 원문을 읽는 화면으로",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "디자인을 시작하기 전에, 사람들이 이 정보에 접근하는 기존 방식을 살펴봤습니다. DART, DartPoint AI, 그리고 우리 팀의 첫 목업입니다. 셋 모두 사용 경험의 서로 다른 부분이 불편했습니다."
+            },
+            {
+              "type": "paths",
+              "items": [
+                {
+                  "label": "DART: 시스템을 먼저 알아야 합니다",
+                  "text": "모든 정보가 공개되어 있지만, 무엇이든 보기 전에 열 가지 공시 유형 중 하나를 골라야 하고 긴 보고서를 넘겨 가며 읽어야 합니다. 우리 팀은 DART에 접속해 무엇이 바뀌었는지 알기까지 일곱 번 멈춘다고 정리했습니다."
+                },
+                {
+                  "label": "DartPoint AI: 시장이 먼저 보입니다",
+                  "text": "홈페이지는 실시간 주가 티커로 시작해 시가·고가·저가·거래량, 그다음 AI 대화로 이어집니다. 분석은 AI가 작성한 보고서와 답변으로 제공됩니다. 공시를 읽는 곳이라기보다 AI를 더한 시세 앱에 가깝습니다."
+                },
+                {
+                  "label": "우리 팀의 첫 목업: 근거 없는 점수",
+                  "text": "같은 패턴을 따랐습니다. 주가 티커, AI 점수, 홍보 문구. 하나의 AI 점수는 어디서 나왔는지 보여주지 않은 채 숫자를 믿으라고 요구합니다."
+                }
+              ]
+            },
+            {
+              "type": "quote",
+              "text": "의견보다 먼저, 해석의 근거를 확인해야 합니다."
+            },
+            {
+              "type": "p",
+              "text": "발표 자료의 이 문장이 디자인 방향이 되었습니다. Darfin은 공시를 판정으로 대신하지 않고, 공시를 읽기 쉽게 만들며, 출처를 계속 보여주고, 어느 부분을 모델이 썼는지 분명히 해야 했습니다."
+            },
+            {
+              "type": "table",
+              "caption": "불편함에서 디자인 결정으로",
+              "firstColumn": "text",
+              "columns": [
+                "불편했던 점",
+                "Darfin의 방식",
+                "화면에서 드러나는 곳"
+              ],
+              "rows": [
+                [
+                  "DART를 쓰려면 DART를 알아야 함",
+                  "공시 유형이 아니라 기업에서 시작",
+                  "기업 검색이 주 진입점이고, 기간·유형 필터는 선택 사항"
+                ],
+                [
+                  "변화 하나를 찾기까지 일곱 번 멈춤",
+                  "한 기업을 질문별로 정리해 한 페이지에",
+                  "개요, AI 분석, 재무 추이의 세 가지 보기"
+                ],
+                [
+                  "시세와 점수가 화면을 이끔",
+                  "공시 내용을 먼저 보여줌",
+                  "랜딩 미리보기에 공시 발췌문과 설명을 나란히 배치"
+                ],
+                [
+                  "누가 쓴 문장인지 불분명함",
+                  "AI가 쓴 문장은 모두 표시",
+                  "파란 AI 콜아웃. 파란색은 동작과 AI에만 사용"
+                ],
+                [
+                  "근거가 보이지 않는 판정",
+                  "상태와 지속 기간을 함께 표시",
+                  "리스크 카드에 상태, 연속 분기 수, 설명을 보여주고 DART 출처 표기를 유지"
+                ],
+                [
+                  "긴 문서는 읽기 피곤함",
+                  "시각 요소를 절제해 내용이 앞서도록",
+                  "slate 중립색, semibold보다 굵지 않은 글꼴, 그림자 대신 테두리"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "아래의 리디자인과 디자인 시스템이 이 결정들을 실제로 적용한 결과입니다."
+            }
+          ]
+        },
+        {
           "id": "ui-redesign",
           "eyebrow": "이전과 이후",
           "heading": "시작 화면의 정보 위계를 정리했습니다",
@@ -1295,13 +1860,13 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "label": "이전 · 초기 목업",
                 "src": "/images/projects/darfin/slide-31-landing.png",
                 "alt": "주가 시세와 AI 점수 카드, 큰 홍보 제목이 있는 초기 Darfin 랜딩 목업",
-                "caption": "sanghyxuk이 만든 초기 랜딩 목업입니다. 발표 자료 31번 슬라이드."
+                "caption": "sanghyxuk이 만든 초기 랜딩 목업입니다."
               },
               "after": {
                 "label": "이후 · 리디자인",
                 "src": "/images/projects/darfin/slide-32-landing.png",
                 "alt": "공시 발췌문과 AI 설명을 나란히 배치한 Darfin 랜딩 리디자인",
-                "caption": "리디자인한 랜딩 페이지입니다. 원문 발췌, 설명, 출처를 함께 보여줍니다. 32번 슬라이드."
+                "caption": "리디자인한 랜딩 페이지입니다. 원문 발췌, 설명, 출처를 함께 보여줍니다."
               }
             },
             {
@@ -1313,13 +1878,13 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "label": "이전 · 기존 검색 화면",
                 "src": "/images/projects/darfin/slide-31-disclosure-search.png",
                 "alt": "기업명, 기간, 공시 유형을 큰 폼 카드에 배치한 기존 공시 검색 화면",
-                "caption": "기존 화면은 기업·기간·공시 유형을 하나의 큰 카드에 배치했습니다. 31번 슬라이드."
+                "caption": "기존 화면은 기업·기간·공시 유형을 하나의 큰 카드에 배치했습니다."
               },
               "after": {
                 "label": "이후 · 리디자인",
                 "src": "/images/projects/darfin/slide-32-disclosure-search.png",
                 "alt": "중앙 기업 검색 입력 아래에 기간과 유형 필터를 배치한 공시 검색 리디자인",
-                "caption": "리디자인에서는 검색 입력과 필터 영역을 분리했습니다. 32번 슬라이드."
+                "caption": "리디자인에서는 검색 입력과 필터 영역을 분리했습니다."
               }
             },
             {
@@ -1338,154 +1903,300 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               "text": "7월 초에는 기능마다 다른 팀원이 화면을 만들어 페이지 간 스타일이 조금씩 달라져 있었습니다. 파란색의 톤, 카드 모양이 서로 달랐고 모의투자는 자체 인라인 스타일 팔레트를 쓰고 있었습니다. 더 많은 화면을 리디자인하기 전에, 이미 쓰고 있던 시각 언어를 문서로 정리하고 모든 페이지가 가져다 쓸 수 있는 코드로 만들었습니다."
             },
             {
-              "type": "steps",
-              "items": [
-                "가장 완성도가 높은 기업 분석 화면을 기준으로 실제 사용 중인 클래스를 전수 조사",
-                "DESIGN_SYSTEM.md 작성: 원칙, 색상, 타이포그래피, 레이아웃, 컴포넌트, 모션, 콘텐츠 규칙, 감사 노트",
-                "패턴을 uiRecipes.js의 이름 있는 상수로 정리 (CARD, BTN_PRIMARY, AI_CALLOUT 등)",
-                "계정, 인증, 커뮤니티, 공시, 기업 분석, 앱 셸을 한 번의 변경으로 이전"
-              ]
-            },
-            {
-              "type": "stats",
-              "items": [
-                { "value": "53", "label": "공유 클래스 레시피" },
-                { "value": "80", "label": "한 커밋에서 변경한 파일" },
-                { "value": "2", "label": "테마: 라이트·다크" },
-                { "value": "2", "label": "언어: 한국어·영어" }
-              ]
-            },
-            {
-              "type": "quote",
-              "text": "파란색이라면, 누를 수 있거나 AI가 쓴 것입니다."
-            },
-            {
-              "type": "p",
-              "text": "디자인 문서의 이 규칙이 시스템 전체를 요약합니다. 중립색은 항상 slate, 파란색은 동작과 AI가 작성한 인사이트에만 쓰고, semibold보다 굵은 글꼴은 쓰지 않아 위계는 크기·색·여백으로 만듭니다. 모든 색상에는 다크 모드 짝이 있습니다."
-            },
-            {
-              "type": "swatches",
-              "caption": "색상 토큰 (Tailwind 이름, 라이트 테마)",
-              "groups": [
-                {
-                  "label": "구조",
-                  "items": [
-                    { "name": "페이지 배경", "token": "slate-50", "hex": "#F8FAFC" },
-                    { "name": "카드", "token": "white", "hex": "#FFFFFF" },
-                    { "name": "테두리", "token": "slate-200", "hex": "#E2E8F0" },
-                    { "name": "보조 텍스트", "token": "slate-500", "hex": "#64748B" },
-                    { "name": "제목", "token": "slate-900", "hex": "#0F172A" }
-                  ]
-                },
-                {
-                  "label": "동작과 AI",
-                  "items": [
-                    { "name": "주요 동작", "token": "blue-600", "hex": "#2563EB" },
-                    { "name": "AI 강조 텍스트", "token": "blue-700", "hex": "#1D4ED8" },
-                    { "name": "AI 콜아웃 배경", "token": "blue-50", "hex": "#EFF6FF" }
-                  ]
-                },
-                {
-                  "label": "국내 시장 관례",
-                  "items": [
-                    { "name": "상승 · 매수", "token": "red-500", "hex": "#EF4444" },
-                    { "name": "하락 · 매도", "token": "blue-500", "hex": "#3B82F6" }
-                  ]
-                },
-                {
-                  "label": "리스크 상태 (AI 분석 탭)",
-                  "items": [
-                    { "name": "신규발생", "token": "red-400", "hex": "#F87171" },
-                    { "name": "악화", "token": "red-500", "hex": "#EF4444" },
-                    { "name": "지속", "token": "amber-400", "hex": "#FBBF24" },
-                    { "name": "개선", "token": "blue-400", "hex": "#60A5FA" },
-                    { "name": "해소", "token": "emerald-300", "hex": "#6EE7B7" },
-                    { "name": "정상", "token": "emerald-200", "hex": "#A7F3D0" },
-                    { "name": "데이터부족", "token": "slate-200", "hex": "#E2E8F0" }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "typeScale",
-              "caption": "타입 스케일 (시스템 산세리프, 굵기 500·600만 사용)",
-              "items": [
-                { "role": "히어로 제목", "spec": "56px · 600 · tight", "sample": "공시를 쉽게", "size": 56, "weight": 600 },
-                { "role": "페이지 제목", "spec": "30px · 600", "sample": "삼성전자 기업 분석", "size": 30, "weight": 600 },
-                { "role": "섹션 제목", "spec": "18px · 600", "sample": "주요 주주 현황", "size": 18, "weight": 600 },
-                { "role": "본문", "spec": "16px · 400 · relaxed", "sample": "최근 공시의 핵심 내용을 한 화면에서 확인하세요.", "size": 16, "weight": 400 },
-                { "role": "라벨", "spec": "14px · 500", "sample": "분기보고서 · 2026.05.15", "size": 14, "weight": 500 },
-                { "role": "아이브로·메타", "spec": "12px · 500 · slate-400", "sample": "01 · 기업 분석", "size": 12, "weight": 500 }
-              ]
-            },
-            {
-              "type": "specimens",
-              "caption": "레시피로 렌더링한 대표 컴포넌트",
-              "items": [
-                { "component": "aiCallout", "label": "AI 콜아웃", "note": "대표 요소입니다. AI가 작성한 인사이트에는 항상 전구 아이콘과 파란 배경을 붙입니다." },
-                { "component": "riskStates", "label": "리스크 상태 배지", "note": "규칙 기반 엔진의 7가지 상태. 나쁨은 빨강, 주의는 호박색, 개선은 파랑입니다." },
-                { "component": "buttons", "label": "버튼", "note": "높이 40px 고정. 섹션마다 주요 동작은 하나만 둡니다." },
-                { "component": "segmented", "label": "세그먼트 탭", "note": "기업 상세의 세 가지 보기에 사용합니다." },
-                { "component": "badges", "label": "배지", "note": "알약 모양. 정보, 진행 중, 중립 세 가지 변형." },
-                { "component": "priceColors", "label": "가격 색상", "note": "국내 시장 관례에 따라 상승은 빨강, 하락은 파랑입니다." }
-              ]
-            },
-            {
-              "type": "compare",
-              "before": {
-                "label": "지양",
-                "points": [
-                  "페이지 코드에 직접 쓴 hex 값이나 일회성 클래스 문자열",
-                  "700 이상의 굵은 글꼴 (워드마크만 예외)",
-                  "누를 수 없거나 AI가 쓰지 않은 요소에 파란색 사용",
-                  "다크 모드 짝이 없는 라이트 전용 색상",
-                  "한국어·영어 로케일 키 대신 하드코딩한 문구"
-                ]
-              },
-              "after": {
-                "label": "필수",
-                "points": [
-                  "카드: 1px slate-200 테두리, 12px 모서리, 그림자 없음",
-                  "모든 가격·수량·날짜에 고정폭 숫자(tabular-nums)",
-                  "한국어 단어가 끊기지 않도록 word-break: keep-all",
-                  "DART 출처 표기, 접수번호 등 출처 표시 유지",
-                  "동작 줄이기 설정에서는 모든 애니메이션이 최종 상태로 표시"
-                ]
-              }
-            },
-            {
-              "type": "evidence",
-              "title": "코드로 정리한 레시피",
-              "context": "페이지는 클래스 문자열을 다시 쓰지 않고 이름 있는 상수를 가져다 씁니다.",
-              "note": "출처: darfin-front 커밋 392abc3 (2026년 7월 8일). 디자인 문서는 이후 배포 전 정리 과정에서 저장소에서 삭제되었고, uiRecipes.js는 남아 있습니다.",
-              "items": [
-                {
-                  "title": "공유 레시피 모듈",
-                  "file": "darfin-front/src/app/shared/lib/uiRecipes.js",
-                  "code": "export const CARD =\n  \"rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900\";\n\nexport const AI_CALLOUT =\n  \"flex gap-2 rounded-md border border-blue-100 dark:border-blue-900/50 bg-blue-50/60 dark:bg-blue-950/30 px-3.5 py-3\";\n\nexport const PRICE_UP = \"text-red-500 dark:text-red-400\";\nexport const PRICE_DOWN = \"text-blue-500 dark:text-blue-400\";",
-                  "finding": "모든 상수가 다크 모드 짝을 함께 담고 있어, 라이트 전용 색상이 실수로 배포되지 않습니다.",
-                  "implication": "레시피 하나를 바꾸면 이를 가져다 쓰는 모든 화면이 함께 바뀌므로, 같은 클래스 문자열의 복사본을 찾아다닐 필요가 없습니다."
-                }
-              ]
-            },
-            {
               "type": "details",
-              "summary": "고치지 않고 기록만 해 둔 불일치",
+              "summary": "디자인 시스템 전체 보기: 색상, 타이포그래피, 컴포넌트, 규칙",
               "blocks": [
                 {
-                  "type": "list",
+                  "type": "steps",
                   "items": [
-                    "같은 역할의 '예시' 배지에 두 가지 파란색(blue-600, blue-700)이 쓰이고 있었습니다.",
-                    "카드 안쪽 여백이 다섯 가지였습니다. 새 카드는 여섯 번째를 만들지 말고 이 중에서 고르도록 했습니다.",
-                    "shadcn 테마 토큰은 Darfin 파란색이 아닌 검정에 가까운 기본값을 가리키고 있어, 대화상자와 드롭다운만 사용했습니다.",
-                    "푸터 링크는 아직 임시 링크였습니다."
+                    "가장 완성도가 높은 기업 분석 화면을 기준으로 실제 사용 중인 클래스를 전수 조사",
+                    "DESIGN_SYSTEM.md 작성: 원칙, 색상, 타이포그래피, 레이아웃, 컴포넌트, 모션, 콘텐츠 규칙, 감사 노트",
+                    "패턴을 uiRecipes.js의 이름 있는 상수로 정리 (CARD, BTN_PRIMARY, AI_CALLOUT 등)",
+                    "계정, 인증, 커뮤니티, 공시, 기업 분석, 앱 셸을 한 번의 변경으로 이전"
                   ]
+                },
+                {
+                  "type": "stats",
+                  "items": [
+                    {
+                      "value": "53",
+                      "label": "공유 클래스 레시피"
+                    },
+                    {
+                      "value": "80",
+                      "label": "한 커밋에서 변경한 파일"
+                    },
+                    {
+                      "value": "2",
+                      "label": "테마: 라이트·다크"
+                    },
+                    {
+                      "value": "2",
+                      "label": "언어: 한국어·영어"
+                    }
+                  ]
+                },
+                {
+                  "type": "quote",
+                  "text": "파란색이라면, 누를 수 있거나 AI가 쓴 것입니다."
+                },
+                {
+                  "type": "p",
+                  "text": "디자인 문서의 이 규칙이 시스템 전체를 요약합니다. 중립색은 항상 slate, 파란색은 동작과 AI가 작성한 인사이트에만 쓰고, semibold보다 굵은 글꼴은 쓰지 않아 위계는 크기·색·여백으로 만듭니다. 모든 색상에는 다크 모드 짝이 있습니다."
+                },
+                {
+                  "type": "swatches",
+                  "caption": "색상 토큰 (Tailwind 이름, 라이트 테마)",
+                  "groups": [
+                    {
+                      "label": "구조",
+                      "items": [
+                        {
+                          "name": "페이지 배경",
+                          "token": "slate-50",
+                          "hex": "#F8FAFC"
+                        },
+                        {
+                          "name": "카드",
+                          "token": "white",
+                          "hex": "#FFFFFF"
+                        },
+                        {
+                          "name": "테두리",
+                          "token": "slate-200",
+                          "hex": "#E2E8F0"
+                        },
+                        {
+                          "name": "보조 텍스트",
+                          "token": "slate-500",
+                          "hex": "#64748B"
+                        },
+                        {
+                          "name": "제목",
+                          "token": "slate-900",
+                          "hex": "#0F172A"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "동작과 AI",
+                      "items": [
+                        {
+                          "name": "주요 동작",
+                          "token": "blue-600",
+                          "hex": "#2563EB"
+                        },
+                        {
+                          "name": "AI 강조 텍스트",
+                          "token": "blue-700",
+                          "hex": "#1D4ED8"
+                        },
+                        {
+                          "name": "AI 콜아웃 배경",
+                          "token": "blue-50",
+                          "hex": "#EFF6FF"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "국내 시장 관례",
+                      "items": [
+                        {
+                          "name": "상승 · 매수",
+                          "token": "red-500",
+                          "hex": "#EF4444"
+                        },
+                        {
+                          "name": "하락 · 매도",
+                          "token": "blue-500",
+                          "hex": "#3B82F6"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "리스크 상태 (AI 분석 탭)",
+                      "items": [
+                        {
+                          "name": "신규발생",
+                          "token": "red-400",
+                          "hex": "#F87171"
+                        },
+                        {
+                          "name": "악화",
+                          "token": "red-500",
+                          "hex": "#EF4444"
+                        },
+                        {
+                          "name": "지속",
+                          "token": "amber-400",
+                          "hex": "#FBBF24"
+                        },
+                        {
+                          "name": "개선",
+                          "token": "blue-400",
+                          "hex": "#60A5FA"
+                        },
+                        {
+                          "name": "해소",
+                          "token": "emerald-300",
+                          "hex": "#6EE7B7"
+                        },
+                        {
+                          "name": "정상",
+                          "token": "emerald-200",
+                          "hex": "#A7F3D0"
+                        },
+                        {
+                          "name": "데이터부족",
+                          "token": "slate-200",
+                          "hex": "#E2E8F0"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "typeScale",
+                  "caption": "타입 스케일 (시스템 산세리프, 굵기 500·600만 사용)",
+                  "items": [
+                    {
+                      "role": "히어로 제목",
+                      "spec": "56px · 600 · tight",
+                      "sample": "공시를 쉽게",
+                      "size": 56,
+                      "weight": 600
+                    },
+                    {
+                      "role": "페이지 제목",
+                      "spec": "30px · 600",
+                      "sample": "삼성전자 기업 분석",
+                      "size": 30,
+                      "weight": 600
+                    },
+                    {
+                      "role": "섹션 제목",
+                      "spec": "18px · 600",
+                      "sample": "주요 주주 현황",
+                      "size": 18,
+                      "weight": 600
+                    },
+                    {
+                      "role": "본문",
+                      "spec": "16px · 400 · relaxed",
+                      "sample": "최근 공시의 핵심 내용을 한 화면에서 확인하세요.",
+                      "size": 16,
+                      "weight": 400
+                    },
+                    {
+                      "role": "라벨",
+                      "spec": "14px · 500",
+                      "sample": "분기보고서 · 2026.05.15",
+                      "size": 14,
+                      "weight": 500
+                    },
+                    {
+                      "role": "아이브로·메타",
+                      "spec": "12px · 500 · slate-400",
+                      "sample": "01 · 기업 분석",
+                      "size": 12,
+                      "weight": 500
+                    }
+                  ]
+                },
+                {
+                  "type": "specimens",
+                  "caption": "레시피로 렌더링한 대표 컴포넌트",
+                  "items": [
+                    {
+                      "component": "aiCallout",
+                      "label": "AI 콜아웃",
+                      "note": "대표 요소입니다. AI가 작성한 인사이트에는 항상 전구 아이콘과 파란 배경을 붙입니다."
+                    },
+                    {
+                      "component": "riskStates",
+                      "label": "리스크 상태 배지",
+                      "note": "규칙 기반 엔진의 7가지 상태. 나쁨은 빨강, 주의는 호박색, 개선은 파랑입니다."
+                    },
+                    {
+                      "component": "buttons",
+                      "label": "버튼",
+                      "note": "높이 40px 고정. 섹션마다 주요 동작은 하나만 둡니다."
+                    },
+                    {
+                      "component": "segmented",
+                      "label": "세그먼트 탭",
+                      "note": "기업 상세의 세 가지 보기에 사용합니다."
+                    },
+                    {
+                      "component": "badges",
+                      "label": "배지",
+                      "note": "알약 모양. 정보, 진행 중, 중립 세 가지 변형."
+                    },
+                    {
+                      "component": "priceColors",
+                      "label": "가격 색상",
+                      "note": "국내 시장 관례에 따라 상승은 빨강, 하락은 파랑입니다."
+                    }
+                  ]
+                },
+                {
+                  "type": "compare",
+                  "before": {
+                    "label": "지양",
+                    "points": [
+                      "페이지 코드에 직접 쓴 hex 값이나 일회성 클래스 문자열",
+                      "700 이상의 굵은 글꼴 (워드마크만 예외)",
+                      "누를 수 없거나 AI가 쓰지 않은 요소에 파란색 사용",
+                      "다크 모드 짝이 없는 라이트 전용 색상",
+                      "한국어·영어 로케일 키 대신 하드코딩한 문구"
+                    ]
+                  },
+                  "after": {
+                    "label": "필수",
+                    "points": [
+                      "카드: 1px slate-200 테두리, 12px 모서리, 그림자 없음",
+                      "모든 가격·수량·날짜에 고정폭 숫자(tabular-nums)",
+                      "한국어 단어가 끊기지 않도록 word-break: keep-all",
+                      "DART 출처 표기, 접수번호 등 출처 표시 유지",
+                      "동작 줄이기 설정에서는 모든 애니메이션이 최종 상태로 표시"
+                    ]
+                  }
+                },
+                {
+                  "type": "evidence",
+                  "title": "코드로 정리한 레시피",
+                  "context": "페이지는 클래스 문자열을 다시 쓰지 않고 이름 있는 상수를 가져다 씁니다.",
+                  "note": "출처: darfin-front 커밋 392abc3 (2026년 7월 8일). 디자인 문서는 이후 배포 전 정리 과정에서 저장소에서 삭제되었고, uiRecipes.js는 남아 있습니다.",
+                  "items": [
+                    {
+                      "title": "공유 레시피 모듈",
+                      "file": "darfin-front/src/app/shared/lib/uiRecipes.js",
+                      "code": "export const CARD =\n  \"rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900\";\n\nexport const AI_CALLOUT =\n  \"flex gap-2 rounded-md border border-blue-100 dark:border-blue-900/50 bg-blue-50/60 dark:bg-blue-950/30 px-3.5 py-3\";\n\nexport const PRICE_UP = \"text-red-500 dark:text-red-400\";\nexport const PRICE_DOWN = \"text-blue-500 dark:text-blue-400\";",
+                      "finding": "모든 상수가 다크 모드 짝을 함께 담고 있어, 라이트 전용 색상이 실수로 배포되지 않습니다.",
+                      "implication": "레시피 하나를 바꾸면 이를 가져다 쓰는 모든 화면이 함께 바뀌므로, 같은 클래스 문자열의 복사본을 찾아다닐 필요가 없습니다."
+                    }
+                  ]
+                },
+                {
+                  "type": "details",
+                  "summary": "고치지 않고 기록만 해 둔 불일치",
+                  "blocks": [
+                    {
+                      "type": "list",
+                      "items": [
+                        "같은 역할의 '예시' 배지에 두 가지 파란색(blue-600, blue-700)이 쓰이고 있었습니다.",
+                        "카드 안쪽 여백이 다섯 가지였습니다. 새 카드는 여섯 번째를 만들지 말고 이 중에서 고르도록 했습니다.",
+                        "shadcn 테마 토큰은 Darfin 파란색이 아닌 검정에 가까운 기본값을 가리키고 있어, 대화상자와 드롭다운만 사용했습니다.",
+                        "푸터 링크는 아직 임시 링크였습니다."
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "p",
+                  "text": "한계도 있습니다. 모의투자 페이지도 이전했지만 같은 날 되돌렸습니다. 모의투자의 공통 UI 요소는 레시피를 사용하지만, 페이지 자체는 기존 스타일을 유지합니다."
                 }
               ]
-            },
-            {
-              "type": "p",
-              "text": "한계도 있습니다. 모의투자 페이지도 이전했지만 같은 날 되돌렸습니다. 모의투자의 공통 UI 요소는 레시피를 사용하지만, 페이지 자체는 기존 스타일을 유지합니다."
             }
           ]
         },
@@ -1560,7 +2271,8 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "description": "누구나 읽을 수 있는 문제와 제품 소개",
           "sections": [
             { "id": "why", "label": "만든 이유" },
-            { "id": "product", "label": "제품 화면" },
+            { "id": "features", "label": "주요 기능" },
+            { "id": "product", "label": "기업 분석" },
             { "id": "glance", "label": "한눈에 보기" }
           ]
         },
@@ -1568,6 +2280,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "label": "디자인",
           "description": "화면과 시각 언어",
           "sections": [
+            { "id": "design-why", "label": "설계 이유" },
             { "id": "ui-redesign", "label": "리디자인" },
             { "id": "design-system", "label": "디자인 시스템" }
           ]
