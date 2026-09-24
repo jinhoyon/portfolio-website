@@ -39,7 +39,7 @@ export const translations = {
           period: "Jun 2026 – Jul 2026",
           title: "Darfin — AI-Powered Company Analysis Platform",
           summary:
-            "Company-analysis pipeline combining DART disclosures, structured financial data, rule-based risk signals, and on-demand Gemini explanations in a React dashboard.",
+            "Turns Korean company filings into one readable page: an overview, financial trends, and risk statuses decided in code and explained by AI.",
           metric: "Twice-daily filing scans · On-demand AI analysis",
           objective:
             "Give retail investors a fast way to understand a KOSPI/KOSDAQ company's DART filings without reading full regulatory disclosures.",
@@ -236,7 +236,7 @@ export const translations = {
           period: "2026.06 – 2026.07",
           title: "Darfin — AI 기반 기업 분석 플랫폼",
           summary:
-            "DART 공시 원문과 구조화된 재무 데이터, 규칙 기반 리스크 신호, 요청 기반 Gemini 설명을 결합해 React 대시보드로 제공하는 기업 분석 파이프라인입니다.",
+            "기업 공시를 읽기 쉬운 한 페이지로 정리합니다. 기업 개요와 재무 추이, 그리고 코드가 판단하고 AI가 설명하는 리스크 상태를 함께 보여줍니다.",
           metric: "하루 두 번 공시 확인 · 요청 기반 AI 분석",
           objective:
             "개인 투자자가 전체 공시 원문을 읽지 않고도 KOSPI·KOSDAQ 기업의 DART 공시를 빠르게 파악할 수 있게 하는 것이 목표였습니다.",
