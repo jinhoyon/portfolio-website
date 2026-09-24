@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ArrowRight, Check, ChevronDown, X } from "lucide-react";
 import type { ProjectStory as Story, StoryBlock, StoryFigure } from "@/lib/projectStories";
+import DarfinSpecimens from "./DarfinSpecimens";
 
 function Figure({ figure, aspect, priority = false }: { figure: StoryFigure; aspect: string; priority?: boolean }) {
   return (
@@ -261,6 +262,61 @@ function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
           <figcaption className="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-500">{block.figure.caption}</figcaption>
         </figure>
       );
+    case "swatches":
+      return (
+        <div className="mt-8">
+          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-zinc-500">{block.caption}</p>
+          <div className="flex flex-col gap-6">
+            {block.groups.map((group) => (
+              <div key={group.label}>
+                <h3 className="text-sm font-semibold text-foreground">{group.label}</h3>
+                <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5">
+                  {group.items.map((item) => (
+                    <li key={`${item.name}-${item.token}`} className="min-w-0">
+                      <span
+                        className="block h-14 border border-zinc-200"
+                        style={{ backgroundColor: item.hex }}
+                        aria-hidden="true"
+                      />
+                      <span className="mt-2 block text-sm leading-snug text-zinc-800">{item.name}</span>
+                      <span className="block font-mono text-xs text-zinc-500">{item.token}</span>
+                      <span className="block font-mono text-xs text-zinc-400">{item.hex}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    case "typeScale":
+      return (
+        <div className="mt-10">
+          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-zinc-500">{block.caption}</p>
+          <ul className="border-t border-zinc-800">
+            {block.items.map((item) => (
+              <li key={item.role} className="grid gap-2 border-b border-zinc-200 py-4 sm:grid-cols-[10rem_1fr] sm:items-baseline sm:gap-6">
+                <div>
+                  <p className="text-sm text-zinc-800">{item.role}</p>
+                  <p className="font-mono text-xs text-zinc-500">{item.spec}</p>
+                </div>
+                <p
+                  className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap leading-tight tracking-tight text-slate-900 [word-break:keep-all]"
+                  style={{
+                    fontSize: item.size,
+                    fontWeight: item.weight,
+                    fontFamily: 'system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
+                  }}
+                >
+                  {item.sample}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    case "specimens":
+      return <DarfinSpecimens caption={block.caption} items={block.items} />;
     case "figure":
       return <Figure figure={block.figure} aspect={aspect} />;
     case "compare":

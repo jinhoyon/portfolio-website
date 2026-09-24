@@ -7,6 +7,9 @@ import type { ProjectSlug } from "./projectsMeta";
 
 export type StoryFigure = { src: string; alt: string; caption: string };
 
+// Live component specimens rendered by DarfinSpecimens.tsx.
+export type SpecimenKey = "buttons" | "badges" | "aiCallout" | "segmented" | "riskStates" | "priceColors";
+
 export type StoryBlock =
   | { type: "p"; text: string }
   | { type: "evidence"; title: string; context: string; note: string; items: { title: string; file: string; code: string; finding: string; implication: string }[] }
@@ -29,6 +32,9 @@ export type StoryBlock =
       notes: { x: number; y: number; title: string; text: string }[];
     }
   | { type: "imageComparison"; title: string; description: string; openLabel: string; before: StoryFigure & { label: string }; after: StoryFigure & { label: string } }
+  | { type: "swatches"; caption: string; groups: { label: string; items: { name: string; token: string; hex: string }[] }[] }
+  | { type: "typeScale"; caption: string; items: { role: string; spec: string; sample: string; size: number; weight: number }[] }
+  | { type: "specimens"; caption: string; items: { component: SpecimenKey; label: string; note: string }[] }
   | {
       type: "compare";
       before: { label: string; points: string[] };
@@ -538,6 +544,167 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             {
               "type": "p",
               "text": "My contribution here was the interface redesign. Prefix05 led the disclosure backend, with contributions from sanghyxuk."
+            }
+          ]
+        },
+        {
+          "id": "design-system",
+          "eyebrow": "Design system",
+          "heading": "One set of recipes instead of per-page styles",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "By early July, each feature had been built by a different teammate, and the pages had drifted apart: different blues, different card shapes, and paper trading running its own inline fintech palette. Before redesigning more screens, I wrote down the visual language we already had and turned it into code that every page could import."
+            },
+            {
+              "type": "steps",
+              "items": [
+                "Audit the company-analysis pages, the most complete surface, and inventory the classes they actually use",
+                "Write DESIGN_SYSTEM.md: principles, color, type, layout, components, motion, content rules, and audit notes",
+                "Encode the patterns as named constants in uiRecipes.js (CARD, BTN_PRIMARY, AI_CALLOUT, …)",
+                "Migrate account, auth, community, disclosure, company analysis, and the app shell in one change"
+              ]
+            },
+            {
+              "type": "stats",
+              "items": [
+                { "value": "53", "label": "shared class recipes" },
+                { "value": "80", "label": "files changed in one commit" },
+                { "value": "2", "label": "themes: light and dark" },
+                { "value": "2", "label": "languages: Korean and English" }
+              ]
+            },
+            {
+              "type": "quote",
+              "text": "If it's blue, you can click it or the AI wrote it."
+            },
+            {
+              "type": "p",
+              "text": "That rule from the design doc sums up the system. Neutrals are always slate, blue appears only on actions and AI-written insight, and nothing is heavier than semibold, so hierarchy comes from size, color, and space. Every color ships with a dark-mode pair."
+            },
+            {
+              "type": "swatches",
+              "caption": "Color tokens (Tailwind names, light theme)",
+              "groups": [
+                {
+                  "label": "Structure",
+                  "items": [
+                    { "name": "Page", "token": "slate-50", "hex": "#F8FAFC" },
+                    { "name": "Card", "token": "white", "hex": "#FFFFFF" },
+                    { "name": "Border", "token": "slate-200", "hex": "#E2E8F0" },
+                    { "name": "Secondary text", "token": "slate-500", "hex": "#64748B" },
+                    { "name": "Heading", "token": "slate-900", "hex": "#0F172A" }
+                  ]
+                },
+                {
+                  "label": "Action and AI",
+                  "items": [
+                    { "name": "Primary action", "token": "blue-600", "hex": "#2563EB" },
+                    { "name": "AI lead text", "token": "blue-700", "hex": "#1D4ED8" },
+                    { "name": "AI callout fill", "token": "blue-50", "hex": "#EFF6FF" }
+                  ]
+                },
+                {
+                  "label": "Korean market convention",
+                  "items": [
+                    { "name": "Up · buy", "token": "red-500", "hex": "#EF4444" },
+                    { "name": "Down · sell", "token": "blue-500", "hex": "#3B82F6" }
+                  ]
+                },
+                {
+                  "label": "Risk states (AI analysis tab)",
+                  "items": [
+                    { "name": "New", "token": "red-400", "hex": "#F87171" },
+                    { "name": "Worsening", "token": "red-500", "hex": "#EF4444" },
+                    { "name": "Persisting", "token": "amber-400", "hex": "#FBBF24" },
+                    { "name": "Improving", "token": "blue-400", "hex": "#60A5FA" },
+                    { "name": "Resolved", "token": "emerald-300", "hex": "#6EE7B7" },
+                    { "name": "Normal", "token": "emerald-200", "hex": "#A7F3D0" },
+                    { "name": "Insufficient data", "token": "slate-200", "hex": "#E2E8F0" }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "typeScale",
+              "caption": "Type scale (system sans, weights 500 and 600 only)",
+              "items": [
+                { "role": "Hero title", "spec": "56px · 600 · tight", "sample": "공시를 쉽게", "size": 56, "weight": 600 },
+                { "role": "Page title", "spec": "30px · 600", "sample": "삼성전자 기업 분석", "size": 30, "weight": 600 },
+                { "role": "Section title", "spec": "18px · 600", "sample": "주요 주주 현황", "size": 18, "weight": 600 },
+                { "role": "Body", "spec": "16px · 400 · relaxed", "sample": "최근 공시의 핵심 내용을 한 화면에서 확인하세요.", "size": 16, "weight": 400 },
+                { "role": "Label", "spec": "14px · 500", "sample": "분기보고서 · 2026.05.15", "size": 14, "weight": 500 },
+                { "role": "Eyebrow and meta", "spec": "12px · 500 · slate-400", "sample": "01 · 기업 분석", "size": 12, "weight": 500 }
+              ]
+            },
+            {
+              "type": "specimens",
+              "caption": "Signature components, rendered from the recipes (UI copy is Darfin's Korean)",
+              "items": [
+                { "component": "aiCallout", "label": "AI callout", "note": "The signature element. Marks every AI-written insight with a lightbulb and a blue tint." },
+                { "component": "riskStates", "label": "Risk-state badges", "note": "Seven states from the rule-based engine. Bad is red, watch is amber, improving is blue." },
+                { "component": "buttons", "label": "Buttons", "note": "Fixed 40px height. One primary action per section." },
+                { "component": "segmented", "label": "Segmented tabs", "note": "Used for the three company views." },
+                { "component": "badges", "label": "Badges", "note": "Pill shape; info, working, and neutral variants." },
+                { "component": "priceColors", "label": "Price colors", "note": "Red for gains and blue for losses, following Korean market convention." }
+              ]
+            },
+            {
+              "type": "compare",
+              "before": {
+                "label": "Avoid",
+                "points": [
+                  "Raw hex values or one-off class strings in page code",
+                  "Bold (700+) type; the wordmark is the only exception",
+                  "Blue on anything that isn't clickable or AI-written",
+                  "A light-only color without its dark pair",
+                  "Hard-coded copy instead of Korean and English locale keys"
+                ]
+              },
+              "after": {
+                "label": "Required",
+                "points": [
+                  "Cards: 1px slate-200 border, 12px radius, no shadow",
+                  "Tabular numerals for every price, count, and date",
+                  "word-break: keep-all so Korean words don't split",
+                  "Source markers (DART attribution, receipt numbers) kept visible",
+                  "Every animation collapses to its end state under reduced motion"
+                ]
+              }
+            },
+            {
+              "type": "evidence",
+              "title": "What the recipes look like in code",
+              "context": "Pages import named constants instead of retyping class strings.",
+              "note": "Source: darfin-front commit 392abc3 (Jul 8, 2026). The design doc was later removed from the repo during pre-deploy cleanup; uiRecipes.js remains.",
+              "items": [
+                {
+                  "title": "Shared recipe module",
+                  "file": "darfin-front/src/app/shared/lib/uiRecipes.js",
+                  "code": "export const CARD =\n  \"rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900\";\n\nexport const AI_CALLOUT =\n  \"flex gap-2 rounded-md border border-blue-100 dark:border-blue-900/50 bg-blue-50/60 dark:bg-blue-950/30 px-3.5 py-3\";\n\nexport const PRICE_UP = \"text-red-500 dark:text-red-400\";\nexport const PRICE_DOWN = \"text-blue-500 dark:text-blue-400\";",
+                  "finding": "Each constant carries its dark-mode pair, so a page can't ship a light-only color by accident.",
+                  "implication": "Changing a recipe restyles every screen that imports it, instead of hunting down copies of the same class string."
+                }
+              ]
+            },
+            {
+              "type": "details",
+              "summary": "Inconsistencies I logged instead of fixing",
+              "blocks": [
+                {
+                  "type": "list",
+                  "items": [
+                    "Two shades of the same \"example\" badge blue (blue-600 and blue-700) for one component role.",
+                    "Five card paddings in use; new cards should pick from those instead of adding a sixth.",
+                    "The shadcn theme tokens still pointed at near-black defaults, not Darfin blue, so only dialogs and dropdowns used them.",
+                    "Footer links were still placeholders."
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "p",
+              "text": "One limit: I also migrated the paper-trading pages, then reverted that change the same day. Trading's shared primitives use the recipes, but its pages keep their original styling."
             }
           ]
         },
@@ -1093,6 +1260,167 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             {
               "type": "p",
               "text": "이 부분에서 제 기여는 화면 리디자인입니다. 공시 백엔드는 Prefix05가 이끌었고 sanghyxuk도 기여했습니다."
+            }
+          ]
+        },
+        {
+          "id": "design-system",
+          "eyebrow": "디자인 시스템",
+          "heading": "화면마다 다른 스타일 대신 하나의 레시피로",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "7월 초에는 기능마다 다른 팀원이 화면을 만들어 페이지 간 스타일이 조금씩 달라져 있었습니다. 파란색의 톤, 카드 모양이 서로 달랐고 모의투자는 자체 인라인 스타일 팔레트를 쓰고 있었습니다. 더 많은 화면을 리디자인하기 전에, 이미 쓰고 있던 시각 언어를 문서로 정리하고 모든 페이지가 가져다 쓸 수 있는 코드로 만들었습니다."
+            },
+            {
+              "type": "steps",
+              "items": [
+                "가장 완성도가 높은 기업 분석 화면을 기준으로 실제 사용 중인 클래스를 전수 조사",
+                "DESIGN_SYSTEM.md 작성: 원칙, 색상, 타이포그래피, 레이아웃, 컴포넌트, 모션, 콘텐츠 규칙, 감사 노트",
+                "패턴을 uiRecipes.js의 이름 있는 상수로 정리 (CARD, BTN_PRIMARY, AI_CALLOUT 등)",
+                "계정, 인증, 커뮤니티, 공시, 기업 분석, 앱 셸을 한 번의 변경으로 이전"
+              ]
+            },
+            {
+              "type": "stats",
+              "items": [
+                { "value": "53", "label": "공유 클래스 레시피" },
+                { "value": "80", "label": "한 커밋에서 변경한 파일" },
+                { "value": "2", "label": "테마: 라이트·다크" },
+                { "value": "2", "label": "언어: 한국어·영어" }
+              ]
+            },
+            {
+              "type": "quote",
+              "text": "파란색이라면, 누를 수 있거나 AI가 쓴 것입니다."
+            },
+            {
+              "type": "p",
+              "text": "디자인 문서의 이 규칙이 시스템 전체를 요약합니다. 중립색은 항상 slate, 파란색은 동작과 AI가 작성한 인사이트에만 쓰고, semibold보다 굵은 글꼴은 쓰지 않아 위계는 크기·색·여백으로 만듭니다. 모든 색상에는 다크 모드 짝이 있습니다."
+            },
+            {
+              "type": "swatches",
+              "caption": "색상 토큰 (Tailwind 이름, 라이트 테마)",
+              "groups": [
+                {
+                  "label": "구조",
+                  "items": [
+                    { "name": "페이지 배경", "token": "slate-50", "hex": "#F8FAFC" },
+                    { "name": "카드", "token": "white", "hex": "#FFFFFF" },
+                    { "name": "테두리", "token": "slate-200", "hex": "#E2E8F0" },
+                    { "name": "보조 텍스트", "token": "slate-500", "hex": "#64748B" },
+                    { "name": "제목", "token": "slate-900", "hex": "#0F172A" }
+                  ]
+                },
+                {
+                  "label": "동작과 AI",
+                  "items": [
+                    { "name": "주요 동작", "token": "blue-600", "hex": "#2563EB" },
+                    { "name": "AI 강조 텍스트", "token": "blue-700", "hex": "#1D4ED8" },
+                    { "name": "AI 콜아웃 배경", "token": "blue-50", "hex": "#EFF6FF" }
+                  ]
+                },
+                {
+                  "label": "국내 시장 관례",
+                  "items": [
+                    { "name": "상승 · 매수", "token": "red-500", "hex": "#EF4444" },
+                    { "name": "하락 · 매도", "token": "blue-500", "hex": "#3B82F6" }
+                  ]
+                },
+                {
+                  "label": "리스크 상태 (AI 분석 탭)",
+                  "items": [
+                    { "name": "신규발생", "token": "red-400", "hex": "#F87171" },
+                    { "name": "악화", "token": "red-500", "hex": "#EF4444" },
+                    { "name": "지속", "token": "amber-400", "hex": "#FBBF24" },
+                    { "name": "개선", "token": "blue-400", "hex": "#60A5FA" },
+                    { "name": "해소", "token": "emerald-300", "hex": "#6EE7B7" },
+                    { "name": "정상", "token": "emerald-200", "hex": "#A7F3D0" },
+                    { "name": "데이터부족", "token": "slate-200", "hex": "#E2E8F0" }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "typeScale",
+              "caption": "타입 스케일 (시스템 산세리프, 굵기 500·600만 사용)",
+              "items": [
+                { "role": "히어로 제목", "spec": "56px · 600 · tight", "sample": "공시를 쉽게", "size": 56, "weight": 600 },
+                { "role": "페이지 제목", "spec": "30px · 600", "sample": "삼성전자 기업 분석", "size": 30, "weight": 600 },
+                { "role": "섹션 제목", "spec": "18px · 600", "sample": "주요 주주 현황", "size": 18, "weight": 600 },
+                { "role": "본문", "spec": "16px · 400 · relaxed", "sample": "최근 공시의 핵심 내용을 한 화면에서 확인하세요.", "size": 16, "weight": 400 },
+                { "role": "라벨", "spec": "14px · 500", "sample": "분기보고서 · 2026.05.15", "size": 14, "weight": 500 },
+                { "role": "아이브로·메타", "spec": "12px · 500 · slate-400", "sample": "01 · 기업 분석", "size": 12, "weight": 500 }
+              ]
+            },
+            {
+              "type": "specimens",
+              "caption": "레시피로 렌더링한 대표 컴포넌트",
+              "items": [
+                { "component": "aiCallout", "label": "AI 콜아웃", "note": "대표 요소입니다. AI가 작성한 인사이트에는 항상 전구 아이콘과 파란 배경을 붙입니다." },
+                { "component": "riskStates", "label": "리스크 상태 배지", "note": "규칙 기반 엔진의 7가지 상태. 나쁨은 빨강, 주의는 호박색, 개선은 파랑입니다." },
+                { "component": "buttons", "label": "버튼", "note": "높이 40px 고정. 섹션마다 주요 동작은 하나만 둡니다." },
+                { "component": "segmented", "label": "세그먼트 탭", "note": "기업 상세의 세 가지 보기에 사용합니다." },
+                { "component": "badges", "label": "배지", "note": "알약 모양. 정보, 진행 중, 중립 세 가지 변형." },
+                { "component": "priceColors", "label": "가격 색상", "note": "국내 시장 관례에 따라 상승은 빨강, 하락은 파랑입니다." }
+              ]
+            },
+            {
+              "type": "compare",
+              "before": {
+                "label": "지양",
+                "points": [
+                  "페이지 코드에 직접 쓴 hex 값이나 일회성 클래스 문자열",
+                  "700 이상의 굵은 글꼴 (워드마크만 예외)",
+                  "누를 수 없거나 AI가 쓰지 않은 요소에 파란색 사용",
+                  "다크 모드 짝이 없는 라이트 전용 색상",
+                  "한국어·영어 로케일 키 대신 하드코딩한 문구"
+                ]
+              },
+              "after": {
+                "label": "필수",
+                "points": [
+                  "카드: 1px slate-200 테두리, 12px 모서리, 그림자 없음",
+                  "모든 가격·수량·날짜에 고정폭 숫자(tabular-nums)",
+                  "한국어 단어가 끊기지 않도록 word-break: keep-all",
+                  "DART 출처 표기, 접수번호 등 출처 표시 유지",
+                  "동작 줄이기 설정에서는 모든 애니메이션이 최종 상태로 표시"
+                ]
+              }
+            },
+            {
+              "type": "evidence",
+              "title": "코드로 정리한 레시피",
+              "context": "페이지는 클래스 문자열을 다시 쓰지 않고 이름 있는 상수를 가져다 씁니다.",
+              "note": "출처: darfin-front 커밋 392abc3 (2026년 7월 8일). 디자인 문서는 이후 배포 전 정리 과정에서 저장소에서 삭제되었고, uiRecipes.js는 남아 있습니다.",
+              "items": [
+                {
+                  "title": "공유 레시피 모듈",
+                  "file": "darfin-front/src/app/shared/lib/uiRecipes.js",
+                  "code": "export const CARD =\n  \"rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900\";\n\nexport const AI_CALLOUT =\n  \"flex gap-2 rounded-md border border-blue-100 dark:border-blue-900/50 bg-blue-50/60 dark:bg-blue-950/30 px-3.5 py-3\";\n\nexport const PRICE_UP = \"text-red-500 dark:text-red-400\";\nexport const PRICE_DOWN = \"text-blue-500 dark:text-blue-400\";",
+                  "finding": "모든 상수가 다크 모드 짝을 함께 담고 있어, 라이트 전용 색상이 실수로 배포되지 않습니다.",
+                  "implication": "레시피 하나를 바꾸면 이를 가져다 쓰는 모든 화면이 함께 바뀌므로, 같은 클래스 문자열의 복사본을 찾아다닐 필요가 없습니다."
+                }
+              ]
+            },
+            {
+              "type": "details",
+              "summary": "고치지 않고 기록만 해 둔 불일치",
+              "blocks": [
+                {
+                  "type": "list",
+                  "items": [
+                    "같은 역할의 '예시' 배지에 두 가지 파란색(blue-600, blue-700)이 쓰이고 있었습니다.",
+                    "카드 안쪽 여백이 다섯 가지였습니다. 새 카드는 여섯 번째를 만들지 말고 이 중에서 고르도록 했습니다.",
+                    "shadcn 테마 토큰은 Darfin 파란색이 아닌 검정에 가까운 기본값을 가리키고 있어, 대화상자와 드롭다운만 사용했습니다.",
+                    "푸터 링크는 아직 임시 링크였습니다."
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "p",
+              "text": "한계도 있습니다. 모의투자 페이지도 이전했지만 같은 날 되돌렸습니다. 모의투자의 공통 UI 요소는 레시피를 사용하지만, 페이지 자체는 기존 스타일을 유지합니다."
             }
           ]
         },
