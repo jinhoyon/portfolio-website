@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, Check, ChevronDown, X } from "lucide-react";
-import type { ProjectStory as Story, StoryBlock, StoryFigure } from "@/lib/projectStories";
+import type { ProjectStory as Story, StoryBlock, StoryFigure, StorySection } from "@/lib/projectStories";
 import DarfinSpecimens from "./DarfinSpecimens";
 
 function Figure({ figure, aspect, priority = false }: { figure: StoryFigure; aspect: string; priority?: boolean }) {
@@ -362,6 +362,16 @@ export default function ProjectStory({
   aspect: string;
   actions: React.ReactNode;
 }) {
+  // Resolve each part's section ids to sections; ids that don't match are skipped.
+  const byId = new Map(story.sections.map((s) => [s.id, s]));
+  const parts = story.parts?.map((part) => ({
+    ...part,
+    sections: part.sections.flatMap(({ id, label }) => {
+      const section = byId.get(id);
+      return section ? [{ section, label }] : [];
+    }),
+  }));
+
   return (
     <>
       <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-700">{story.tagline}</p>
@@ -379,29 +389,78 @@ export default function ProjectStory({
 
       <Figure figure={story.cover} aspect={aspect} priority />
 
-      <nav aria-label={story.contentsLabel} className="mt-10 border-t border-zinc-200 pt-6">
-        <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">{story.contentsLabel}</p>
-        <ol className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-          {story.sections.map((section, i) => (
-            <li key={section.id} className="flex gap-3 text-sm">
-              <span className="font-mono text-zinc-400" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-              <a href={`#${section.id}`} className="text-zinc-600 underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">{section.heading}</a>
-            </li>
-          ))}
-        </ol>
-      </nav>
+      {parts ? (
+        <nav aria-label={story.contentsLabel} className="mt-10 border-t border-zinc-200 pt-6">
+          <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">{story.contentsLabel}</p>
+          <ol className="mt-4 grid gap-px border border-zinc-200 bg-zinc-200 sm:grid-cols-2 lg:grid-cols-4">
+            {parts.map((part, i) => (
+              <li key={part.label} className="flex flex-col bg-white p-5">
+                <span className="font-mono text-xs text-zinc-400">{String(i + 1).padStart(2, "0")}</span>
+                <a href={`#${partId(i)}`} className="mt-1 text-base font-semibold text-foreground underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">
+                  {part.label}
+                </a>
+                <p className="mt-1 text-xs leading-relaxed text-zinc-500">{part.description}</p>
+                <ul className="mt-4 flex flex-col gap-2 border-t border-zinc-100 pt-4">
+                  {part.sections.map(({ section, label }) => (
+                    <li key={section.id}>
+                      <a href={`#${section.id}`} className="text-sm text-zinc-600 underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">
+                        {label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      ) : (
+        <nav aria-label={story.contentsLabel} className="mt-10 border-t border-zinc-200 pt-6">
+          <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">{story.contentsLabel}</p>
+          <ol className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+            {story.sections.map((section, i) => (
+              <li key={section.id} className="flex gap-3 text-sm">
+                <span className="font-mono text-zinc-400" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <a href={`#${section.id}`} className="text-zinc-600 underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">{section.heading}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
 
-      {story.sections.map((section) => (
-        <section key={section.id} id={section.id} className="mt-16 scroll-mt-24 border-t border-zinc-200 pt-12">
-          <span className="font-mono text-xs uppercase tracking-widest text-zinc-500">{section.eyebrow}</span>
-          <h2 className="mt-2 max-w-2xl text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            {section.heading}
-          </h2>
-          {section.blocks.map((block, i) => (
-            <Block key={i} block={block} aspect={aspect} />
-          ))}
-        </section>
-      ))}
+      {parts
+        ? parts.map((part, i) => (
+            <div key={part.label} role="group" aria-labelledby={`${partId(i)}-label`}>
+              <div id={partId(i)} className="mt-24 scroll-mt-24 border-t-2 border-zinc-800 pt-6">
+                <span className="font-mono text-xs uppercase tracking-widest text-zinc-500">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <p id={`${partId(i)}-label`} className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                  {part.label}
+                </p>
+                <p className="mt-2 text-base text-zinc-500">{part.description}</p>
+              </div>
+              {part.sections.map(({ section }) => (
+                <Section key={section.id} section={section} aspect={aspect} />
+              ))}
+            </div>
+          ))
+        : story.sections.map((section) => <Section key={section.id} section={section} aspect={aspect} />)}
     </>
+  );
+}
+
+const partId = (i: number) => `part-${i + 1}`;
+
+function Section({ section, aspect }: { section: StorySection; aspect: string }) {
+  return (
+    <section id={section.id} className="mt-16 scroll-mt-24 border-t border-zinc-200 pt-12">
+      <span className="font-mono text-xs uppercase tracking-widest text-zinc-500">{section.eyebrow}</span>
+      <h2 className="mt-2 max-w-2xl text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+        {section.heading}
+      </h2>
+      {section.blocks.map((block, i) => (
+        <Block key={i} block={block} aspect={aspect} />
+      ))}
+    </section>
   );
 }

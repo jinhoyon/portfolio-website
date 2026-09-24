@@ -48,12 +48,21 @@ export type StorySection = {
   blocks: StoryBlock[];
 };
 
+// Groups sections for the contents and the page body. Order here is render order;
+// `label` is the short name shown in the contents (section headings stay long).
+export type StoryPart = {
+  label: string;
+  description: string;
+  sections: { id: string; label: string }[];
+};
+
 export type ProjectStory = {
   tagline: string;
   contentsLabel: string;
   facts: { label: string; value: string }[];
   cover: StoryFigure;
   sections: StorySection[];
+  parts?: StoryPart[];
 };
 
 export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, ProjectStory>>> = {
@@ -772,7 +781,45 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         }
       ],
-      "contentsLabel": "Inside the project"
+      "contentsLabel": "Inside the project",
+      "parts": [
+        {
+          "label": "Overview",
+          "description": "The problem and the product, for anyone",
+          "sections": [
+            { "id": "why", "label": "Why I built it" },
+            { "id": "product", "label": "The product" },
+            { "id": "glance", "label": "At a glance" }
+          ]
+        },
+        {
+          "label": "Design",
+          "description": "The interface and its visual system",
+          "sections": [
+            { "id": "ui-redesign", "label": "Redesign" },
+            { "id": "design-system", "label": "Design system" }
+          ]
+        },
+        {
+          "label": "Engineering",
+          "description": "How it works and the key decisions",
+          "sections": [
+            { "id": "architecture", "label": "Architecture" },
+            { "id": "data-source", "label": "Two data sources" },
+            { "id": "risk-engine", "label": "Risk engine" },
+            { "id": "on-demand", "label": "On-demand AI" }
+          ]
+        },
+        {
+          "label": "Wrap-up",
+          "description": "What was checked, who did what, and lessons",
+          "sections": [
+            { "id": "validation", "label": "Evidence and limits" },
+            { "id": "contribution", "label": "My contribution" },
+            { "id": "reflection", "label": "Reflection" }
+          ]
+        }
+      ]
     },
     "ko": {
       "tagline": "기업 공시를 더 쉽게 살펴볼 수 있도록, 구조화된 기업 정보와 재무 추이, AI 기반 리스크 설명을 한 화면에 모았습니다.",
@@ -1488,7 +1535,45 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         }
       ],
-      "contentsLabel": "프로젝트 살펴보기"
+      "contentsLabel": "프로젝트 살펴보기",
+      "parts": [
+        {
+          "label": "개요",
+          "description": "누구나 읽을 수 있는 문제와 제품 소개",
+          "sections": [
+            { "id": "why", "label": "만든 이유" },
+            { "id": "product", "label": "제품 화면" },
+            { "id": "glance", "label": "한눈에 보기" }
+          ]
+        },
+        {
+          "label": "디자인",
+          "description": "화면과 시각 언어",
+          "sections": [
+            { "id": "ui-redesign", "label": "리디자인" },
+            { "id": "design-system", "label": "디자인 시스템" }
+          ]
+        },
+        {
+          "label": "엔지니어링",
+          "description": "동작 방식과 핵심 결정",
+          "sections": [
+            { "id": "architecture", "label": "동작 방식" },
+            { "id": "data-source", "label": "두 가지 데이터 경로" },
+            { "id": "risk-engine", "label": "리스크 엔진" },
+            { "id": "on-demand", "label": "요청 시 AI 분석" }
+          ]
+        },
+        {
+          "label": "마무리",
+          "description": "검증한 것, 역할 분담, 배운 점",
+          "sections": [
+            { "id": "validation", "label": "검증과 한계" },
+            { "id": "contribution", "label": "내 기여" },
+            { "id": "reflection", "label": "회고" }
+          ]
+        }
+      ]
     }
   }
 };
