@@ -56,20 +56,20 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
       "tagline": "Making company disclosures easier to investigate: structured company information, financial trends, and AI-assisted risk explanations in one interface.",
       "facts": [
         {
-          "label": "My role",
+          "label": "Role",
           "value": "Company-analysis pipeline, API, and UI"
         },
         {
-          "label": "Project",
-          "value": "Team project · Jun–Jul 2026"
+          "label": "Team",
+          "value": "Team of 4 · Jun–Jul 2026"
         },
         {
           "label": "Also contributed",
           "value": "Landing redesign and shared design system"
         },
         {
-          "label": "Development",
-          "value": "AI-assisted with Claude and Cursor"
+          "label": "Tools",
+          "value": "Claude and Cursor (AI-assisted development)"
         }
       ],
       "cover": {
@@ -615,16 +615,16 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "value": "기업 분석 파이프라인·API·UI"
         },
         {
-          "label": "프로젝트",
-          "value": "팀 프로젝트 · 2026년 6–7월"
+          "label": "팀",
+          "value": "4인 팀 · 2026년 6–7월"
         },
         {
           "label": "추가 기여",
           "value": "랜딩 리디자인·공통 디자인 시스템"
         },
         {
-          "label": "개발 방식",
-          "value": "Claude·Cursor를 활용한 AI 보조 개발"
+          "label": "도구",
+          "value": "Claude·Cursor (AI 보조 개발)"
         }
       ],
       "cover": {

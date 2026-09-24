@@ -308,13 +308,13 @@ export default function ProjectStory({
 }) {
   return (
     <>
-      <p className="mt-5 max-w-2xl text-lg leading-relaxed text-zinc-600">{story.tagline}</p>
+      <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-700">{story.tagline}</p>
 
-      <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-y border-zinc-200 py-6 lg:grid-cols-4">
-        {story.facts.map((fact) => (
-          <div key={fact.label}>
-            <dt className="font-mono text-xs uppercase tracking-widest text-zinc-500">{fact.label}</dt>
-            <dd className="mt-1.5 text-sm leading-snug text-foreground">{fact.value}</dd>
+      <dl className="mt-10 max-w-2xl divide-y divide-zinc-200 border-y border-zinc-200 text-sm">
+        {[...story.facts, { label: stackLabel, value: stack.join(" · ") }].map((fact) => (
+          <div key={fact.label} className="grid gap-1 py-3 sm:grid-cols-[8rem_1fr] sm:gap-6">
+            <dt className="text-zinc-500">{fact.label}</dt>
+            <dd className="leading-relaxed text-foreground">{fact.value}</dd>
           </div>
         ))}
       </dl>
@@ -322,17 +322,6 @@ export default function ProjectStory({
       <div className="mt-6 flex flex-wrap gap-3">{actions}</div>
 
       <Figure figure={story.cover} aspect={aspect} priority />
-
-      <div className="mt-8">
-        <span className="font-mono text-xs uppercase tracking-widest text-zinc-500">{stackLabel}</span>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {stack.map((tech) => (
-            <span key={tech} className="border border-zinc-200 px-2.5 py-1 text-xs text-zinc-600">
-              {tech}
-            </span>
-          ))}
-        </div>
-      </div>
 
       <nav aria-label={story.contentsLabel} className="mt-10 border-t border-zinc-200 pt-6">
         <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">{story.contentsLabel}</p>

@@ -19,6 +19,7 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
   const item = t.items[metaIndex];
   const project = { ...item, ...meta };
   const story = PROJECT_STORIES[slug]?.[language];
+  const [projectName, projectSubtitle] = project.title.split(" — ");
 
   const githubLink = (
     <a
@@ -39,17 +40,25 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
         <div className="mx-auto max-w-4xl px-6 py-16">
           <Link
             href="/#projects"
-            className="inline-flex items-center gap-2 bg-zinc-800 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-600"
+            className="group inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4"
           >
-            <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" strokeWidth={1.75} />
             {t.backToProjects}
           </Link>
 
-          <span className="mt-6 block text-xs font-mono uppercase tracking-widest text-zinc-500">
-            {project.category} · {project.period}
-          </span>
-          <h1 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
-            {project.title}
+          {/* Story pages carry the period in their facts and the category in the subtitle. */}
+          {!story && (
+            <span className="mt-10 block text-xs font-mono uppercase tracking-widest text-zinc-500">
+              {project.category} · {project.period}
+            </span>
+          )}
+          <h1 className={`${story ? "mt-10" : "mt-3"} text-foreground`}>
+            <span className="block text-4xl font-semibold tracking-tight sm:text-5xl">{projectName}</span>
+            {projectSubtitle && (
+              <span className="mt-2 block text-xl font-normal leading-snug tracking-tight text-zinc-500 sm:text-2xl">
+                {projectSubtitle}
+              </span>
+            )}
           </h1>
 
           {story ? (
