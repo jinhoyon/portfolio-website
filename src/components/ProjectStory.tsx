@@ -411,8 +411,9 @@ export default function ProjectStory({
       <Figure figure={story.cover} aspect={aspect} priority />
 
       {parts ? (
-        // From lg up, StorySidebar takes over as the contents.
-        <nav aria-label={story.contentsLabel} className="mt-10 border-t border-zinc-200 pt-6 lg:hidden">
+        // Tablet only: hidden on phones, where the boxes fill the screen, and from lg up,
+        // where StorySidebar takes over as the contents.
+        <nav aria-label={story.contentsLabel} className="mt-10 hidden border-t border-zinc-200 pt-6 md:block lg:hidden">
           <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">{story.contentsLabel}</p>
           <ol className="mt-4 grid gap-px border border-zinc-200 bg-zinc-200 sm:grid-cols-2 lg:grid-cols-4">
             {parts.map((part, i) => (
