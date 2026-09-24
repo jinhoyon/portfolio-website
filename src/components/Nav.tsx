@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, FileText, Languages } from "lucide-react";
@@ -18,9 +19,9 @@ export default function Nav() {
 
   const LINKS = [
     { href: "/#projects", label: t.links.projects },
-    { href: "/#architecture", label: t.links.approach },
-    { href: "/#skills", label: t.links.skills },
     { href: "/#experience", label: t.links.experience },
+    { href: "/#skills", label: t.links.skills },
+    { href: "/#approach", label: t.links.approach },
     { href: "/#contact", label: t.links.contact },
   ];
 
@@ -35,12 +36,12 @@ export default function Nav() {
       className="sticky top-0 z-50 border-b border-zinc-200 bg-background/90 backdrop-blur"
     >
       <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-        <a
+        <Link
           href="/#top"
           className="shrink-0 whitespace-nowrap font-semibold tracking-tight text-foreground"
         >
           {t.name}
-        </a>
+        </Link>
 
         <nav className="hidden lg:flex items-center gap-6">
           {LINKS.map((link) => (

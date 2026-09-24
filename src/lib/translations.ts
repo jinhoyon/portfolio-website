@@ -127,7 +127,7 @@ export const translations = {
     },
     philosophy: {
       eyebrow: "How I Work",
-      title: "Engineering Approach",
+      title: "Approach",
       values: [
         {
           title: "Teaching Through Building",
@@ -148,7 +148,7 @@ export const translations = {
     },
     skills: {
       eyebrow: "Toolbox",
-      title: "Technical Skills & Competencies",
+      title: "Skills",
       categories: [
         { title: "Languages", items: ["Python", "Java", "JavaScript", "SQL", "Kotlin", "HTML/CSS", "XML", "C/C++"] },
         {
@@ -173,7 +173,7 @@ export const translations = {
     },
     experience: {
       eyebrow: "Career",
-      title: "Work History",
+      title: "Experience",
       roles: [
         {
           period: "Mar 2025 — Sep 2025",
@@ -204,7 +204,7 @@ export const translations = {
       name: "Jinho (Roy) Yon",
       links: {
         projects: "프로젝트",
-        approach: "소개",
+        approach: "접근 방식",
         skills: "기술",
         experience: "경력",
         contact: "연락처",
@@ -324,7 +324,7 @@ export const translations = {
     },
     philosophy: {
       eyebrow: "일하는 방식",
-      title: "엔지니어링 접근 방식",
+      title: "접근 방식",
       values: [
         {
           title: "만들며 가르치기",
@@ -345,7 +345,7 @@ export const translations = {
     },
     skills: {
       eyebrow: "기술 스택",
-      title: "기술 역량",
+      title: "기술",
       categories: [
         { title: "언어", items: ["Python", "Java", "JavaScript", "SQL", "Kotlin", "HTML/CSS", "XML", "C/C++"] },
         {
@@ -369,8 +369,8 @@ export const translations = {
       certifiedText: "Introduction to Model Context Protocol (Anthropic)",
     },
     experience: {
-      eyebrow: "경력",
-      title: "경력 사항",
+      eyebrow: "커리어",
+      title: "경력",
       roles: [
         {
           period: "2025.03 — 2025.09",

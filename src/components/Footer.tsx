@@ -24,13 +24,13 @@ export default function Footer() {
   return (
     <section id="contact" className="bg-zinc-900 text-white">
       <div className="mx-auto max-w-6xl px-6 py-20">
-        <Reveal className="border border-zinc-700 p-10 mb-14">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight max-w-lg">
+        <Reveal className="mb-16">
+          <h2 className="max-w-xl text-3xl font-semibold tracking-tight sm:text-4xl">
             {t.heading}
           </h2>
           <p className="mt-3 text-zinc-400 max-w-md">{t.subtext}</p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-6">
+          <div className="mt-8 flex flex-wrap items-center gap-6">
             <motion.a
               href={
                 email
@@ -68,7 +68,7 @@ export default function Footer() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <p className="text-sm text-zinc-500 leading-relaxed">
+          <p className="border-t border-zinc-800 pt-8 text-sm text-zinc-500 leading-relaxed">
             {t.aboutLine1}
             <br />
             {t.aboutLine2}

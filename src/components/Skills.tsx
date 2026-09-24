@@ -1,13 +1,10 @@
 "use client";
 
-import { Code2, Layers, Server, Bot, Wrench } from "lucide-react";
 import SectionHeader from "./SectionHeader";
 import RevealGroup from "./motion/RevealGroup";
 import RevealItem from "./motion/RevealItem";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations } from "@/lib/translations";
-
-const ICONS = [Code2, Layers, Server, Bot, Wrench];
 
 export default function Skills() {
   const { language } = useLanguage();
@@ -18,31 +15,17 @@ export default function Skills() {
       <div className="mx-auto max-w-6xl px-6 py-20">
         <SectionHeader eyebrow={t.eyebrow} title={t.title} />
 
-        <RevealGroup className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-200 border border-zinc-200">
-          {t.categories.map(({ title, items }, i) => {
-            const Icon = ICONS[i];
-            return (
-              <RevealItem key={i} hover={false} className="bg-white p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Icon className="h-4 w-4 text-zinc-500" strokeWidth={1.75} />
-                  <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">
-                    {title}
-                  </h3>
-                </div>
-                <ul className="flex flex-col gap-2.5">
-                  {items.map((item) => (
-                    <li key={item} className="text-sm text-zinc-800">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </RevealItem>
-            );
-          })}
+        <RevealGroup className="divide-y divide-zinc-200 border-y border-zinc-200">
+          {t.categories.map(({ title, items }) => (
+            <RevealItem key={title} hover={false} className="grid gap-1 py-5 sm:grid-cols-[12rem_1fr] sm:gap-6">
+              <h3 className="text-sm text-zinc-500">{title}</h3>
+              <p className="text-sm leading-relaxed text-foreground">{items.join(" · ")}</p>
+            </RevealItem>
+          ))}
         </RevealGroup>
 
-        <p className="mt-6 text-sm text-zinc-500">
-          <span className="font-medium text-zinc-700">{t.certifiedLabel}</span> {t.certifiedText}
+        <p className="mt-6 text-sm text-zinc-600">
+          <span className="font-medium text-foreground">{t.certifiedLabel}</span> {t.certifiedText}
         </p>
       </div>
     </section>

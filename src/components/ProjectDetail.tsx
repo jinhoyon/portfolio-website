@@ -26,7 +26,7 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
       href={project.githubUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-zinc-800"
+      className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-600 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4"
     >
       <Github className="h-4 w-4" strokeWidth={1.75} />
       {t.githubLabel}
@@ -70,15 +70,15 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
                 aspect={meta.imageAspect}
                 actions={githubLink}
               />
-              <div className="mt-16 flex flex-wrap gap-3 border-t border-zinc-200 pt-8">
-                {githubLink}
+              <div className="mt-16 flex flex-wrap items-center gap-6 border-t border-zinc-200 pt-8">
                 <Link
                   href="/#projects"
-                  className="inline-flex items-center gap-2 bg-zinc-800 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-600"
+                  className="group inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-zinc-600 focus-visible:outline-2 focus-visible:outline-offset-4"
                 >
-                  <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
+                  <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" strokeWidth={1.75} />
                   {t.backToProjects}
                 </Link>
+                {githubLink}
               </div>
             </>
           ) : (

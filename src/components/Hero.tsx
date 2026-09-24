@@ -53,7 +53,7 @@ export default function Hero() {
           {t.heading}
         </motion.h1>
 
-        <motion.div variants={item} className="flex flex-wrap gap-4">
+        <motion.div variants={item} className="flex flex-wrap items-center gap-6">
           <motion.a
             href="#projects"
             whileHover={{ scale: 1.03 }}
@@ -63,15 +63,13 @@ export default function Hero() {
             {t.viewProjects}
             <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
           </motion.a>
-          <motion.a
+          <a
             href="#contact"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 border border-zinc-300 bg-white px-5 py-3 text-sm font-medium text-foreground transition-colors hover:border-zinc-800"
+            className="inline-flex items-center gap-2 text-sm font-medium text-zinc-600 transition-colors hover:text-foreground"
           >
             <Mail className="h-4 w-4" strokeWidth={1.75} />
             {t.contactMe}
-          </motion.a>
+          </a>
         </motion.div>
       </motion.div>
     </section>

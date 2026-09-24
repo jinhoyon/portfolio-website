@@ -27,7 +27,7 @@ export default function SectionHeader({
       <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
         {title}
       </h2>
-      {subtitle && <p className="mt-3 text-zinc-500 leading-relaxed">{subtitle}</p>}
+      {subtitle && <p className="mt-3 text-zinc-600 leading-relaxed">{subtitle}</p>}
     </motion.div>
   );
 }
