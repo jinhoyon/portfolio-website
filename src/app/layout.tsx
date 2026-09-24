@@ -15,10 +15,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const TITLE = "Jinho (Roy) Yon | Software Engineer";
+const DESCRIPTION =
+  "Portfolio of Jinho (Roy) Yon — Software Engineer specializing in fullstack development and applied AI/LLM systems.";
+
+// The preview image itself comes from app/opengraph-image.tsx.
 export const metadata: Metadata = {
-  title: "Jinho (Roy) Yon | Software Engineer",
-  description:
-    "Portfolio of Jinho (Roy) Yon — Software Engineer specializing in fullstack development and applied AI/LLM systems.",
+  metadataBase: new URL("https://yjinho.com"),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Jinho (Roy) Yon",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
