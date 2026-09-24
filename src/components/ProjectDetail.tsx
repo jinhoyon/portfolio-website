@@ -44,11 +44,14 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
             hasSidebar ? "lg:grid lg:max-w-6xl lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-14" : ""
           }`}
         >
-          {hasSidebar && story && <StorySidebar story={story} />}
+          {hasSidebar && story && (
+            <StorySidebar story={story} backHref="/#projects" backLabel={t.backToProjects} />
+          )}
           <div className="min-w-0">
+          {/* With the sidebar (lg+), the back link lives in the sticky sidebar instead. */}
           <Link
             href="/#projects"
-            className="group inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4"
+            className={`group inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 ${hasSidebar ? "lg:hidden" : ""}`}
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" strokeWidth={1.75} />
             {t.backToProjects}

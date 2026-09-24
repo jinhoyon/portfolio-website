@@ -1,12 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { resolveStoryParts, storyPartId, type ProjectStory } from "@/lib/projectStories";
 
 // A section counts as "current" once its top passes this line below the sticky nav.
 const ACTIVE_OFFSET = 140;
 
-export default function StorySidebar({ story }: { story: ProjectStory }) {
+export default function StorySidebar({
+  story,
+  backHref,
+  backLabel,
+}: {
+  story: ProjectStory;
+  backHref: string;
+  backLabel: string;
+}) {
   const parts = resolveStoryParts(story);
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -50,8 +60,14 @@ export default function StorySidebar({ story }: { story: ProjectStory }) {
         aria-label={story.contentsLabel}
         className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pb-8"
       >
-        <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">{story.contentsLabel}</p>
-        <ol className="mt-5 flex flex-col gap-6">
+        <Link
+          href={backHref}
+          className="group inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4"
+        >
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" strokeWidth={1.75} />
+          {backLabel}
+        </Link>
+        <ol className="mt-8 flex flex-col gap-6">
           {parts.map((part, i) => {
             const partActive = part.sections.some(({ section }) => section.id === activeId);
             return (
