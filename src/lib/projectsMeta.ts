@@ -2,7 +2,7 @@
 export const PROJECTS_META = [
   {
     slug: "darfin",
-    stack: ["React", "Spring Boot", "Java", "Python", "MySQL", "Google Gemini API"],
+    stack: ["React", "Spring Boot", "Java", "Python", "MariaDB", "Gemini 2.5 Flash"],
     imageAspect: "aspect-[1600/871]",
     images: [
       "/images/projects/darfin/landing.png",

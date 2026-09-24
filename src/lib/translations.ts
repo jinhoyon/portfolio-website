@@ -39,14 +39,14 @@ export const translations = {
           period: "Jun 2026 – Jul 2026",
           title: "Darfin — AI-Powered Company Analysis Platform",
           summary:
-            "Python pipeline that diffs DART filings against the prior version and uses Gemini to summarize changes and flag risks, served to a React dashboard through a Spring Boot API.",
-          metric: "Automated twice-daily DART filing analysis (06:00 / 18:00 KST)",
+            "Company-analysis pipeline combining DART disclosures, structured financial data, rule-based risk signals, and on-demand Gemini explanations in a React dashboard.",
+          metric: "Twice-daily filing scans · On-demand AI analysis",
           objective:
             "Give retail investors a fast way to understand a KOSPI/KOSDAQ company's DART filings without reading full regulatory disclosures.",
           problem:
             "DART filings are dense, released multiple times a day across hundreds of companies, and easy to misread — a materially important change can be buried in pages of boilerplate, with no easy way to see what actually changed since the last filing.",
           approach:
-            "Built a Python pipeline that collects filings via the DART API, parses the XML, diffs each filing against the prior one, and pipes the meaningful deltas to Gemini for summarization and risk analysis. The pipeline runs twice daily via APScheduler, backed by an on-demand LLM worker queue for user-triggered lookups. A Spring Boot query API serves the analyzed data to a React frontend covering financial trends, risk signals, business segments, and shareholder status.",
+            "Built a hybrid pipeline using XML for narrative sections and structured DART endpoints for financial data. Java calculates metrics and risk states; Gemini extracts narrative information and writes explanations. Twice-daily scans are separate from on-demand AI jobs coordinated through MariaDB, with results served through Spring Boot to React.",
           challenges: [
             "DART's XML schema varies across filing types, so the parser had to handle inconsistent/nested structures rather than a single fixed shape.",
             "Keeping twice-daily batch analysis and on-demand user requests both fast and within LLM cost/latency budgets meant designing a separate worker queue instead of calling Gemini synchronously everywhere.",
@@ -236,14 +236,14 @@ export const translations = {
           period: "2026.06 – 2026.07",
           title: "Darfin — AI 기반 기업 분석 플랫폼",
           summary:
-            "DART 공시를 이전 공시와 비교해 Gemini로 변경 사항을 요약하고 리스크를 짚어내는 Python 파이프라인으로, Spring Boot API를 거쳐 React 대시보드로 제공합니다.",
-          metric: "DART 공시 분석 자동화 (매일 06:00 / 18:00 KST)",
+            "DART 공시 원문과 구조화된 재무 데이터, 규칙 기반 리스크 신호, 요청 기반 Gemini 설명을 결합해 React 대시보드로 제공하는 기업 분석 파이프라인입니다.",
+          metric: "하루 두 번 공시 확인 · 요청 기반 AI 분석",
           objective:
             "개인 투자자가 전체 공시 원문을 읽지 않고도 KOSPI·KOSDAQ 기업의 DART 공시를 빠르게 파악할 수 있게 하는 것이 목표였습니다.",
           problem:
             "DART 공시는 내용이 방대하고 하루에도 수백 개 기업에서 여러 건씩 올라오며, 정말 중요한 변화가 수십 페이지의 정형화된 문구 속에 묻혀 이전 공시와 무엇이 달라졌는지 한눈에 파악하기 어렵습니다.",
           approach:
-            "DART API로 공시를 수집하고 XML을 파싱한 뒤 이전 공시와 diff를 비교해, 의미 있는 변경분만 Gemini에 전달해 요약·리스크 분석을 수행하는 Python 파이프라인을 구축했습니다. 이 파이프라인은 APScheduler로 하루 두 번 자동 실행되며, 사용자가 직접 요청하는 경우를 위한 온디맨드 LLM 워커 큐도 함께 운영됩니다. Spring Boot 조회 API가 분석 결과를 재무 추이, 리스크, 사업 부문, 주주 현황을 다루는 React 프론트엔드에 제공합니다.",
+            "서술형 원문은 XML, 재무 데이터는 구조화된 DART 엔드포인트를 사용하는 파이프라인을 구축했습니다. Java가 지표와 리스크 상태를 계산하고 Gemini가 원문 정보를 추출해 설명을 작성합니다. 하루 두 번의 수집과 요청 기반 AI 작업은 분리되어 MariaDB로 조율되며, Spring Boot를 거쳐 React에 결과를 제공합니다.",
           challenges: [
             "DART의 XML 스키마가 공시 유형마다 달라, 단일 고정 구조가 아니라 일관되지 않고 중첩된 구조를 처리하는 파서가 필요했습니다.",
             "하루 두 번의 배치 분석과 사용자의 온디맨드 요청을 모두 빠르고 LLM 비용·지연 시간 예산 안에서 처리하기 위해, 모든 요청을 동기적으로 Gemini에 보내는 대신 별도의 워커 큐를 설계해야 했습니다.",

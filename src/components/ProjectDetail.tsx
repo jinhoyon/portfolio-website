@@ -5,9 +5,11 @@ import { ArrowLeft, Github } from "lucide-react";
 import Nav from "./Nav";
 import Footer from "./Footer";
 import ProjectImageCarousel from "./ProjectImageCarousel";
+import ProjectStory from "./ProjectStory";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations } from "@/lib/translations";
 import { PROJECTS_META, type ProjectSlug } from "@/lib/projectsMeta";
+import { PROJECT_STORIES } from "@/lib/projectStories";
 
 export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
   const { language } = useLanguage();
@@ -16,6 +18,19 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
   const meta = PROJECTS_META[metaIndex];
   const item = t.items[metaIndex];
   const project = { ...item, ...meta };
+  const story = PROJECT_STORIES[slug]?.[language];
+
+  const githubLink = (
+    <a
+      href={project.githubUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-zinc-800"
+    >
+      <Github className="h-4 w-4" strokeWidth={1.75} />
+      {t.githubLabel}
+    </a>
+  );
 
   return (
     <>
@@ -37,6 +52,28 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
             {project.title}
           </h1>
 
+          {story ? (
+            <>
+              <ProjectStory
+                story={story}
+                stack={project.stack}
+                stackLabel={t.techStackLabel}
+                aspect={meta.imageAspect}
+                actions={githubLink}
+              />
+              <div className="mt-16 flex flex-wrap gap-3 border-t border-zinc-200 pt-8">
+                {githubLink}
+                <Link
+                  href="/#projects"
+                  className="inline-flex items-center gap-2 bg-zinc-800 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-600"
+                >
+                  <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
+                  {t.backToProjects}
+                </Link>
+              </div>
+            </>
+          ) : (
+          <>
           <span className="mt-4 block w-fit border-l-2 border-zinc-800 pl-3 text-sm font-medium text-zinc-700">
             {project.metric}
           </span>
@@ -121,16 +158,10 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
           </div>
 
           <div className="mt-10 flex flex-wrap gap-5 text-sm border-t border-zinc-200 pt-8">
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 border border-zinc-300 bg-white px-4 py-2.5 font-medium text-foreground transition-colors hover:border-zinc-800"
-            >
-              <Github className="h-4 w-4" strokeWidth={1.75} />
-              {t.githubLabel}
-            </a>
+            {githubLink}
           </div>
+          </>
+          )}
         </div>
       </main>
       <Footer />
