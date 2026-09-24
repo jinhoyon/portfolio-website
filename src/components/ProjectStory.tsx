@@ -171,7 +171,7 @@ function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
       );
     case "stats":
       return (
-        <dl className="mt-6 grid grid-cols-2 gap-px border border-zinc-200 bg-zinc-200 md:grid-cols-4">
+        <dl className={`mt-6 grid gap-px border border-zinc-200 bg-zinc-200 ${block.items.length === 2 ? "sm:grid-cols-2" : "grid-cols-2 md:grid-cols-4"}`}>
           {block.items.map((item) => (
             <div key={item.label} className="flex flex-col-reverse bg-white p-5">
               <dt className="mt-1 text-sm leading-snug text-zinc-600">{item.label}</dt>

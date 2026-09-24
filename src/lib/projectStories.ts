@@ -193,6 +193,25 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "id": "product",
+          "eyebrow": "The product",
+          "heading": "One company, three focused views",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "The company page organizes information into an overview, financial trends, and AI analysis. The overview brings together reported facts such as shareholders, dividends, employees, and audit information. Financial charts make reporting periods easier to compare, while the AI tab presents risk categories, trajectories, and an event timeline."
+            },
+            {
+              "type": "figure",
+              "figure": {
+                "src": "/images/projects/darfin/financial-trends.png",
+                "alt": "Darfin financial trends showing quarterly revenue, operating profit, and net income",
+                "caption": "Financial trends bring values from multiple reporting periods into a single view. Calculations use structured statement data rather than model-generated numbers."
+              }
+            }
+          ]
+        },
+        {
           "id": "architecture",
           "eyebrow": "How it works",
           "heading": "Collect on a schedule, compute in code, call AI on request",
@@ -314,25 +333,10 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "caption": "Each source does the job it's reliable for. The XML path stays as a fallback for key information such as dividends and shareholders."
               },
               "openLabel": "Open full-size image"
-            }
-          ]
-        },
-        {
-          "id": "comparison",
-          "eyebrow": "An evolving approach",
-          "heading": "From filing comparisons to a risk-focused interface",
-          "blocks": [
-            {
-              "type": "p",
-              "text": "The early pipeline compared sections across filings. It matched stable section identifiers where available, normalized whitespace, and isolated changed passages. Renamed sections and reorganized documents needed special handling so that structural changes did not overwhelm meaningful ones."
             },
             {
               "type": "p",
-              "text": "The final product took a different shape. I removed the filing-changes tab, and the later risk-analysis path used original section text rather than the earlier diff-based findings workflow. Diffs are still computed in the backend, but they are not shown in the final interface."
-            },
-            {
-              "type": "p",
-              "text": "The distinction is important to how I describe the result: the company page presents an overview, financial trends, and AI-assisted risk analysis—not a user-facing comparison of filing changes."
+              "text": "An earlier version also compared sections across filings to surface what changed. The backend still computes those diffs, but the final interface dropped the filing-changes tab in favor of risk analysis on the original section text."
             }
           ]
         },
@@ -363,7 +367,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               "figure": {
                 "src": "/images/projects/darfin/ai-risk-analysis.png",
                 "alt": "Darfin AI analysis view with six risk categories, statuses, and explanations",
-                "caption": "Samsung Electronics' AI analysis tab (Korean UI). Risk thresholds remain provisional.",
+                "caption": "Samsung Electronics' AI analysis tab (Korean UI).",
                 "width": 1600,
                 "height": 870
               },
@@ -396,7 +400,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             },
             {
               "type": "p",
-              "text": "This makes calculations and state transitions inspectable and repeatable. It does not establish that the thresholds are financially well calibrated; that remains a separate evaluation task."
+              "text": "This makes calculations and state transitions inspectable and repeatable."
             }
           ]
         },
@@ -433,25 +437,6 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
-          "id": "product",
-          "eyebrow": "The product",
-          "heading": "One company, three focused views",
-          "blocks": [
-            {
-              "type": "p",
-              "text": "The company page organizes information into an overview, financial trends, and AI analysis. The overview brings together reported facts such as shareholders, dividends, employees, and audit information. Financial charts make reporting periods easier to compare, while the AI tab presents risk categories, trajectories, and an event timeline."
-            },
-            {
-              "type": "figure",
-              "figure": {
-                "src": "/images/projects/darfin/financial-trends.png",
-                "alt": "Darfin financial trends showing quarterly revenue, operating profit, and net income",
-                "caption": "Financial trends bring values from multiple reporting periods into a single view. Calculations use structured statement data rather than model-generated numbers."
-              }
-            }
-          ]
-        },
-        {
           "id": "ui-redesign",
           "eyebrow": "Before and after",
           "heading": "Making the entry points clearer",
@@ -484,10 +469,6 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               }
             },
             {
-              "type": "p",
-              "text": "These are historical design screenshots. The figures and accuracy claims pictured in the mockups are not verified project results."
-            },
-            {
               "type": "imageComparison",
               "title": "Disclosure search: make the company the starting point",
               "description": "I restyled disclosure search around a prominent company input, with the date and disclosure-type filters grouped underneath. The later design supports optional filters and adds quick date ranges, giving the search field a clearer visual priority.",
@@ -507,7 +488,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             },
             {
               "type": "p",
-              "text": "My contribution here was the interface redesign. Prefix05 led the disclosure backend, with contributions from sanghyxuk. These comparisons demonstrate changes in hierarchy and presentation; we did not measure a usability improvement."
+              "text": "My contribution here was the interface redesign. Prefix05 led the disclosure backend, with contributions from sanghyxuk."
             }
           ]
         },
@@ -532,20 +513,34 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "heading": "What was checked—and what remains open",
           "blocks": [
             {
-              "type": "p",
-              "text": "The project seeded 30 companies. During the supplied code audit, all 24 Python tests passed, covering reporting periods, real DART response transformations, and LLM request handling. The Java analysis package contained 75 test methods covering metrics, risk states, freshness rules, and related behavior; that count is not a claim that they were all run in the audit."
-            },
-            {
-              "type": "list",
+              "type": "stats",
               "items": [
-                "AI output was checked manually, without a formal benchmark dataset.",
-                "Risk thresholds remain provisional, and long narrative inputs are truncated.",
-                "No end-to-end latency benchmarks or production usage results were established by the audit."
+                {
+                  "value": "24 / 24",
+                  "label": "Python tests passing: reporting periods, DART response parsing, LLM requests"
+                },
+                {
+                  "value": "75",
+                  "label": "Java test methods written: metrics, risk states, freshness rules"
+                }
               ]
             },
             {
               "type": "p",
-              "text": "These checks support parts of the implementation. They do not establish investment usefulness or model accuracy. My next priority would be a repeatable evaluation set covering financial values, extracted events, missing information, and generated explanations."
+              "text": "The Python suite was run during a code review and passed. The Java figure is the number of test methods in the analysis package. What isn't proven yet:"
+            },
+            {
+              "type": "list",
+              "items": [
+                "AI output was checked by hand; there's no benchmark dataset yet.",
+                "Risk thresholds are provisional, and long narrative inputs are truncated.",
+                "There are no latency benchmarks or production usage data.",
+                "The redesigns changed hierarchy and presentation; usability wasn't measured, and numbers shown in the mockups are placeholders."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "So the work shows the implementation behaves as designed, not that it is accurate or useful for investing. Next, I'd build a repeatable evaluation set covering financial values, extracted events, missing information, and generated explanations."
             }
           ]
         },
@@ -556,11 +551,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "blocks": [
             {
               "type": "p",
-              "text": "The most useful boundary in Darfin is the one between source data, calculation, and interpretation. Structured endpoints provide a more stable foundation for numbers. Original filings preserve narrative context. Code makes calculations and state transitions repeatable. The model helps extract and explain information within those boundaries."
-            },
-            {
-              "type": "p",
-              "text": "Building across the pipeline, API, and interface made those distinctions concrete: what the system knows, what it computes, and what it generates all need to remain understandable to the person using it."
+              "text": "The most useful boundary in Darfin is between source data, calculation, and interpretation: structured endpoints for numbers, original filings for narrative context, code for repeatable calculations, and the model for extraction and explanation within those limits. Building across the pipeline, API, and interface taught me that what a system knows, computes, and generates all need to stay understandable to the person using it."
             }
           ]
         }
@@ -708,6 +699,25 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "id": "product",
+          "eyebrow": "제품 화면",
+          "heading": "한 기업을 세 가지 관점에서 살펴봅니다",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "기업 페이지는 개요, 재무 추이, AI 분석으로 구성됩니다. 개요에는 주주·배당·직원·감사 정보 등 공시된 사실을 모았습니다. 재무 차트는 보고 기간 간 비교를 돕고, AI 탭은 리스크 영역과 추이, 추출한 사건의 타임라인을 보여줍니다."
+            },
+            {
+              "type": "figure",
+              "figure": {
+                "src": "/images/projects/darfin/financial-trends.png",
+                "alt": "분기별 매출액·영업이익·당기순이익을 보여주는 Darfin 재무 추이 화면",
+                "caption": "여러 보고 기간의 값을 한 화면에서 비교합니다. 수치 계산에는 모델이 생성한 숫자가 아닌 구조화된 재무제표 데이터를 사용합니다."
+              }
+            }
+          ]
+        },
+        {
           "id": "architecture",
           "eyebrow": "동작 방식",
           "heading": "수집은 정해진 시간에, 계산은 코드로, AI는 요청할 때",
@@ -829,25 +839,10 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "caption": "각 데이터 소스를 가장 안정적인 용도에 사용합니다. 배당·주주 등 주요 정보에는 XML 경로를 보완용으로 남겨 두었습니다."
               },
               "openLabel": "원본 크기로 보기"
-            }
-          ]
-        },
-        {
-          "id": "comparison",
-          "eyebrow": "접근 방식의 변화",
-          "heading": "공시 비교에서 리스크 중심 화면으로",
-          "blocks": [
-            {
-              "type": "p",
-              "text": "초기 파이프라인은 공시 간 섹션을 비교했습니다. 가능한 경우 안정적인 섹션 식별자로 연결하고, 공백을 정규화한 뒤 변경된 문장을 추렸습니다. 섹션 이름이나 문서 구성이 바뀌는 경우에는 형식 변화가 의미 있는 변경을 덮어버리지 않도록 별도 처리가 필요했습니다."
             },
             {
               "type": "p",
-              "text": "최종 제품의 화면 구성은 달라졌습니다. 공시 변경 탭을 제거했고, 이후 리스크 분석은 이전의 diff 기반 findings 경로 대신 원본 섹션 텍스트를 사용하도록 바뀌었습니다. 백엔드는 여전히 diff를 계산하지만 최종 화면에는 표시하지 않습니다."
-            },
-            {
-              "type": "p",
-              "text": "따라서 결과물은 공시 변경 비교 화면이 아니라, 기업 개요·재무 추이·AI 기반 리스크 분석을 제공하는 기업 페이지로 설명하는 것이 정확합니다."
+              "text": "초기 버전은 공시 간 섹션을 비교해 무엇이 바뀌었는지 보여주었습니다. 백엔드는 지금도 이 diff를 계산하지만, 최종 화면에서는 공시 변경 탭을 없애고 원본 섹션 텍스트를 바탕으로 한 리스크 분석에 집중했습니다."
             }
           ]
         },
@@ -878,7 +873,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               "figure": {
                 "src": "/images/projects/darfin/ai-risk-analysis.png",
                 "alt": "여섯 개 리스크 영역의 상태와 설명을 보여주는 Darfin AI 분석 화면",
-                "caption": "삼성전자 AI 분석 탭. 리스크 임계값은 아직 잠정 값입니다.",
+                "caption": "삼성전자 AI 분석 탭.",
                 "width": 1600,
                 "height": 870
               },
@@ -911,7 +906,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             },
             {
               "type": "p",
-              "text": "이 구조 덕분에 계산과 상태 전이를 검토하고 반복 실행할 수 있습니다. 다만 규칙이 일관되게 실행된다는 사실만으로 재무적으로 적절한 임계값이라는 점까지 입증되지는 않습니다. 별도의 평가가 필요합니다."
+              "text": "이 구조 덕분에 계산과 상태 전이를 검토하고 반복 실행할 수 있습니다."
             }
           ]
         },
@@ -948,25 +943,6 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
-          "id": "product",
-          "eyebrow": "제품 화면",
-          "heading": "한 기업을 세 가지 관점에서 살펴봅니다",
-          "blocks": [
-            {
-              "type": "p",
-              "text": "기업 페이지는 개요, 재무 추이, AI 분석으로 구성됩니다. 개요에는 주주·배당·직원·감사 정보 등 공시된 사실을 모았습니다. 재무 차트는 보고 기간 간 비교를 돕고, AI 탭은 리스크 영역과 추이, 추출한 사건의 타임라인을 보여줍니다."
-            },
-            {
-              "type": "figure",
-              "figure": {
-                "src": "/images/projects/darfin/financial-trends.png",
-                "alt": "분기별 매출액·영업이익·당기순이익을 보여주는 Darfin 재무 추이 화면",
-                "caption": "여러 보고 기간의 값을 한 화면에서 비교합니다. 수치 계산에는 모델이 생성한 숫자가 아닌 구조화된 재무제표 데이터를 사용합니다."
-              }
-            }
-          ]
-        },
-        {
           "id": "ui-redesign",
           "eyebrow": "이전과 이후",
           "heading": "시작 화면의 정보 위계를 정리했습니다",
@@ -999,10 +975,6 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               }
             },
             {
-              "type": "p",
-              "text": "당시 디자인을 기록한 화면입니다. 목업에 표시된 수치와 정확도 주장은 검증된 프로젝트 성과가 아닙니다."
-            },
-            {
               "type": "imageComparison",
               "title": "공시 검색: 기업 입력을 시작점으로",
               "description": "기업 입력을 눈에 띄게 배치하고 기간과 공시 유형 필터를 그 아래에 모았습니다. 이후 버전은 선택적으로 필터를 사용할 수 있고 빠른 기간 선택도 제공해, 검색 입력에 시각적 우선순위를 부여합니다.",
@@ -1022,7 +994,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             },
             {
               "type": "p",
-              "text": "이 부분에서 제 기여는 화면 리디자인입니다. 공시 백엔드는 Prefix05가 이끌었고 sanghyxuk도 기여했습니다. 비교 화면은 정보의 위계와 표현 변화를 보여주며, 사용성 개선을 수치로 측정한 것은 아닙니다."
+              "text": "이 부분에서 제 기여는 화면 리디자인입니다. 공시 백엔드는 Prefix05가 이끌었고 sanghyxuk도 기여했습니다."
             }
           ]
         },
@@ -1047,20 +1019,34 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "heading": "확인한 것과 아직 남은 과제",
           "blocks": [
             {
-              "type": "p",
-              "text": "초기 수집 대상으로 30개 기업을 등록했습니다. 제공된 코드 감사에서는 보고 기간 처리, 실제 DART 응답 변환, LLM 요청 처리 등을 다루는 Python 테스트 24개가 모두 통과했습니다. Java 분석 패키지에는 지표·리스크 상태·데이터 갱신 규칙 등을 다루는 테스트 메서드 75개가 있었습니다. 이는 감사에서 모두 실행했다는 의미는 아닙니다."
-            },
-            {
-              "type": "list",
+              "type": "stats",
               "items": [
-                "AI 결과는 수동으로 비교했으며, 정식 평가 데이터셋은 없습니다.",
-                "리스크 임계값은 잠정 값이고, 긴 서술형 입력은 길이 제한에 따라 잘립니다.",
-                "감사에서는 종단 간 지연 시간 벤치마크나 운영 사용자 성과가 확인되지 않았습니다."
+                {
+                  "value": "24 / 24",
+                  "label": "통과한 Python 테스트: 보고 기간, DART 응답 변환, LLM 요청"
+                },
+                {
+                  "value": "75",
+                  "label": "작성된 Java 테스트 메서드: 지표, 리스크 상태, 데이터 갱신 규칙"
+                }
               ]
             },
             {
               "type": "p",
-              "text": "이 검증은 구현의 일부를 뒷받침하지만 투자 판단의 유용성이나 모델 정확도를 입증하지는 않습니다. 다음으로는 재무 수치, 추출 사건, 누락 정보, 생성된 설명을 반복 평가할 수 있는 데이터셋을 우선 만들고 싶습니다."
+              "text": "Python 테스트는 코드 검토 과정에서 실행해 모두 통과했습니다. Java 수치는 분석 패키지에 있는 테스트 메서드 수입니다. 아직 검증하지 못한 부분은 다음과 같습니다."
+            },
+            {
+              "type": "list",
+              "items": [
+                "AI 결과는 수동으로 확인했으며, 정식 평가 데이터셋은 아직 없습니다.",
+                "리스크 임계값은 잠정 값이고, 긴 서술형 입력은 길이 제한으로 잘립니다.",
+                "지연 시간 벤치마크나 실제 운영 사용 데이터는 없습니다.",
+                "리디자인은 정보 위계와 표현을 바꾼 것이며, 사용성은 측정하지 않았습니다. 목업 속 수치는 예시 값입니다."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "즉, 구현이 설계대로 동작한다는 점은 보여주지만 정확도나 투자 판단의 유용성까지 입증하지는 않습니다. 다음으로는 재무 수치, 추출 사건, 누락 정보, 생성된 설명을 반복 평가할 수 있는 데이터셋을 만들고 싶습니다."
             }
           ]
         },
@@ -1071,11 +1057,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "blocks": [
             {
               "type": "p",
-              "text": "Darfin에서 가장 중요한 구분은 원본 데이터, 계산, 해석 사이의 경계였습니다. 구조화된 엔드포인트는 숫자의 기반이 되고, 원본 공시는 서술 맥락을 보존합니다. 코드는 계산과 상태 전이를 반복 가능하게 만들고, 모델은 그 경계 안에서 정보를 추출하고 설명합니다."
-            },
-            {
-              "type": "p",
-              "text": "파이프라인부터 API와 화면까지 만들면서 이 구분이 구체화되었습니다. 시스템이 알고 있는 것, 계산한 것, 생성한 것을 사용하는 사람도 이해할 수 있어야 합니다."
+              "text": "Darfin에서 가장 중요한 구분은 원본 데이터, 계산, 해석 사이의 경계였습니다. 숫자는 구조화된 엔드포인트가, 서술 맥락은 원본 공시가, 반복 가능한 계산은 코드가, 추출과 설명은 모델이 맡습니다. 파이프라인부터 API와 화면까지 직접 만들면서, 시스템이 알고 있는 것과 계산한 것, 생성한 것을 사용하는 사람도 구분할 수 있어야 한다는 점을 배웠습니다."
             }
           ]
         }
