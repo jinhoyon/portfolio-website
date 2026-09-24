@@ -46,12 +46,13 @@ export default function Hero() {
         animate="show"
         variants={container}
       >
-        <motion.h1
-          variants={item}
-          className="max-w-2xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight text-foreground sm:text-4xl lg:text-5xl"
-        >
-          {t.heading}
-        </motion.h1>
+        <motion.div variants={item} className="flex flex-col gap-4">
+          <h1 className="max-w-2xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+            {t.heading}
+          </h1>
+          {/* Role line for recruiters, kept quieter than the headline. */}
+          <p className="text-sm text-zinc-500 sm:text-base">{t.subheading}</p>
+        </motion.div>
 
         <motion.div variants={item} className="flex flex-wrap items-center gap-6">
           <motion.a
