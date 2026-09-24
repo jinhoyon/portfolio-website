@@ -189,6 +189,55 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                   "caption": "Financial statements"
                 }
               ]
+            },
+            {
+              "type": "p",
+              "text": "Other services already close part of this gap. DartPoint AI pulls DART data into charts and ratio tables, and uses generative AI to summarize each filing. That makes the data reachable, but the verdicts, such as whether a ratio is a problem or whether it's getting better or worse, come either from the reader or from a summary written by a model."
+            },
+            {
+              "type": "link",
+              "label": "Visit DartPoint AI",
+              "href": "https://dartpoint.ai"
+            },
+            {
+              "type": "table",
+              "caption": "Two approaches to the same gap",
+              "columns": [
+                "Aspect",
+                "DartPoint AI",
+                "Darfin"
+              ],
+              "rows": [
+                [
+                  "Coverage",
+                  "All listed companies, plus stock prices and forecasts",
+                  "30 seeded companies"
+                ],
+                [
+                  "Financial ratios",
+                  "Values shown with their components",
+                  "Combined into a status for each risk area"
+                ],
+                [
+                  "AI",
+                  "Summarizes one filing at a time; chat assistant",
+                  "Explains computed statuses across quarters"
+                ],
+                [
+                  "Who judges",
+                  "Generative AI, inside each filing summary",
+                  "Rules in code; the model explains"
+                ],
+                [
+                  "Change over time",
+                  "A chart per metric; year-over-year figures in summaries",
+                  "Status per risk area: new, worsening, persisting, improving, resolved"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Darfin takes a narrower bet. Instead of another chart per metric, each risk area gets a status that code decides and the model only explains, tracked across quarters. DartPoint covers far more ground; Darfin goes deeper on that one question."
             }
           ]
         },
@@ -695,6 +744,55 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                   "caption": "재무제표"
                 }
               ]
+            },
+            {
+              "type": "p",
+              "text": "이 격차를 줄이려는 서비스도 이미 있습니다. DartPoint AI는 DART 데이터를 차트와 비율 표로 보여주고, 생성형 AI로 공시를 한 건씩 요약합니다. 데이터에 닿기는 쉬워졌지만, 이 비율이 문제인지, 나아지고 있는지에 대한 판단은 여전히 사용자에게 맡겨지거나 모델이 쓴 요약에서 나옵니다."
+            },
+            {
+              "type": "link",
+              "label": "DartPoint AI 살펴보기",
+              "href": "https://dartpoint.ai"
+            },
+            {
+              "type": "table",
+              "caption": "같은 문제에 대한 두 가지 접근",
+              "columns": [
+                "구분",
+                "DartPoint AI",
+                "Darfin"
+              ],
+              "rows": [
+                [
+                  "범위",
+                  "전체 상장사, 주가·실적 예측 포함",
+                  "초기 등록 30개 기업"
+                ],
+                [
+                  "재무 비율",
+                  "값과 구성 항목을 표시",
+                  "리스크 영역별 상태로 종합"
+                ],
+                [
+                  "AI",
+                  "공시 한 건씩 요약, 대화형 어시스턴트",
+                  "분기에 걸쳐 계산된 상태를 설명"
+                ],
+                [
+                  "판단 주체",
+                  "공시 요약 안의 생성형 AI",
+                  "코드의 규칙이 판단하고 모델이 설명"
+                ],
+                [
+                  "시간에 따른 변화",
+                  "지표별 차트, 요약 속 전년 동기 비교",
+                  "리스크 영역별 상태: 신규발생·악화·지속·개선·해소"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Darfin은 범위를 좁혔습니다. 지표마다 차트를 하나 더 보여주는 대신, 리스크 영역마다 코드가 상태를 정하고 모델은 그 상태를 설명하며, 이를 분기에 걸쳐 추적합니다. DartPoint가 훨씬 넓은 범위를 다룬다면, Darfin은 이 한 가지 질문을 더 깊게 다룹니다."
             }
           ]
         },
