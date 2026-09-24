@@ -65,6 +65,24 @@ export type ProjectStory = {
   parts?: StoryPart[];
 };
 
+export type ResolvedStoryPart = Omit<StoryPart, "sections"> & {
+  sections: { section: StorySection; label: string }[];
+};
+
+/** Resolve each part's section ids to sections; ids that don't match are skipped. */
+export function resolveStoryParts(story: ProjectStory): ResolvedStoryPart[] | undefined {
+  const byId = new Map(story.sections.map((s) => [s.id, s]));
+  return story.parts?.map((part) => ({
+    ...part,
+    sections: part.sections.flatMap(({ id, label }) => {
+      const section = byId.get(id);
+      return section ? [{ section, label }] : [];
+    }),
+  }));
+}
+
+export const storyPartId = (i: number) => `part-${i + 1}`;
+
 export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, ProjectStory>>> = {
   "darfin": {
     "en": {

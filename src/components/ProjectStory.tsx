@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, Check, ChevronDown, X } from "lucide-react";
+import { resolveStoryParts, storyPartId } from "@/lib/projectStories";
 import type { ProjectStory as Story, StoryBlock, StoryFigure, StorySection } from "@/lib/projectStories";
 import DarfinSpecimens from "./DarfinSpecimens";
 
@@ -362,15 +363,7 @@ export default function ProjectStory({
   aspect: string;
   actions: React.ReactNode;
 }) {
-  // Resolve each part's section ids to sections; ids that don't match are skipped.
-  const byId = new Map(story.sections.map((s) => [s.id, s]));
-  const parts = story.parts?.map((part) => ({
-    ...part,
-    sections: part.sections.flatMap(({ id, label }) => {
-      const section = byId.get(id);
-      return section ? [{ section, label }] : [];
-    }),
-  }));
+  const parts = resolveStoryParts(story);
 
   return (
     <>
@@ -390,7 +383,8 @@ export default function ProjectStory({
       <Figure figure={story.cover} aspect={aspect} priority />
 
       {parts ? (
-        <nav aria-label={story.contentsLabel} className="mt-10 border-t border-zinc-200 pt-6">
+        // From lg up, StorySidebar takes over as the contents.
+        <nav aria-label={story.contentsLabel} className="mt-10 border-t border-zinc-200 pt-6 lg:hidden">
           <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">{story.contentsLabel}</p>
           <ol className="mt-4 grid gap-px border border-zinc-200 bg-zinc-200 sm:grid-cols-2 lg:grid-cols-4">
             {parts.map((part, i) => (
@@ -449,7 +443,7 @@ export default function ProjectStory({
   );
 }
 
-const partId = (i: number) => `part-${i + 1}`;
+const partId = storyPartId;
 
 function Section({ section, aspect }: { section: StorySection; aspect: string }) {
   return (

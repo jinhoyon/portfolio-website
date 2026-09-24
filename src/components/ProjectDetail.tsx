@@ -6,6 +6,7 @@ import Nav from "./Nav";
 import Footer from "./Footer";
 import ProjectImageCarousel from "./ProjectImageCarousel";
 import ProjectStory from "./ProjectStory";
+import StorySidebar from "./StorySidebar";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations } from "@/lib/translations";
 import { PROJECTS_META, type ProjectSlug } from "@/lib/projectsMeta";
@@ -20,6 +21,7 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
   const project = { ...item, ...meta };
   const story = PROJECT_STORIES[slug]?.[language];
   const [projectName, projectSubtitle] = project.title.split(" — ");
+  const hasSidebar = Boolean(story?.parts);
 
   const githubLink = (
     <a
@@ -37,7 +39,13 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
     <>
       <Nav />
       <main className="flex-1">
-        <div className="mx-auto max-w-4xl px-6 py-16">
+        <div
+          className={`mx-auto max-w-4xl px-6 py-16 ${
+            hasSidebar ? "lg:grid lg:max-w-6xl lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-14" : ""
+          }`}
+        >
+          {hasSidebar && story && <StorySidebar story={story} />}
+          <div className="min-w-0">
           <Link
             href="/#projects"
             className="group inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4"
@@ -171,6 +179,7 @@ export default function ProjectDetail({ slug }: { slug: ProjectSlug }) {
           </div>
           </>
           )}
+          </div>
         </div>
       </main>
       <Footer />
