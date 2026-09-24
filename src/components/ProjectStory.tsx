@@ -186,9 +186,9 @@ function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
       return (
         <div className="mt-8">
           <p className="mb-3 font-mono text-xs uppercase tracking-widest text-zinc-500">{block.caption}</p>
-          {/* Stacked cards on mobile, a real table from sm up. */}
-          <table className="w-full border-collapse text-left text-sm">
-            <thead className="hidden sm:table-header-group">
+          {/* From sm up: one row per entry. */}
+          <table className="hidden w-full border-collapse text-left text-sm sm:table">
+            <thead>
               <tr className="border-b border-zinc-800">
                 {block.columns.map((col) => (
                   <th key={col} scope="col" className="py-3 pr-4 font-semibold text-foreground">{col}</th>
@@ -197,16 +197,42 @@ function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
             </thead>
             <tbody>
               {block.rows.map((row) => (
-                <tr key={row[0]} className="block border-b border-zinc-200 py-3 sm:table-row sm:py-0">
+                <tr key={row[0]} className="border-b border-zinc-200">
                   {row.map((cell, i) => (
-                    <td key={i} className={`block py-0.5 leading-relaxed sm:table-cell sm:py-3 sm:pr-4 sm:align-top ${i === 0 ? "font-mono text-xs text-zinc-500 sm:whitespace-nowrap" : i === row.length - 1 ? "text-zinc-800" : "text-zinc-600"}`}>
-                      {i > 0 && <span className="mt-2 block font-mono text-[11px] uppercase tracking-widest text-zinc-400 sm:hidden">{block.columns[i]}</span>}
+                    <td key={i} className={`py-3 pr-4 align-top leading-relaxed ${i === 0 ? "whitespace-nowrap font-mono text-xs text-zinc-500" : i === row.length - 1 ? "text-zinc-800" : "text-zinc-600"}`}>
                       {cell}
                     </td>
                   ))}
                 </tr>
               ))}
             </tbody>
+          </table>
+          {/* On phones the first column becomes a label line above each row, so the
+              remaining columns stay side by side and can be compared directly. */}
+          <table className="w-full table-fixed border-collapse text-left text-sm sm:hidden">
+            <thead>
+              <tr className="border-b border-zinc-800">
+                {block.columns.slice(1).map((col) => (
+                  <th key={col} scope="col" className="py-2.5 pr-3 font-semibold leading-snug text-foreground">{col}</th>
+                ))}
+              </tr>
+            </thead>
+            {block.rows.map((row) => (
+              <tbody key={row[0]} className="border-b border-zinc-200">
+                <tr>
+                  <th scope="colgroup" colSpan={row.length - 1} className="pt-3 font-mono text-xs font-normal text-zinc-500">
+                    {row[0]}
+                  </th>
+                </tr>
+                <tr>
+                  {row.slice(1).map((cell, i) => (
+                    <td key={i} className={`pb-3 pr-3 pt-1 align-top leading-relaxed ${i === row.length - 2 ? "text-zinc-800" : "text-zinc-600"}`}>
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            ))}
           </table>
         </div>
       );
