@@ -686,6 +686,69 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "id": "language-boundary",
+          "eyebrow": "Engineering boundary",
+          "heading": "Why Python alongside Java?",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "I chose Python for the pipeline because I expected its data-processing ecosystem to help me build and iterate faster. The work involved inspecting filing XML, transforming source data, and integrating model outputs. Libraries such as lxml, Pydantic, and the Gemini SDK gave me building blocks for those tasks. This was a development-speed judgment; I did not benchmark an equivalent Java implementation."
+            },
+            {
+              "type": "p",
+              "text": "Darfin splits document processing and AI generation from the user-facing API. Python collects and parses filings, prepares source material, and runs the Gemini worker. Spring serves the product API, calculates financial metrics and risk states, and also fetches structured DART data directly when its cache is missing or stale. Python is not a gateway for every DART request."
+            },
+            {
+              "type": "paths",
+              "items": [
+                {
+                  "label": "Python · documents and AI",
+                  "text": "lxml handles filing XML; the Gemini SDK and Pydantic models support structured generation. Separate scripts expose ingestion, parsing, and worker stages for reruns and debugging."
+                },
+                {
+                  "label": "Java · serving and calculations",
+                  "text": "Spring owns request orchestration, structured-data refreshes, deterministic calculations, and job enqueueing. It returns available results without waiting for the model to finish."
+                }
+              ]
+            },
+            {
+              "type": "p",
+              "text": "This boundary keeps XML and model-output experiments within the Python pipeline while preserving the existing Spring application as the serving layer. The practical advantage is being able to change and rerun pipeline stages separately from the API. That is an architectural benefit of the split, not a measured claim that Python executes faster or that Java cannot do the same work."
+            },
+            {
+              "type": "table",
+              "firstColumn": "text",
+              "caption": "What the language split buys—and costs",
+              "columns": [
+                "Choice",
+                "Benefit",
+                "Tradeoff"
+              ],
+              "rows": [
+                [
+                  "Python pipeline + Spring API",
+                  "Keep document/AI dependencies and background execution separate from request serving.",
+                  "Two runtimes, dependency sets, and processes to deploy, monitor, and debug."
+                ],
+                [
+                  "Shared MariaDB handoff",
+                  "Both languages can read persisted results and coordinate through job rows.",
+                  "Schema and status changes must stay compatible across repos; shared tables remain a coupling point."
+                ],
+                [
+                  "Java-only alternative",
+                  "One language and toolchain could simplify ownership, shared types, and debugging.",
+                  "Consolidating the current system would mean porting and revalidating the Python parsing and AI stages. Background jobs and freshness logic would still be needed."
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "The opportunity cost runs both ways: a second stack adds ongoing maintenance, while rewriting a working pipeline takes time away from product validation. I would revisit the boundary if cross-repo changes and operational failures became more expensive than the flexibility it provides. Async processing is not exclusive to Python; a Java worker could preserve the same request/worker separation."
+            }
+          ]
+        },
+        {
           "id": "architecture",
           "eyebrow": "How it works",
           "heading": "Generate on demand, reuse while fresh",
@@ -1100,6 +1163,10 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "label": "Engineering",
           "description": "Decisions, tradeoffs, and validation",
           "sections": [
+            {
+              "id": "language-boundary",
+              "label": "Python and Java"
+            },
             {
               "id": "architecture",
               "label": "How it works"
@@ -1767,6 +1834,69 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "id": "language-boundary",
+          "eyebrow": "기술 선택과 역할 분리",
+          "heading": "Java와 함께 Python을 사용한 이유",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "데이터 처리 생태계를 활용하면 더 빠르게 만들고 수정할 수 있다고 판단해 파이프라인에 Python을 선택했습니다. 공시 XML을 살펴보고, 원천 데이터를 변환하고, 모델 출력을 통합하는 작업에 lxml, Pydantic, Gemini SDK 같은 라이브러리를 활용할 수 있었습니다. 개발 속도에 대한 판단이었으며, 동일한 Java 구현과 벤치마크로 비교한 것은 아닙니다."
+            },
+            {
+              "type": "p",
+              "text": "Darfin은 문서 처리·AI 생성과 사용자 요청을 처리하는 API의 역할을 나눴습니다. Python은 공시 수집·파싱, 근거 자료 준비, Gemini 워커를 담당합니다. Spring은 제품 API와 재무 지표·리스크 상태 계산을 맡고, 캐시가 없거나 오래된 구조화된 DART 데이터는 직접 조회합니다. 모든 DART 요청이 Python을 거치는 구조는 아닙니다."
+            },
+            {
+              "type": "paths",
+              "items": [
+                {
+                  "label": "Python · 문서와 AI",
+                  "text": "lxml로 공시 XML을 처리하고, Gemini SDK와 Pydantic 모델로 구조화된 생성을 다룹니다. 수집·파싱·워커 단계를 개별 스크립트로 실행해 재처리하고 디버깅할 수 있습니다."
+                },
+                {
+                  "label": "Java · API와 계산",
+                  "text": "Spring은 요청 흐름, 구조화된 데이터 갱신, 결정론적 계산, 작업 등록을 담당합니다. 모델 완료를 기다리지 않고 준비된 결과를 반환합니다."
+                }
+              ]
+            },
+            {
+              "type": "p",
+              "text": "이 경계는 XML 처리와 모델 출력 실험을 Python 파이프라인에 모으고, 기존 Spring 애플리케이션이 API를 계속 담당하게 합니다. 파이프라인 단계를 API와 별도로 수정하고 재실행할 수 있다는 실용적인 이점이 있습니다. 이는 역할 분리의 장점이며, Python 실행 속도가 더 빠르거나 Java로 같은 작업을 할 수 없다는 뜻은 아닙니다."
+            },
+            {
+              "type": "table",
+              "firstColumn": "text",
+              "caption": "언어를 나누며 얻는 것과 감수하는 것",
+              "columns": [
+                "선택",
+                "이점",
+                "트레이드오프"
+              ],
+              "rows": [
+                [
+                  "Python 파이프라인 + Spring API",
+                  "문서·AI 의존성과 백그라운드 실행을 API 요청 처리에서 분리합니다.",
+                  "배포·모니터링·디버깅할 런타임, 의존성, 프로세스가 각각 두 개가 됩니다."
+                ],
+                [
+                  "MariaDB를 통한 작업 인계",
+                  "두 언어가 저장된 결과를 읽고 작업 행으로 상태를 공유합니다.",
+                  "저장소 간 스키마·상태 변경의 호환성을 지켜야 하며, 공유 테이블에 결합됩니다."
+                ],
+                [
+                  "Java로 통합하는 대안",
+                  "언어와 도구를 통일해 담당 범위, 공통 타입, 디버깅을 단순화할 수 있습니다.",
+                  "현재 구조를 통합하려면 Python 파싱·AI 단계를 이식하고 다시 검증해야 합니다. 백그라운드 작업과 최신성 확인도 여전히 필요합니다."
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "기회비용은 양쪽에 있습니다. 두 번째 스택은 지속적인 유지보수 부담을 만들고, 작동하는 파이프라인을 다시 작성하는 일은 제품 검증에 쓸 시간을 소모합니다. 저장소를 넘나드는 변경과 운영 장애의 비용이 유연성의 이점보다 커진다면 이 경계를 다시 검토하겠습니다. 비동기 처리는 Python만의 장점이 아니며, Java 워커로도 같은 요청·워커 분리를 유지할 수 있습니다."
+            }
+          ]
+        },
+        {
           "id": "architecture",
           "eyebrow": "동작 방식",
           "heading": "필요할 때 생성하고, 최신 결과는 재사용",
@@ -2181,6 +2311,10 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           "label": "엔지니어링",
           "description": "설계 결정, 트레이드오프, 검증",
           "sections": [
+            {
+              "id": "language-boundary",
+              "label": "Python과 Java의 역할"
+            },
             {
               "id": "architecture",
               "label": "동작 방식"
