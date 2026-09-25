@@ -43,10 +43,8 @@ export const PROJECTS_META = [
     stack: ["Kotlin", "XML", "Android Studio"],
     imageAspect: "aspect-16/9",
     images: [
-      "[Placeholder: Add screenshot — pH reading screen]",
-      "[Placeholder: Add screenshot — reading history]",
-      "[Placeholder: Add screenshot — sensor pairing flow]",
-      "[Placeholder: Add screenshot — app onboarding]",
+      "/images/projects/nail-pholish/app-overview.png",
+      "/images/projects/nail-pholish/measure-and-track.png",
     ],
     githubUrl: "https://github.com/jinhoyon/Nail-pHolish-App",
   },
