@@ -30,6 +30,26 @@ function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
   // Tables style their first column as a short mono key unless marked as prose.
   const keyColumn = block.type === "table" && block.firstColumn !== "text";
   switch (block.type) {
+    case "requestFlow":
+      return (
+        <figure className="mt-8 border border-zinc-200 bg-zinc-50 p-5 sm:p-8">
+          <figcaption className="text-sm font-medium leading-relaxed text-zinc-600">{block.caption}</figcaption>
+          <div className="mt-6 border border-zinc-300 bg-white p-4 text-center text-sm font-medium">{block.start}</div>
+          <div aria-hidden="true" className="py-2 text-center text-zinc-400">↓</div>
+          <div className="mx-auto max-w-lg rounded-xl border border-zinc-800 bg-zinc-900 p-5 text-center text-sm font-medium leading-relaxed text-white">{block.check}</div>
+          <div aria-hidden="true" className="py-2 text-center text-zinc-400">↓</div>
+          <ul className="grid gap-3 md:grid-cols-3">
+            {block.branches.map((branch) => (
+              <li key={branch.label} className="border border-zinc-200 bg-white p-4">
+                <p className="font-mono text-xs leading-relaxed text-zinc-500">{branch.label}</p>
+                <h3 className="mt-3 text-base font-semibold leading-snug">{branch.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-600">{branch.text}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-5 border-t border-zinc-200 pt-4 text-sm leading-relaxed text-zinc-600">{block.result}</p>
+        </figure>
+      );
     case "p":
       return <p className="mt-5 max-w-2xl text-base leading-relaxed text-zinc-700">{block.text}</p>;
     case "evidence":
@@ -396,6 +416,20 @@ export default function ProjectStory({
   return (
     <>
       <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-700">{story.tagline}</p>
+
+      {story.summary && (
+        <section aria-labelledby="engineering-summary" className="mt-8 border border-zinc-200 bg-zinc-50 p-5 sm:p-6">
+          <h2 id="engineering-summary" className="text-lg font-semibold tracking-tight">{story.summary.title}</h2>
+          <dl className="mt-5 grid gap-5 sm:grid-cols-2">
+            {story.summary.items.map((item) => (
+              <div key={item.label}>
+                <dt className="text-sm font-semibold text-zinc-800">{item.label}</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-zinc-600">{item.text}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
 
       <dl className="mt-10 max-w-2xl divide-y divide-zinc-200 border-y border-zinc-200 text-sm">
         {[...story.facts, { label: stackLabel, value: stack.join(" · ") }].map((fact) => (

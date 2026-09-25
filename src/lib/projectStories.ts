@@ -11,6 +11,7 @@ export type StoryFigure = { src: string; alt: string; caption: string };
 export type SpecimenKey = "buttons" | "badges" | "aiCallout" | "segmented" | "riskStates" | "priceColors";
 
 export type StoryBlock =
+  | { type: "requestFlow"; caption: string; start: string; check: string; branches: { label: string; title: string; text: string }[]; result: string }
   | { type: "p"; text: string }
   | { type: "evidence"; title: string; context: string; note: string; items: { title: string; file: string; code: string; finding: string; implication: string }[] }
   | { type: "link"; label: string; href: string }
@@ -59,6 +60,7 @@ export type StoryPart = {
 
 export type ProjectStory = {
   tagline: string;
+  summary?: { title: string; items: { label: string; text: string }[] };
   contentsLabel: string;
   facts: { label: string; value: string }[];
   cover: StoryFigure;
@@ -686,7 +688,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
         {
           "id": "architecture",
           "eyebrow": "How it works",
-          "heading": "Collect on a schedule, call AI on request",
+          "heading": "Generate on demand, reuse while fresh",
           "blocks": [
             {
               "type": "diagram",
@@ -695,17 +697,90 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "width": 2688,
                 "height": 895,
                 "alt": "Architecture diagram: DART feeds a scheduled Python pipeline into MariaDB; Spring Boot reads and writes MariaDB, computes metrics and risk states, and serves React; AI workers running Gemini pick up jobs from MariaDB",
-                "caption": "The pipeline writes filings and financial data twice a day. Spring computes metrics and risk states, and queues an AI job only when someone opens the AI tab."
+                "caption": "Scheduled collection is separate from AI generation. Spring checks stored results before requesting work from the Python worker."
               },
               "openLabel": "Open full-size image"
             },
             {
               "type": "p",
-              "text": "The pipeline collects filings at 06:00 and 18:00 KST. Spring computes metrics and risk states, and queues an AI job only when someone opens the AI tab, so no model calls are spent on companies nobody views. Panels that don't need AI render right away."
+              "text": "Filings are collected at 06:00 and 18:00 KST. Opening the AI tab requests analysis, but a request does not automatically mean a Gemini call. Spring first checks whether the stored explanations are complete and fresh."
             },
             {
               "type": "p",
               "text": "I built the company-analysis path end to end, including the first job queue and worker. Sanghyxuk later added concurrent workers."
+            },
+            {
+              "type": "requestFlow",
+              "caption": "AI analysis request · simplified flow after access and source-data checks",
+              "start": "User opens the AI tab → Spring analysis API",
+              "check": "Are stored explanations complete and fresh for the latest computed quarter?",
+              "branches": [
+                {
+                  "label": "Yes",
+                  "title": "Reuse the stored result",
+                  "text": "Return the database explanations with calculated metrics. No new LLM job."
+                },
+                {
+                  "label": "No · work already active",
+                  "title": "Keep the existing job",
+                  "text": "Return quantitative results and job status. The client polls for completion."
+                },
+                {
+                  "label": "No · work needed",
+                  "title": "Queue → generate → save",
+                  "text": "When source data is sufficient and no job is active, queue work for the Python worker. Failed jobs require explicit retry."
+                }
+              ],
+              "result": "Worker saves explanations in MariaDB → subsequent requests can reuse them until the freshness check fails."
+            },
+            {
+              "type": "table",
+              "firstColumn": "text",
+              "caption": "Alternatives and their opportunity costs",
+              "columns": [
+                "Approach",
+                "What it buys",
+                "What it costs"
+              ],
+              "rows": [
+                [
+                  "Precompute AI for every company",
+                  "Explanations can be ready before anyone visits.",
+                  "Model calls and worker capacity go to companies nobody may read."
+                ],
+                [
+                  "Generate on every request",
+                  "A simple request-to-generation path.",
+                  "Unchanged inputs still incur model latency and cost; repeat visits repeat the work."
+                ],
+                [
+                  "On demand + persisted results",
+                  "Spend model calls on requested, missing or stale explanations; share completed work across visits.",
+                  "The first uncached request waits. Freshness checks, job states, and failure handling add complexity."
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "The tradeoff is to accept a wait for the first uncached explanation in exchange for avoiding speculative and repeated generation. A background worker lets the API return quantitative results without waiting for Gemini; the interface polls to add the explanation later. Persisting results makes reuse survive page reloads and worker restarts."
+            },
+            {
+              "type": "details",
+              "summary": "How freshness and duplicate work are checked",
+              "blocks": [
+                {
+                  "type": "p",
+                  "text": "Java still computes the inexpensive metrics and risk states on each request. It compares the latest source receipt number with the stored one and skips rewriting those results when they match. A changed receipt, including a correction, triggers persistence. This is selective reuse, not a cache of the entire HTTP response."
+                },
+                {
+                  "type": "p",
+                  "text": "For every risk category in the latest quarter, the narrative must be present, any required watch-next text must be present, and llm_updated_at must be at least as recent as computed_at. The queue checks for pending or running work under a company-row lock before inserting another job. Failed jobs stay visible for an explicit retry."
+                },
+                {
+                  "type": "p",
+                  "text": "Using the existing MariaDB for both results and jobs keeps the handoff between Java and Python in one datastore. The architectural cost is tighter database coupling and polling/locking overhead. A dedicated queue would become worth evaluating if contention or throughput measurements justified another service."
+                }
+              ]
             }
           ]
         },
@@ -805,6 +880,10 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "caption": "Each source does the job it's reliable for. The XML path stays as a fallback for key information such as dividends and shareholders."
               },
               "openLabel": "Open full-size image"
+            },
+            {
+              "type": "p",
+              "text": "Keeping one XML-only path would have meant maintaining extraction rules for changing document layouts. Structured endpoints reduce that parsing burden for financial values, but introduce a second ingestion path whose reporting periods and company identifiers must stay aligned. XML remains useful for narrative context and fallback information. The tradeoff is more integration work in exchange for fewer layout-dependent numerical rules."
             }
           ]
         },
@@ -825,6 +904,10 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             {
               "type": "p",
               "text": "Java calculates the financial measures, and a rule-based state machine gives each risk a status, from new to resolved. Gemini only writes the explanation, from the computed signals and the filing text."
+            },
+            {
+              "type": "p",
+              "text": "Letting the model assign the status as well as explain it would put both decisions in one generation step. Separating them makes the calculation reproducible and testable, and keeps a model wording change from changing the assigned status. The cost is maintaining explicit rules and thresholds. Deterministic does not mean financially validated: provisional thresholds still need evaluation, and generated explanations still need to be checked against their inputs."
             },
             {
               "type": "details",
@@ -1014,6 +1097,28 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "label": "Engineering",
+          "description": "Decisions, tradeoffs, and validation",
+          "sections": [
+            {
+              "id": "architecture",
+              "label": "How it works"
+            },
+            {
+              "id": "data-source",
+              "label": "Two data sources"
+            },
+            {
+              "id": "risk-engine",
+              "label": "Risk engine"
+            },
+            {
+              "id": "validation",
+              "label": "Evidence and limits"
+            }
+          ]
+        },
+        {
           "label": "Design",
           "description": "Why it looks the way it does",
           "sections": [
@@ -1032,38 +1137,37 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
-          "label": "Engineering",
-          "description": "How it works",
-          "sections": [
-            {
-              "id": "architecture",
-              "label": "How it works"
-            },
-            {
-              "id": "data-source",
-              "label": "Two data sources"
-            },
-            {
-              "id": "risk-engine",
-              "label": "Risk engine"
-            }
-          ]
-        },
-        {
           "label": "Wrap-up",
-          "description": "Limits, credit, and lessons",
+          "description": "Ownership and lessons",
           "sections": [
-            {
-              "id": "validation",
-              "label": "Evidence and limits"
-            },
             {
               "id": "reflection",
               "label": "Team and takeaways"
             }
           ]
         }
-      ]
+      ],
+      "summary": {
+        "title": "Engineering at a glance",
+        "items": [
+          {
+            "label": "Ownership",
+            "text": "Company-analysis pipeline, Spring API, React UI, and the first database-backed job queue and worker."
+          },
+          {
+            "label": "Hardest decision",
+            "text": "Separate reliable financial data from inconsistent XML, then spend model calls only on requested explanations that need updating."
+          },
+          {
+            "label": "Implemented",
+            "text": "30 seeded companies, rule-based risk states, and persisted AI explanations reused when complete and fresh."
+          },
+          {
+            "label": "Limits",
+            "text": "No production usage data, latency benchmark, or formal AI evaluation yet. Cost and wait-time benefits are design intentions, not measured outcomes."
+          }
+        ]
+      }
     },
     "ko": {
       "tagline": "기업 공시를 더 쉽게 살펴볼 수 있도록, 구조화된 기업 정보와 재무 추이, AI 기반 리스크 설명을 한 화면에 모았습니다.",
@@ -1665,7 +1769,7 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
         {
           "id": "architecture",
           "eyebrow": "동작 방식",
-          "heading": "수집은 정해진 시간에, AI는 요청할 때",
+          "heading": "필요할 때 생성하고, 최신 결과는 재사용",
           "blocks": [
             {
               "type": "diagram",
@@ -1674,17 +1778,90 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "width": 2688,
                 "height": 895,
                 "alt": "구조도: DART 데이터가 정기 실행되는 Python 파이프라인을 거쳐 MariaDB에 저장되고, Spring Boot가 MariaDB를 읽고 쓰며 지표와 리스크 상태를 계산해 React에 제공하고, Gemini를 사용하는 AI 워커가 MariaDB에서 작업을 가져갑니다",
-                "caption": "파이프라인은 하루 두 번 공시와 재무 데이터를 저장합니다. Spring이 지표와 리스크 상태를 계산하고, 사용자가 AI 탭을 열 때만 AI 작업을 큐에 넣습니다."
+                "caption": "정기 수집과 AI 생성을 분리했습니다. Spring은 저장된 결과를 확인한 뒤 필요한 작업만 Python 워커에 요청합니다."
               },
               "openLabel": "원본 크기로 보기"
             },
             {
               "type": "p",
-              "text": "파이프라인은 매일 06:00과 18:00(KST)에 공시를 수집합니다. Spring이 지표와 리스크 상태를 계산하고, 누군가 AI 탭을 열 때만 AI 작업을 대기열에 넣어 아무도 보지 않는 기업에 모델 호출 비용을 쓰지 않습니다. AI가 필요 없는 패널은 바로 표시됩니다."
+              "text": "공시는 매일 06:00과 18:00(KST)에 수집합니다. AI 탭을 열면 분석을 요청하지만, 요청마다 Gemini를 호출하지는 않습니다. Spring이 저장된 설명의 완전성과 최신성을 먼저 확인합니다."
             },
             {
               "type": "p",
               "text": "기업 분석 경로는 첫 작업 대기열과 워커를 포함해 처음부터 끝까지 제가 만들었습니다. 이후 sanghyxuk이 동시 워커를 추가했습니다."
+            },
+            {
+              "type": "requestFlow",
+              "caption": "AI 분석 요청 · 접근 권한과 원천 데이터 확인 이후의 간략한 흐름",
+              "start": "사용자가 AI 탭 열기 → Spring 분석 API",
+              "check": "최신 계산 분기의 설명이 모두 준비되어 있고 최신 상태인가?",
+              "branches": [
+                {
+                  "label": "예",
+                  "title": "저장된 결과 재사용",
+                  "text": "계산된 지표와 DB의 설명을 반환합니다. 새 LLM 작업은 없습니다."
+                },
+                {
+                  "label": "아니요 · 진행 중",
+                  "title": "기존 작업 유지",
+                  "text": "정량 결과와 작업 상태를 반환하고, 클라이언트가 완료 여부를 폴링합니다."
+                },
+                {
+                  "label": "아니요 · 작업 필요",
+                  "title": "큐 등록 → 생성 → 저장",
+                  "text": "원천 데이터가 충분하고 진행 중인 작업이 없으면 Python 워커용 작업을 등록합니다. 실패한 작업은 명시적으로 재시도합니다."
+                }
+              ],
+              "result": "워커가 설명을 MariaDB에 저장 → 최신성 조건이 유지되는 동안 후속 요청에서 재사용"
+            },
+            {
+              "type": "table",
+              "firstColumn": "text",
+              "caption": "대안과 기회비용",
+              "columns": [
+                "방식",
+                "얻는 것",
+                "감수하는 것"
+              ],
+              "rows": [
+                [
+                  "모든 기업의 AI 결과 미리 생성",
+                  "첫 방문 전에 설명을 준비할 수 있습니다.",
+                  "아무도 보지 않을 기업에도 모델 비용과 워커 처리량을 사용합니다."
+                ],
+                [
+                  "요청마다 새로 생성",
+                  "요청에서 생성까지의 흐름이 단순합니다.",
+                  "입력이 같아도 모델 비용과 지연이 발생하며, 재방문마다 작업을 반복합니다."
+                ],
+                [
+                  "요청 시 생성 + 결과 저장",
+                  "요청된 설명 중 없거나 오래된 것만 생성하고, 완료된 작업을 재방문에서 재사용합니다.",
+                  "첫 요청은 기다려야 합니다. 최신성 확인, 작업 상태, 실패 처리의 복잡성이 늘어납니다."
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "처음 생성하는 설명의 대기 시간을 감수하는 대신, 아직 수요가 없는 기업과 동일한 요청에 대한 반복 생성을 줄이는 선택입니다. API는 Gemini를 기다리지 않고 정량 결과를 반환하며, UI는 폴링으로 설명을 나중에 추가합니다. 결과를 저장하므로 페이지를 새로 고치거나 워커를 재시작해도 재사용할 수 있습니다."
+            },
+            {
+              "type": "details",
+              "summary": "최신성과 중복 작업을 확인하는 방법",
+              "blocks": [
+                {
+                  "type": "p",
+                  "text": "Java는 요청마다 비용이 적은 지표와 리스크 상태를 계산합니다. 최신 원천 공시의 접수번호가 저장된 번호와 같으면 DB 재기록을 생략하고, 정정공시 등을 통해 번호가 바뀌면 결과를 기록합니다. HTTP 응답 전체를 캐시하는 방식은 아닙니다."
+                },
+                {
+                  "type": "p",
+                  "text": "최신 분기의 각 리스크 범주에 설명과 필요한 후속 관찰 문구가 있어야 하며, llm_updated_at이 computed_at보다 오래되지 않아야 합니다. 큐는 기업 행 잠금 안에서 대기·실행 중인 작업을 확인한 뒤 새 작업을 등록합니다. 실패한 작업은 숨기지 않고 명시적으로 재시도하도록 남깁니다."
+                },
+                {
+                  "type": "p",
+                  "text": "결과와 작업을 기존 MariaDB에 함께 저장하면 Java와 Python의 작업 인계를 하나의 저장소에서 처리할 수 있습니다. 그 대가로 DB 결합도와 폴링·잠금 부담이 생깁니다. 경합이나 처리량 측정으로 필요성이 확인된다면 별도 큐 서비스 도입을 검토할 수 있습니다."
+                }
+              ]
             }
           ]
         },
@@ -1784,6 +1961,10 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
                 "caption": "각 데이터 소스를 가장 안정적인 용도에 사용합니다. 배당·주주 등 주요 정보에는 XML 경로를 보완용으로 남겨 두었습니다."
               },
               "openLabel": "원본 크기로 보기"
+            },
+            {
+              "type": "p",
+              "text": "XML 경로 하나만 유지하면 문서 형식이 바뀔 때마다 수치 추출 규칙도 관리해야 합니다. 구조화된 API는 그 부담을 줄이지만, 두 수집 경로의 보고 기간과 기업 식별자를 맞춰야 하는 통합 작업이 늘어납니다. XML은 서술형 맥락과 보완 정보에 남겨 두었습니다. 문서 레이아웃에 의존하는 수치 규칙을 줄이는 대신 데이터 통합의 복잡성을 감수한 선택입니다."
             }
           ]
         },
@@ -1804,6 +1985,10 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             {
               "type": "p",
               "text": "Java가 재무 지표를 계산하고, 규칙 기반 상태 머신이 리스크마다 신규발생부터 해소까지 상태를 정합니다. Gemini는 계산된 신호와 공시 텍스트를 바탕으로 설명만 씁니다."
+            },
+            {
+              "type": "p",
+              "text": "모델이 상태 판단과 설명을 모두 맡으면 하나의 생성 단계로 처리할 수 있습니다. 둘을 분리하면 계산을 재현하고 테스트할 수 있으며, 모델의 표현 변화가 상태 판단을 바꾸지 않습니다. 대신 규칙과 임계값을 직접 관리해야 합니다. 결정론적이라는 것이 재무적으로 검증되었다는 뜻은 아닙니다. 잠정 임계값의 평가와 생성 설명의 입력 대비 검증은 여전히 필요합니다."
             },
             {
               "type": "details",
@@ -1993,6 +2178,28 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
+          "label": "엔지니어링",
+          "description": "설계 결정, 트레이드오프, 검증",
+          "sections": [
+            {
+              "id": "architecture",
+              "label": "동작 방식"
+            },
+            {
+              "id": "data-source",
+              "label": "두 가지 데이터 경로"
+            },
+            {
+              "id": "risk-engine",
+              "label": "리스크 엔진"
+            },
+            {
+              "id": "validation",
+              "label": "검증과 한계"
+            }
+          ]
+        },
+        {
           "label": "디자인",
           "description": "왜 이렇게 디자인했는가",
           "sections": [
@@ -2011,38 +2218,37 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           ]
         },
         {
-          "label": "엔지니어링",
-          "description": "동작 방식",
-          "sections": [
-            {
-              "id": "architecture",
-              "label": "동작 방식"
-            },
-            {
-              "id": "data-source",
-              "label": "두 가지 데이터 경로"
-            },
-            {
-              "id": "risk-engine",
-              "label": "리스크 엔진"
-            }
-          ]
-        },
-        {
           "label": "마무리",
-          "description": "한계, 역할, 배운 점",
+          "description": "담당 범위와 배운 점",
           "sections": [
-            {
-              "id": "validation",
-              "label": "검증과 한계"
-            },
             {
               "id": "reflection",
               "label": "팀과 배운 점"
             }
           ]
         }
-      ]
+      ],
+      "summary": {
+        "title": "엔지니어링 한눈에 보기",
+        "items": [
+          {
+            "label": "담당 범위",
+            "text": "기업 분석 파이프라인, Spring API, React UI, 최초의 DB 작업 큐와 워커를 구현했습니다."
+          },
+          {
+            "label": "핵심 결정",
+            "text": "불규칙한 XML에서 재무 수치를 분리하고, 사용자가 요청한 설명 중 갱신이 필요한 것에만 모델 호출을 사용했습니다."
+          },
+          {
+            "label": "구현 결과",
+            "text": "30개 기업의 초기 데이터, 규칙 기반 리스크 상태, 완전성과 최신성을 확인해 재사용하는 AI 설명을 구현했습니다."
+          },
+          {
+            "label": "검증 범위",
+            "text": "실제 운영 사용 데이터, 지연 시간 벤치마크, 정식 AI 평가는 아직 없습니다. 비용과 대기 시간 개선은 설계 의도이며 측정된 성과는 아닙니다."
+          }
+        ]
+      }
     }
   }
 };

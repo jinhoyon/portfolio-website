@@ -150,7 +150,7 @@ export const translations = {
       eyebrow: "Toolbox",
       title: "Skills",
       categories: [
-        { title: "Languages", items: ["Python", "Java", "JavaScript", "SQL", "Kotlin", "HTML/CSS", "XML", "C/C++"] },
+        { title: "Languages", items: ["Python", "Java", "TypeScript", "JavaScript", "SQL", "Kotlin", "HTML/CSS", "XML", "C/C++"] },
         {
           title: "Frontend",
           items: ["React.js", "React Native", "Tailwind CSS", "Three.js", "D3.js", "Mermaid.js", "Android (Kotlin/XML)"],
@@ -161,7 +161,7 @@ export const translations = {
         },
         {
           title: "AI / LLM",
-          items: ["Google Gemini", "OpenAI", "Prompt Engineering", "Retrieval-Augmented Generation", "Model Context Protocol (MCP)"],
+          items: ["Google Gemini", "Prompt Engineering", "LLM Output Validation"],
         },
         {
           title: "DevOps & Tools",
@@ -348,7 +348,7 @@ export const translations = {
       eyebrow: "기술 스택",
       title: "기술",
       categories: [
-        { title: "언어", items: ["Python", "Java", "JavaScript", "SQL", "Kotlin", "HTML/CSS", "XML", "C/C++"] },
+        { title: "언어", items: ["Python", "Java", "TypeScript", "JavaScript", "SQL", "Kotlin", "HTML/CSS", "XML", "C/C++"] },
         {
           title: "프론트엔드",
           items: ["React.js", "React Native", "Tailwind CSS", "Three.js", "D3.js", "Mermaid.js", "Android (Kotlin/XML)"],
@@ -359,7 +359,7 @@ export const translations = {
         },
         {
           title: "AI / LLM",
-          items: ["Google Gemini", "OpenAI", "Prompt Engineering", "Retrieval-Augmented Generation", "Model Context Protocol (MCP)"],
+          items: ["Google Gemini", "Prompt Engineering", "LLM Output Validation"],
         },
         {
           title: "DevOps & 도구",
