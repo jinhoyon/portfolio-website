@@ -30,11 +30,10 @@ export const PROJECTS_META = [
   {
     slug: "fitsbug",
     stack: ["Java", "Servlets", "MyBatis", "MySQL", "REST APIs", "AJAX", "Toss Payments"],
-    imageAspect: "aspect-4/3",
+    imageAspect: "aspect-16/9",
     images: [
-      "/images/projects/fitsbug/dashboard.png",
-      "/images/projects/fitsbug/member-management.png",
-      "/images/projects/fitsbug/revenue.png",
+      "/images/projects/fitsbug/app-overview.png",
+      "/images/projects/fitsbug/schedule-and-revenue.png",
     ],
     githubUrl: "https://github.com/jinhoyon/fitsbug",
   },
