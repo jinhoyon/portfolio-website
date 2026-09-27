@@ -16,8 +16,8 @@ export default function Experience() {
         <SectionHeader eyebrow={t.eyebrow} title={t.title} />
 
         <RevealGroup className="divide-y divide-zinc-200 border-y border-zinc-200">
-          {t.roles.map((role) => (
-            <RevealItem key={role.title} hover={false} className="grid gap-3 py-8 sm:grid-cols-[12rem_1fr] sm:gap-6">
+          {t.roles.map((role, i) => (
+            <RevealItem key={i} hover={false} className="grid gap-3 py-8 sm:grid-cols-[12rem_1fr] sm:gap-6">
               <span className="pt-1.5 font-mono text-xs uppercase tracking-widest text-zinc-500">{role.period}</span>
               <div className="max-w-3xl">
                 <h3 className="text-lg font-semibold tracking-tight text-foreground">{role.title}</h3>

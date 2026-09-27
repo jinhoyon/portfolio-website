@@ -17,8 +17,8 @@ export default function Skills() {
         <SectionHeader eyebrow={t.eyebrow} title={t.title} />
 
         <RevealGroup className="divide-y divide-zinc-200 border-y border-zinc-200">
-          {t.categories.map(({ title, items }) => (
-            <RevealItem key={title} hover={false} className="grid gap-1 py-5 sm:grid-cols-[12rem_1fr] sm:gap-6">
+          {t.categories.map(({ title, items }, i) => (
+            <RevealItem key={i} hover={false} className="grid gap-1 py-5 sm:grid-cols-[12rem_1fr] sm:gap-6">
               <h3 className="text-sm text-zinc-500">{title}</h3>
               <p className="text-sm leading-relaxed text-foreground">{items.join(" · ")}</p>
             </RevealItem>
