@@ -4,6 +4,26 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 
 export type Language = "en" | "ko";
 
+function getPreferredLanguage(): Language {
+  try {
+    const stored = window.localStorage.getItem("language");
+    if (stored === "en" || stored === "ko") return stored;
+  } catch {
+    // Browser preferences still work when storage is unavailable.
+  }
+
+  const languages = navigator.languages?.length
+    ? navigator.languages
+    : [navigator.language];
+
+  for (const locale of languages) {
+    const language = locale.toLowerCase().split("-")[0];
+    if (language === "en" || language === "ko") return language;
+  }
+
+  return "en";
+}
+
 const LanguageContext = createContext<{
   language: Language;
   toggleLanguage: () => void;
@@ -11,21 +31,28 @@ const LanguageContext = createContext<{
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   // Always starts as "en" to match the server-rendered markup; the stored
-  // preference is applied after mount to avoid a hydration mismatch.
+  // or browser preference is applied after mount to avoid a hydration mismatch.
   const [language, setLanguage] = useState<Language>("en");
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("language");
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, a client-only external source unavailable during SSR
-    if (stored === "en" || stored === "ko") setLanguage(stored);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- browser preferences and storage are only available after mount
+    setLanguage(getPreferredLanguage());
   }, []);
 
   useEffect(() => {
     document.documentElement.lang = language;
-    window.localStorage.setItem("language", language);
   }, [language]);
 
-  const toggleLanguage = () => setLanguage((l) => (l === "en" ? "ko" : "en"));
+  const toggleLanguage = () => {
+    const nextLanguage = language === "en" ? "ko" : "en";
+    setLanguage(nextLanguage);
+    try {
+      // Only an explicit choice should override future browser preferences.
+      window.localStorage.setItem("language", nextLanguage);
+    } catch {
+      // Keep the switch usable even when the browser blocks storage.
+    }
+  };
 
   return (
     <LanguageContext.Provider value={{ language, toggleLanguage }}>
