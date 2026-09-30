@@ -11,6 +11,7 @@ export type StoryFigure = { src: string; alt: string; caption: string };
 export type SpecimenKey = "buttons" | "badges" | "aiCallout" | "segmented" | "riskStates" | "priceColors";
 
 export type StoryBlock =
+  | { type: "responsibilityDiagram"; caption: string; source: string; lanes: { input: string; title: string; role: string; tasks: string[]; exchange: string }[]; database: string; stored: string; handoff: string; tradeoff: string }
   | { type: "requestFlow"; caption: string; start: string; check: string; branches: { label: string; title: string; text: string }[]; result: string }
   | { type: "p"; text: string }
   | { type: "evidence"; title: string; context: string; note: string; items: { title: string; file: string; code: string; finding: string; implication: string }[] }
@@ -699,17 +700,37 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               "text": "Darfin splits document processing and AI generation from the user-facing API. Python collects and parses filings, prepares source material, and runs the Gemini worker. Spring serves the product API, calculates financial metrics and risk states, and also fetches structured DART data directly when its cache is missing or stale. Python is not a gateway for every DART request."
             },
             {
-              "type": "paths",
-              "items": [
+              "type": "responsibilityDiagram",
+              "caption": "Two runtimes, distinct responsibilities, one shared datastore",
+              "source": "DART · filings and structured financial data",
+              "lanes": [
                 {
-                  "label": "Python · documents and AI",
-                  "text": "lxml handles filing XML; the Gemini SDK and Pydantic models support structured generation. Separate scripts expose ingestion, parsing, and worker stages for reruns and debugging."
+                  "input": "Scheduled collection · XML + structured data",
+                  "title": "Python",
+                  "role": "Document pipeline + AI worker",
+                  "tasks": [
+                    "Parse filings with lxml; prepare source text.",
+                    "Warm shared data tables on scheduled runs.",
+                    "Consume queued jobs; call Gemini and save explanations."
+                  ],
+                  "exchange": "Read jobs and source data ↔ write data and AI results"
                 },
                 {
-                  "label": "Java · serving and calculations",
-                  "text": "Spring owns request orchestration, structured-data refreshes, deterministic calculations, and job enqueueing. It returns available results without waiting for the model to finish."
+                  "input": "Direct API fetch · missing or stale structured data",
+                  "title": "Java / Spring",
+                  "role": "Product API + deterministic calculations",
+                  "tasks": [
+                    "Handle requests from the React interface.",
+                    "Compute financial metrics and risk states.",
+                    "Reuse fresh explanations; enqueue work when needed."
+                  ],
+                  "exchange": "Read cached results ↔ write refreshed data, states and jobs"
                 }
-              ]
+              ],
+              "database": "Shared MariaDB",
+              "stored": "Source data · calculated states · AI explanations · llm_jobs",
+              "handoff": "AI handoff: Spring queues → Python generates and saves → Spring serves the result to React.",
+              "tradeoff": "Independent pipeline iteration, with a shared contract to maintain: both runtimes must agree on table schemas and job states."
             },
             {
               "type": "p",
@@ -947,6 +968,29 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             {
               "type": "p",
               "text": "Keeping one XML-only path would have meant maintaining extraction rules for changing document layouts. Structured endpoints reduce that parsing burden for financial values, but introduce a second ingestion path whose reporting periods and company identifiers must stay aligned. XML remains useful for narrative context and fallback information. The tradeoff is more integration work in exchange for fewer layout-dependent numerical rules."
+            },
+            {
+              "type": "p",
+              "text": "The text side had its own problem. Consecutive filings are nearly word-for-word identical, so I first tried highlighting word-level differences. But the goal was less reading, not pinpointing every word."
+            },
+            {
+              "type": "compare",
+              "before": {
+                "label": "First try: word-level differences",
+                "points": [
+                  "Spacing and punctuation changes, like \"Google(\" vs \"Google (\", showed up as edits",
+                  "Real changes were hard to single out from the noise",
+                  "Readers still had to read the whole section to see each highlight in context"
+                ]
+              },
+              "after": {
+                "label": "Final: section-level chunks",
+                "points": [
+                  "Sections matched across years by DART's own section codes",
+                  "Unchanged sections skipped by hash, without reading them",
+                  "Only changed paragraphs kept, as before/after pairs"
+                ]
+              }
             }
           ]
         },
@@ -1847,17 +1891,37 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
               "text": "Darfin은 문서 처리·AI 생성과 사용자 요청을 처리하는 API의 역할을 나눴습니다. Python은 공시 수집·파싱, 근거 자료 준비, Gemini 워커를 담당합니다. Spring은 제품 API와 재무 지표·리스크 상태 계산을 맡고, 캐시가 없거나 오래된 구조화된 DART 데이터는 직접 조회합니다. 모든 DART 요청이 Python을 거치는 구조는 아닙니다."
             },
             {
-              "type": "paths",
-              "items": [
+              "type": "responsibilityDiagram",
+              "caption": "두 런타임의 역할과 하나의 공유 저장소",
+              "source": "DART · 공시 문서와 구조화된 재무 데이터",
+              "lanes": [
                 {
-                  "label": "Python · 문서와 AI",
-                  "text": "lxml로 공시 XML을 처리하고, Gemini SDK와 Pydantic 모델로 구조화된 생성을 다룹니다. 수집·파싱·워커 단계를 개별 스크립트로 실행해 재처리하고 디버깅할 수 있습니다."
+                  "input": "정기 수집 · XML + 구조화된 데이터",
+                  "title": "Python",
+                  "role": "문서 파이프라인 + AI 워커",
+                  "tasks": [
+                    "lxml로 공시를 파싱하고 근거 텍스트를 준비합니다.",
+                    "정기 실행으로 공유 데이터 테이블을 미리 채웁니다.",
+                    "큐의 작업을 가져와 Gemini를 호출하고 설명을 저장합니다."
+                  ],
+                  "exchange": "작업·원천 데이터 읽기 ↔ 데이터·AI 결과 저장"
                 },
                 {
-                  "label": "Java · API와 계산",
-                  "text": "Spring은 요청 흐름, 구조화된 데이터 갱신, 결정론적 계산, 작업 등록을 담당합니다. 모델 완료를 기다리지 않고 준비된 결과를 반환합니다."
+                  "input": "API 직접 조회 · 없거나 오래된 구조화 데이터",
+                  "title": "Java / Spring",
+                  "role": "제품 API + 결정론적 계산",
+                  "tasks": [
+                    "React 화면에서 보내는 요청을 처리합니다.",
+                    "재무 지표와 리스크 상태를 계산합니다.",
+                    "최신 설명을 재사용하고 필요할 때 작업을 등록합니다."
+                  ],
+                  "exchange": "저장된 결과 읽기 ↔ 갱신 데이터·상태·작업 저장"
                 }
-              ]
+              ],
+              "database": "공유 MariaDB",
+              "stored": "원천 데이터 · 계산된 상태 · AI 설명 · llm_jobs",
+              "handoff": "AI 작업 인계: Spring이 등록 → Python이 생성·저장 → Spring이 React에 결과 전달",
+              "tradeoff": "파이프라인을 별도로 수정할 수 있지만, 두 런타임이 테이블 스키마와 작업 상태에 대한 공통 규약을 유지해야 합니다."
             },
             {
               "type": "p",
@@ -2095,6 +2159,29 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
             {
               "type": "p",
               "text": "XML 경로 하나만 유지하면 문서 형식이 바뀔 때마다 수치 추출 규칙도 관리해야 합니다. 구조화된 API는 그 부담을 줄이지만, 두 수집 경로의 보고 기간과 기업 식별자를 맞춰야 하는 통합 작업이 늘어납니다. XML은 서술형 맥락과 보완 정보에 남겨 두었습니다. 문서 레이아웃에 의존하는 수치 규칙을 줄이는 대신 데이터 통합의 복잡성을 감수한 선택입니다."
+            },
+            {
+              "type": "p",
+              "text": "텍스트에도 문제가 있었습니다. 연속된 공시는 거의 한 글자도 다르지 않아, 처음에는 단어 단위 차이를 강조하려 했습니다. 하지만 목표는 모든 단어를 짚는 것이 아니라 읽을 양을 줄이는 것이었습니다."
+            },
+            {
+              "type": "compare",
+              "before": {
+                "label": "첫 시도: 단어 단위 비교",
+                "points": [
+                  "\"Google(\"과 \"Google (\"처럼 띄어쓰기·문장부호 차이까지 변경으로 잡혔습니다",
+                  "노이즈 속에서 실제 변경을 골라내기 어려웠습니다",
+                  "강조를 맥락과 함께 보려면 여전히 섹션 전체를 읽어야 했습니다"
+                ]
+              },
+              "after": {
+                "label": "최종: 섹션 단위 청크",
+                "points": [
+                  "DART의 섹션 코드로 연도 간 같은 섹션을 매칭",
+                  "해시가 같은 섹션은 읽지 않고 건너뜀",
+                  "바뀐 문단만 이전/이후 쌍으로 보관"
+                ]
+              }
             }
           ]
         },
@@ -2383,6 +2470,630 @@ export const PROJECT_STORIES: Partial<Record<ProjectSlug, Record<Language, Proje
           }
         ]
       }
+    }
+  },
+  "seenior": {
+    "en": {
+      "tagline": "Paste a public GitHub URL and get an onboarding report for the codebase: written documentation, four interactive diagrams, and a quiz to check what you took away.",
+      "summary": {
+        "title": "Engineering at a glance",
+        "items": [
+          {
+            "label": "Ownership",
+            "text": "Gemini analysis prompts and route, the documentation view, all four diagram views, and the results page. My teammate built the GitHub layer and the quiz."
+          },
+          {
+            "label": "Hardest problem",
+            "text": "Getting diagrams from an LLM that actually render: a strict JSON contract in the prompt, then syntax repair and a parse check before anything reaches the page."
+          },
+          {
+            "label": "Implemented",
+            "text": "Architecture, feature-flow, class, and dependency-map views with clickable nodes; documentation with scroll-synced contents and in-page search."
+          },
+          {
+            "label": "Limits",
+            "text": "Hackathon prototype: reads at most 50 files per repository, no retry when a diagram fails, and no user testing. It didn't place."
+          }
+        ]
+      },
+      "contentsLabel": "Inside the project",
+      "facts": [
+        {
+          "label": "Role",
+          "value": "AI analysis prompts and the documentation and diagram UI"
+        },
+        {
+          "label": "Team",
+          "value": "Team of 2 · IBM Bob Hackathon · May 2026"
+        },
+        {
+          "label": "Build time",
+          "value": "About 33 hours of a 48-hour online event"
+        },
+        {
+          "label": "Tools",
+          "value": "IBM Bob and Claude Code (AI-assisted development)"
+        }
+      ],
+      "cover": {
+        "src": "/images/projects/seenior/uml-flowchart.png",
+        "alt": "Seenior report for expressjs/express showing the Architecture view: a flowchart of the browser, Express application, middleware stack, route handlers, view renderer and data storage, with a side panel describing each module",
+        "caption": "The Architecture view for expressjs/express. Boxes are colour-coded by type, and the panel on the right describes each module; clicking a box selects its description."
+      },
+      "parts": [
+        {
+          "label": "Overview",
+          "description": "The problem and the product",
+          "sections": [
+            { "id": "why", "label": "Why I built it" },
+            { "id": "product", "label": "What Seenior does" }
+          ]
+        },
+        {
+          "label": "Engineering",
+          "description": "Decisions, tradeoffs, and limits",
+          "sections": [
+            { "id": "how", "label": "How it works" },
+            { "id": "diagrams", "label": "Diagrams that render" },
+            { "id": "codebase-map", "label": "Dependency map" },
+            { "id": "validation", "label": "Evidence and limits" }
+          ]
+        },
+        {
+          "label": "Wrap-up",
+          "description": "Ownership and lessons",
+          "sections": [
+            { "id": "reflection", "label": "Team and takeaways" }
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "why",
+          "eyebrow": "Why I built it",
+          "heading": "Large repos don't come with a map",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "School assignments kept handing me large existing codebases to extend. Before writing a line, I'd spend a long time opening files one by one, trying to work out where a request enters, which modules matter, and how they connect. The README rarely answered that."
+            },
+            {
+              "type": "p",
+              "text": "The IBM Bob Hackathon asked for tools that improve how software is built, with IBM's Bob as an AI development partner. A teammate and I took on that problem: give someone a first map of an unfamiliar repository before they start reading code."
+            },
+            {
+              "type": "stats",
+              "items": [
+                { "value": "~33 h", "label": "from first commit to submission" },
+                { "value": "2", "label": "people on the team" },
+                { "value": "503", "label": "projects submitted to the event" },
+                { "value": "5,628", "label": "participants across the event" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "product",
+          "eyebrow": "What Seenior does",
+          "heading": "One URL, three ways into a codebase",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "The landing page takes a GitHub URL and three checkboxes. The report opens in tabs, so a reader can start with prose, pictures, or questions."
+            },
+            {
+              "type": "figure",
+              "figure": {
+                "src": "/images/projects/seenior/landing.png",
+                "alt": "Seenior landing page with a GitHub URL field and checkboxes for Documentation, UML / Flowchart and Quiz",
+                "caption": "The starting point: a repository URL and a choice of outputs. The \"60 seconds\" headline was our pitch line. It's roughly how long a report takes to generate, not how long understanding takes."
+              }
+            },
+            {
+              "type": "paths",
+              "items": [
+                {
+                  "label": "Documentation",
+                  "text": "An eight-part written overview: purpose, architecture, key components, file structure, technologies, setup, APIs and examples. A contents list follows your scroll position, and in-page search highlights matches."
+                },
+                {
+                  "label": "Diagrams",
+                  "text": "Four views: a module-level architecture flowchart, step-by-step feature flows through real files, a class diagram when the code has one, and a file-level dependency map."
+                },
+                {
+                  "label": "Quiz",
+                  "text": "Ten multiple-choice questions with explanations, for checking what you took away."
+                }
+              ]
+            },
+            {
+              "type": "figure",
+              "figure": {
+                "src": "/images/projects/seenior/documentation.png",
+                "alt": "Seenior documentation tab for expressjs/express with a numbered contents list on the left, a search field, and the Project Overview section",
+                "caption": "Documentation for expressjs/express. The contents list on the left tracks where you are as you scroll."
+              }
+            }
+          ]
+        },
+        {
+          "id": "how",
+          "eyebrow": "How it works",
+          "heading": "From URL to report in one request",
+          "blocks": [
+            {
+              "type": "steps",
+              "items": [
+                "The browser sends the URL and the chosen outputs to a Next.js API route.",
+                "Octokit walks the repository and downloads up to 50 source and config files.",
+                "Each file is trimmed to its first 2,000 characters and packed into the prompt.",
+                "Gemini is called once per output: documentation as Markdown, diagrams and quiz as JSON.",
+                "The results page renders the Markdown, the Mermaid diagrams, and an interactive dependency graph."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Everything runs in one Next.js app: two API routes and the React pages, with no separate server or database. That kept a two-person weekend build simple to deploy on Vercel, where the demo still runs."
+            },
+            {
+              "type": "p",
+              "text": "The model was chosen as much by budget as by quality. We started on Gemini 2.5 Flash-Lite, moved to 2.5 Flash when the diagram prompts became structured, and switched back to Flash-Lite about an hour before the deadline after hitting API usage limits. Temperature is set to 0 so the same repository gives a consistent report."
+            },
+            {
+              "type": "link",
+              "label": "Try the live demo",
+              "href": "https://seenior.vercel.app/"
+            }
+          ]
+        },
+        {
+          "id": "diagrams",
+          "eyebrow": "Decision 01",
+          "heading": "Treat the model's diagrams as untrusted input",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Mermaid is strict: one stray character and a diagram won't render. The first diagram prompt simply asked Gemini for class, sequence and component diagrams in Mermaid code blocks. That returned free-form text we had to dig diagrams out of, with nothing constraining their syntax, and class diagrams kept failing to parse."
+            },
+            {
+              "type": "p",
+              "text": "I rewrote the diagram prompt twice on the second day, each time narrowing what the model was allowed to return."
+            },
+            {
+              "type": "table",
+              "caption": "Three versions of the diagram prompt",
+              "columns": ["Version", "What the model returned", "What changed next"],
+              "rows": [
+                [
+                  "v1",
+                  "Markdown with Mermaid code blocks for class, sequence and component diagrams, plus prose",
+                  "Switched to JSON so diagrams didn't have to be extracted from text"
+                ],
+                [
+                  "v2",
+                  "JSON with a class and a sequence diagram, plus a description and category for every node. Hard size caps (≤7 classes, ≤5 actors, ≤10 messages) and plain alphanumeric names",
+                  "Most of a Next.js or Express codebase is functions, not classes, so a class diagram alone missed most of it"
+                ],
+                [
+                  "v3",
+                  "JSON with four views: architecture (5–8 modules), feature flows (3–6 features through real file paths), a class diagram only when at least 3 classes are related, and a file dependency map",
+                  "The version that shipped"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "The contract is enforced on both ends. On the model side: JSON response mode, temperature 0, and syntax rules written into the prompt (only the class keyword, no aliases, no generic types, no code fences). On the page, a clean-up step strips stray fences, removes edge labels Mermaid can't parse, and quotes labels that contain slashes, such as API paths. Then Mermaid's own parser checks the result before anything is rendered."
+            },
+            {
+              "type": "compare",
+              "before": {
+                "label": "Ask for diagrams",
+                "points": [
+                  "Free-form Markdown with embedded code blocks",
+                  "Any size, any syntax",
+                  "An unparseable diagram could take the page down with it"
+                ]
+              },
+              "after": {
+                "label": "Specify and check them",
+                "points": [
+                  "One JSON object with fixed keys and size limits",
+                  "Syntax rules in the prompt, repairs on the page",
+                  "Parse check first; on failure, show the source instead of crashing"
+                ]
+              }
+            },
+            {
+              "type": "p",
+              "text": "Because every node comes with a description in the same JSON, the diagrams are clickable: selecting a box shows what that module does. I first synced on hover as well, but dimming the other nodes as the cursor moved looked like a jarring zoom, so only clicks select."
+            }
+          ]
+        },
+        {
+          "id": "codebase-map",
+          "eyebrow": "Decision 02",
+          "heading": "Lay out dependencies top-down, not by physics",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "The dependency map shows the 12–20 most important files and the imports between them. My first version placed nodes with a d3-force simulation, where nodes push apart and edges pull together until the layout settles. I replaced it in the next commit."
+            },
+            {
+              "type": "p",
+              "text": "A force layout has no sense of direction, but imports do: a page calls a route, which uses a library. dagre ranks nodes into layers so dependency chains read from top to bottom, and XYFlow renders the result as a graph you can pan and zoom, with a minimap. Selecting a file shows what it does and how many files import it or are imported by it."
+            }
+          ]
+        },
+        {
+          "id": "validation",
+          "eyebrow": "Evidence and limits",
+          "heading": "What it does, and where it falls short",
+          "blocks": [
+            {
+              "type": "stats",
+              "items": [
+                { "value": "≤50", "label": "files read per repository" },
+                { "value": "2,000", "label": "characters kept from each file" },
+                { "value": "3", "label": "Gemini calls per full report, one after another" },
+                { "value": "0", "label": "user tests run" }
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Seenior was a hackathon prototype. It was submitted with a live demo but didn't place, and we never tested it with users, so there's no evidence that it shortens anyone's ramp-up time. Reading the code back, these are its main limits:"
+            },
+            {
+              "type": "list",
+              "items": [
+                "Files are chosen by order, not importance. The crawler takes the first 50 matching files in the order GitHub lists them, and config files count. On expressjs/express, the quiz asked about the ESLint config and Dependabot settings rather than routing or middleware.",
+                "Each file is cut at 2,000 characters (1,500 for the quiz), so the model sees only the top of large files.",
+                "The three generations run one after another. Running them in parallel would shorten the wait; an unused helper in the repo already did that.",
+                "If a diagram still fails the parse check, the page shows its source. There's no retry.",
+                "Every file is a separate GitHub API request, so without a token one large repository can use up GitHub's limit of 60 requests an hour."
+              ]
+            },
+            {
+              "type": "figure",
+              "figure": {
+                "src": "/images/projects/seenior/quiz.png",
+                "alt": "Seenior quiz tab for expressjs/express; the first two questions ask about an ESLint rule and the Dependabot configuration",
+                "caption": "The quiz for expressjs/express. Both visible questions are about config files, a side effect of reading files in listing order."
+              }
+            }
+          ]
+        },
+        {
+          "id": "reflection",
+          "eyebrow": "Team and takeaways",
+          "heading": "What I owned, and what I learned",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "My teammate set up the project and built the GitHub layer (URL parsing, repository metadata and the file crawler) and the quiz page. I wrote the Gemini prompts and the analysis route, and built the documentation view, the four diagram views and the results page. We both developed with IBM Bob and Claude Code: I wrote critiques of the UI and rendering bugs, had the agents implement fixes in phases, and checked the results in the browser."
+            },
+            {
+              "type": "list",
+              "items": [
+                "Structured LLM output needs a contract on both sides. Constraining it in the prompt made failures rarer; checking it before rendering made the remaining ones harmless. Neither was enough alone.",
+                "What goes into the prompt matters as much as the wording. The config-file quiz questions came from which files were read, not from how the quiz prompt was phrased.",
+                "A headline number should say what it measures. \"60 seconds\" was generation time, but it read as a claim about understanding a codebase."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "tagline": "공개 GitHub URL을 붙여 넣으면 코드베이스 온보딩 리포트를 만들어 줍니다. 문서, 네 가지 인터랙티브 다이어그램, 이해도를 확인하는 퀴즈로 구성됩니다.",
+      "summary": {
+        "title": "엔지니어링 한눈에 보기",
+        "items": [
+          {
+            "label": "담당",
+            "text": "Gemini 분석 프롬프트와 API 라우트, 문서 화면, 네 가지 다이어그램 화면, 결과 페이지. GitHub 연동과 퀴즈는 팀원이 만들었습니다."
+          },
+          {
+            "label": "가장 어려웠던 문제",
+            "text": "LLM이 만든 다이어그램이 실제로 렌더링되게 하는 것. 프롬프트에 엄격한 JSON 규약을 두고, 화면에 그리기 전에 문법을 보정하고 파싱 검사를 거칩니다."
+          },
+          {
+            "label": "구현",
+            "text": "클릭 가능한 아키텍처·기능 흐름·클래스·의존성 맵 화면, 스크롤에 맞춰 움직이는 목차와 페이지 내 검색을 갖춘 문서."
+          },
+          {
+            "label": "한계",
+            "text": "해커톤 프로토타입입니다. 저장소당 최대 50개 파일만 읽고, 다이어그램이 실패해도 재시도하지 않으며, 사용자 테스트는 하지 않았습니다. 수상하지 못했습니다."
+          }
+        ]
+      },
+      "contentsLabel": "프로젝트 살펴보기",
+      "facts": [
+        {
+          "label": "역할",
+          "value": "AI 분석 프롬프트, 문서·다이어그램 UI"
+        },
+        {
+          "label": "팀",
+          "value": "2인 팀 · IBM Bob 해커톤 · 2026년 5월"
+        },
+        {
+          "label": "개발 기간",
+          "value": "48시간 온라인 행사 중 약 33시간"
+        },
+        {
+          "label": "도구",
+          "value": "IBM Bob, Claude Code (AI 활용 개발)"
+        }
+      ],
+      "cover": {
+        "src": "/images/projects/seenior/uml-flowchart.png",
+        "alt": "expressjs/express에 대한 Seenior 리포트의 아키텍처 화면. 브라우저, Express 애플리케이션, 미들웨어, 라우트 핸들러, 뷰 렌더러, 데이터 저장소를 잇는 흐름도와 각 모듈 설명 패널",
+        "caption": "expressjs/express의 아키텍처 화면. 상자는 유형별로 색이 구분되고, 오른쪽 패널이 각 모듈을 설명합니다. 상자를 클릭하면 해당 설명이 선택됩니다."
+      },
+      "parts": [
+        {
+          "label": "개요",
+          "description": "문제와 제품",
+          "sections": [
+            { "id": "why", "label": "만든 이유" },
+            { "id": "product", "label": "Seenior의 기능" }
+          ]
+        },
+        {
+          "label": "엔지니어링",
+          "description": "결정, 트레이드오프, 한계",
+          "sections": [
+            { "id": "how", "label": "동작 방식" },
+            { "id": "diagrams", "label": "렌더링되는 다이어그램" },
+            { "id": "codebase-map", "label": "의존성 맵" },
+            { "id": "validation", "label": "근거와 한계" }
+          ]
+        },
+        {
+          "label": "마무리",
+          "description": "담당 범위와 배운 점",
+          "sections": [
+            { "id": "reflection", "label": "팀과 배운 점" }
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "why",
+          "eyebrow": "만든 이유",
+          "heading": "큰 저장소에는 지도가 없다",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "학교 과제에서는 기존의 큰 코드베이스를 받아 기능을 더하는 일이 많았습니다. 코드를 한 줄 쓰기도 전에 파일을 하나씩 열어 보며 요청이 어디로 들어오는지, 어떤 모듈이 중요한지, 서로 어떻게 연결되는지 파악하느라 오랜 시간을 썼습니다. README는 이런 질문에 거의 답해 주지 않았습니다."
+            },
+            {
+              "type": "p",
+              "text": "IBM Bob 해커톤의 주제는 IBM의 Bob을 AI 개발 파트너로 삼아 소프트웨어 개발 방식을 개선하는 도구였습니다. 팀원과 저는 이 문제를 골랐습니다. 낯선 저장소의 코드를 읽기 전에 먼저 볼 수 있는 첫 지도를 주는 것입니다."
+            },
+            {
+              "type": "stats",
+              "items": [
+                { "value": "~33시간", "label": "첫 커밋부터 제출까지" },
+                { "value": "2명", "label": "팀 인원" },
+                { "value": "503", "label": "행사에 제출된 프로젝트 수" },
+                { "value": "5,628", "label": "행사 전체 참가자 수" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "product",
+          "eyebrow": "Seenior의 기능",
+          "heading": "URL 하나, 코드베이스로 들어가는 세 가지 길",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "첫 화면에서는 GitHub URL과 체크박스 세 개만 받습니다. 리포트는 탭으로 열려서 글, 그림, 질문 중 원하는 것부터 볼 수 있습니다."
+            },
+            {
+              "type": "figure",
+              "figure": {
+                "src": "/images/projects/seenior/landing.png",
+                "alt": "GitHub URL 입력란과 문서, UML / 흐름도, 퀴즈 체크박스가 있는 Seenior 첫 화면",
+                "caption": "시작 화면: 저장소 URL과 생성할 결과물 선택. \"60초\" 문구는 발표용 슬로건이었습니다. 리포트 생성에 걸리는 대략적인 시간이지, 코드베이스를 이해하는 데 걸리는 시간은 아닙니다."
+              }
+            },
+            {
+              "type": "paths",
+              "items": [
+                {
+                  "label": "문서",
+                  "text": "목적, 아키텍처, 핵심 구성 요소, 파일 구조, 사용 기술, 설치 방법, API, 예제로 이뤄진 8개 섹션의 설명. 목차가 스크롤 위치를 따라가고, 페이지 내 검색은 일치 항목을 강조합니다."
+                },
+                {
+                  "label": "다이어그램",
+                  "text": "네 가지 화면: 모듈 단위 아키텍처 흐름도, 실제 파일을 따라가는 기능별 흐름, 코드에 클래스 구조가 있을 때의 클래스 다이어그램, 파일 단위 의존성 맵."
+                },
+                {
+                  "label": "퀴즈",
+                  "text": "해설이 포함된 객관식 10문항으로 이해한 내용을 확인합니다."
+                }
+              ]
+            },
+            {
+              "type": "figure",
+              "figure": {
+                "src": "/images/projects/seenior/documentation.png",
+                "alt": "expressjs/express에 대한 Seenior 문서 탭. 왼쪽에 번호가 매겨진 목차, 검색창, 프로젝트 개요 섹션",
+                "caption": "expressjs/express의 문서. 왼쪽 목차가 스크롤 위치를 따라갑니다."
+              }
+            }
+          ]
+        },
+        {
+          "id": "how",
+          "eyebrow": "동작 방식",
+          "heading": "요청 한 번으로 URL에서 리포트까지",
+          "blocks": [
+            {
+              "type": "steps",
+              "items": [
+                "브라우저가 URL과 선택한 결과물을 Next.js API 라우트로 보냅니다.",
+                "Octokit이 저장소를 탐색해 소스·설정 파일을 최대 50개까지 내려받습니다.",
+                "각 파일은 앞부분 2,000자만 남겨 프롬프트에 담습니다.",
+                "결과물마다 Gemini를 한 번씩 호출합니다. 문서는 Markdown, 다이어그램과 퀴즈는 JSON으로 받습니다.",
+                "결과 페이지가 Markdown, Mermaid 다이어그램, 인터랙티브 의존성 그래프를 렌더링합니다."
+              ]
+            },
+            {
+              "type": "p",
+              "text": "모든 것이 Next.js 앱 하나에서 돌아갑니다. API 라우트 두 개와 React 페이지뿐이고, 별도 서버나 데이터베이스는 없습니다. 덕분에 두 사람이 주말 동안 만든 앱을 Vercel에 간단히 배포할 수 있었고, 데모는 지금도 동작합니다."
+            },
+            {
+              "type": "p",
+              "text": "모델은 품질만큼이나 예산으로 정해졌습니다. Gemini 2.5 Flash-Lite로 시작해 다이어그램 프롬프트를 구조화하면서 2.5 Flash로 바꿨고, 마감 약 한 시간 전 API 사용 한도에 걸려 다시 Flash-Lite로 돌아갔습니다. 같은 저장소에서 일관된 리포트가 나오도록 temperature는 0으로 두었습니다."
+            },
+            {
+              "type": "link",
+              "label": "라이브 데모 보기",
+              "href": "https://seenior.vercel.app/"
+            }
+          ]
+        },
+        {
+          "id": "diagrams",
+          "eyebrow": "결정 01",
+          "heading": "모델이 만든 다이어그램을 신뢰하지 않는 입력으로 다루기",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "Mermaid는 엄격해서 문자 하나만 잘못돼도 다이어그램이 그려지지 않습니다. 첫 다이어그램 프롬프트는 Gemini에 클래스·시퀀스·컴포넌트 다이어그램을 Mermaid 코드 블록으로 달라고만 했습니다. 그 결과 자유 형식 텍스트에서 다이어그램을 찾아내야 했고, 문법을 제한할 방법이 없어 클래스 다이어그램이 계속 파싱에 실패했습니다."
+            },
+            {
+              "type": "p",
+              "text": "둘째 날 다이어그램 프롬프트를 두 번 다시 썼고, 그때마다 모델이 돌려줄 수 있는 범위를 좁혔습니다."
+            },
+            {
+              "type": "table",
+              "caption": "다이어그램 프롬프트의 세 가지 버전",
+              "columns": ["버전", "모델이 돌려준 것", "다음에 바꾼 점"],
+              "rows": [
+                [
+                  "v1",
+                  "클래스·시퀀스·컴포넌트 다이어그램이 담긴 Mermaid 코드 블록과 설명 글이 섞인 Markdown",
+                  "텍스트에서 다이어그램을 뽑아내지 않도록 JSON으로 전환"
+                ],
+                [
+                  "v2",
+                  "클래스·시퀀스 다이어그램과 노드별 설명·분류를 담은 JSON. 크기 상한(클래스 7개, 액터 5개, 메시지 10개 이하)과 영숫자만 쓰는 이름",
+                  "Next.js나 Express 코드베이스는 대부분 클래스가 아닌 함수라서 클래스 다이어그램만으로는 대부분을 놓침"
+                ],
+                [
+                  "v3",
+                  "네 가지 화면을 담은 JSON: 아키텍처(모듈 5~8개), 기능 흐름(실제 파일 경로를 따라가는 기능 3~6개), 서로 관계있는 클래스가 3개 이상일 때만 만드는 클래스 다이어그램, 파일 의존성 맵",
+                  "최종 제출 버전"
+                ]
+              ]
+            },
+            {
+              "type": "p",
+              "text": "규약은 양쪽에서 지킵니다. 모델 쪽에서는 JSON 응답 모드, temperature 0, 그리고 프롬프트에 적은 문법 규칙(class 키워드만 사용, 별칭·제네릭 타입·코드 펜스 금지)을 씁니다. 화면 쪽에서는 남은 코드 펜스를 지우고, Mermaid가 해석하지 못하는 간선 라벨을 없애고, API 경로처럼 슬래시가 들어간 라벨을 따옴표로 감쌉니다. 그런 다음 Mermaid 자체 파서로 검사한 뒤에만 렌더링합니다."
+            },
+            {
+              "type": "compare",
+              "before": {
+                "label": "다이어그램을 요청하기",
+                "points": [
+                  "코드 블록이 섞인 자유 형식 Markdown",
+                  "크기도 문법도 제한 없음",
+                  "파싱되지 않는 다이어그램 하나가 페이지 전체를 멈출 수 있음"
+                ]
+              },
+              "after": {
+                "label": "명세하고 검사하기",
+                "points": [
+                  "키와 크기 제한이 정해진 JSON 객체 하나",
+                  "문법 규칙은 프롬프트에, 보정은 화면에서",
+                  "먼저 파싱 검사, 실패하면 멈추는 대신 원본을 표시"
+                ]
+              }
+            },
+            {
+              "type": "p",
+              "text": "모든 노드의 설명이 같은 JSON에 함께 오기 때문에 다이어그램을 클릭할 수 있습니다. 상자를 선택하면 그 모듈이 하는 일을 보여 줍니다. 처음에는 마우스를 올릴 때도 연동했지만, 커서가 움직일 때마다 다른 노드가 흐려지는 것이 갑자기 확대되는 것처럼 보여 클릭할 때만 선택되도록 했습니다."
+            }
+          ]
+        },
+        {
+          "id": "codebase-map",
+          "eyebrow": "결정 02",
+          "heading": "의존성은 물리 시뮬레이션이 아니라 위에서 아래로",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "의존성 맵은 가장 중요한 파일 12~20개와 그 사이의 import 관계를 보여 줍니다. 첫 버전은 d3-force 시뮬레이션으로 노드를 배치했습니다. 노드끼리는 밀어내고 간선은 당기면서 배치가 안정될 때까지 움직이는 방식입니다. 바로 다음 커밋에서 이를 교체했습니다."
+            },
+            {
+              "type": "p",
+              "text": "force 레이아웃에는 방향이 없지만 import에는 방향이 있습니다. 페이지가 라우트를 호출하고, 라우트가 라이브러리를 씁니다. dagre는 노드를 층으로 나눠 의존성 사슬이 위에서 아래로 읽히게 하고, XYFlow는 이를 이동·확대할 수 있는 미니맵 달린 그래프로 그립니다. 파일을 선택하면 그 역할과, 그 파일을 import하는 파일과 그 파일이 import하는 파일의 수가 표시됩니다."
+            }
+          ]
+        },
+        {
+          "id": "validation",
+          "eyebrow": "근거와 한계",
+          "heading": "할 수 있는 것과 부족한 점",
+          "blocks": [
+            {
+              "type": "stats",
+              "items": [
+                { "value": "≤50", "label": "저장소당 읽는 파일 수" },
+                { "value": "2,000", "label": "파일당 남기는 글자 수" },
+                { "value": "3", "label": "전체 리포트당 순차 실행되는 Gemini 호출" },
+                { "value": "0", "label": "진행한 사용자 테스트" }
+              ]
+            },
+            {
+              "type": "p",
+              "text": "Seenior는 해커톤 프로토타입입니다. 라이브 데모와 함께 제출했지만 수상하지 못했고, 사용자 테스트를 하지 않았으므로 실제로 누군가의 파악 시간을 줄였다는 근거는 없습니다. 코드를 다시 읽어 보면 주요 한계는 다음과 같습니다."
+            },
+            {
+              "type": "list",
+              "items": [
+                "파일을 중요도가 아닌 순서로 고릅니다. GitHub가 나열하는 순서대로 조건에 맞는 첫 50개 파일을 가져오고, 설정 파일도 포함됩니다. expressjs/express에서는 퀴즈가 라우팅이나 미들웨어 대신 ESLint 설정과 Dependabot 설정을 물었습니다.",
+                "파일마다 2,000자(퀴즈는 1,500자)에서 잘라서 큰 파일은 앞부분만 모델에 전달됩니다.",
+                "세 가지 생성 작업이 차례로 실행됩니다. 병렬로 실행하면 대기 시간이 줄어드는데, 저장소에 이미 그렇게 하는 사용되지 않은 헬퍼가 있습니다.",
+                "다이어그램이 파싱 검사를 통과하지 못하면 원본을 보여 줄 뿐 다시 시도하지 않습니다.",
+                "파일마다 GitHub API 요청을 따로 보내므로, 토큰 없이는 큰 저장소 하나로도 시간당 60회 제한을 다 쓸 수 있습니다."
+              ]
+            },
+            {
+              "type": "figure",
+              "figure": {
+                "src": "/images/projects/seenior/quiz.png",
+                "alt": "expressjs/express에 대한 Seenior 퀴즈 탭. 앞의 두 문항이 ESLint 규칙과 Dependabot 설정을 묻고 있음",
+                "caption": "expressjs/express의 퀴즈. 보이는 두 문항 모두 설정 파일에 관한 것으로, 나열된 순서대로 파일을 읽은 결과입니다."
+              }
+            }
+          ]
+        },
+        {
+          "id": "reflection",
+          "eyebrow": "팀과 배운 점",
+          "heading": "제가 맡은 것과 배운 것",
+          "blocks": [
+            {
+              "type": "p",
+              "text": "팀원은 프로젝트를 세팅하고 GitHub 연동(URL 파싱, 저장소 메타데이터, 파일 수집)과 퀴즈 페이지를 만들었습니다. 저는 Gemini 프롬프트와 분석 라우트를 작성하고, 문서 화면, 네 가지 다이어그램 화면, 결과 페이지를 만들었습니다. 둘 다 IBM Bob과 Claude Code로 개발했습니다. 저는 UI와 렌더링 버그에 대한 검토 의견을 작성해 에이전트가 단계별로 수정하게 하고, 결과를 브라우저에서 확인했습니다."
+            },
+            {
+              "type": "list",
+              "items": [
+                "구조화된 LLM 출력에는 양쪽 모두에 규약이 필요합니다. 프롬프트에서 제한하니 실패가 줄었고, 렌더링 전에 검사하니 남은 실패가 문제를 일으키지 않았습니다. 어느 한쪽만으로는 부족했습니다.",
+                "프롬프트에 무엇을 넣는지가 문구만큼 중요합니다. 설정 파일에 관한 퀴즈 문항은 퀴즈 프롬프트의 표현이 아니라 어떤 파일을 읽었는지에서 나왔습니다.",
+                "대표 숫자는 무엇을 측정했는지 말해야 합니다. \"60초\"는 생성 시간이었지만, 코드베이스를 이해하는 시간처럼 읽혔습니다."
+              ]
+            }
+          ]
+        }
+      ]
     }
   }
 };

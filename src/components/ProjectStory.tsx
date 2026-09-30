@@ -30,6 +30,43 @@ function Block({ block, aspect }: { block: StoryBlock; aspect: string }) {
   // Tables style their first column as a short mono key unless marked as prose.
   const keyColumn = block.type === "table" && block.firstColumn !== "text";
   switch (block.type) {
+    case "responsibilityDiagram":
+      return (
+        <figure className="mt-8 border border-zinc-200 bg-zinc-50 p-5 sm:p-8">
+          <figcaption className="text-sm font-medium leading-relaxed text-zinc-600">{block.caption}</figcaption>
+          <div className="mt-6 border border-zinc-300 bg-white p-4 text-center text-sm font-semibold">{block.source}</div>
+          <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
+            {block.lanes.map((lane) => (
+              <div key={lane.title} className="flex min-w-0 flex-col">
+                <div className="flex flex-col items-center py-3 text-center">
+                  <span aria-hidden="true" className="h-5 border-l border-zinc-400" />
+                  <span className="my-2 text-xs leading-relaxed text-zinc-600">{lane.input}</span>
+                  <span aria-hidden="true" className="text-zinc-400">↓</span>
+                </div>
+                <div className="flex-1 border border-zinc-300 bg-white p-5">
+                  <h3 className="text-xl font-semibold tracking-tight">{lane.title}</h3>
+                  <p className="mt-1 text-sm font-medium text-zinc-500">{lane.role}</p>
+                  <ul className="mt-4 space-y-3 border-t border-zinc-100 pt-4">
+                    {lane.tasks.map((task) => (
+                      <li key={task} className="text-sm leading-relaxed text-zinc-700">{task}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="flex flex-col items-center py-3 text-center">
+                  <span aria-hidden="true" className="text-lg text-zinc-500">↕</span>
+                  <p className="mt-1 text-xs leading-relaxed text-zinc-600">{lane.exchange}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="border border-zinc-800 bg-zinc-900 p-5 text-center text-white">
+            <p className="text-lg font-semibold">{block.database}</p>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-300">{block.stored}</p>
+          </div>
+          <p className="mt-4 text-sm font-medium leading-relaxed text-zinc-800">{block.handoff}</p>
+          <p className="mt-3 border-t border-zinc-200 pt-3 text-sm leading-relaxed text-zinc-600">{block.tradeoff}</p>
+        </figure>
+      );
     case "requestFlow":
       return (
         <figure className="mt-8 border border-zinc-200 bg-zinc-50 p-5 sm:p-8">

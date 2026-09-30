@@ -17,7 +17,7 @@ export const PROJECTS_META = [
   },
   {
     slug: "seenior",
-    stack: ["React", "Node.js", "Google Gemini API", "GitHub REST API (Octokit)", "Mermaid.js", "D3.js", "XYFlow"],
+    stack: ["Next.js", "TypeScript", "Gemini API", "Octokit", "Mermaid.js", "XYFlow"],
     imageAspect: "aspect-[1600/873]",
     images: [
       "/images/projects/seenior/landing.png",

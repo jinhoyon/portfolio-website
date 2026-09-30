@@ -62,8 +62,8 @@ export const translations = {
           period: "May 2026",
           title: "Seenior — AI-Powered Developer Onboarding",
           summary:
-            "LLM app that turns any public GitHub repo into documentation, interactive UML diagrams, and quizzes, cutting codebase ramp-up from hours to under 60 seconds.",
-          metric: "Ramp-up time: hours → under 60 seconds",
+            "LLM app that turns a public GitHub repo into documentation, interactive architecture diagrams, and a quiz. Built by a team of 2 in about 33 hours for the IBM Bob Hackathon.",
+          metric: "Four interactive diagram views from one repo URL",
           objective:
             "Cut the time it takes a developer to understand an unfamiliar codebase from hours of manual file-reading to under a minute.",
           problem:
@@ -260,8 +260,8 @@ export const translations = {
           period: "2026.05",
           title: "Seenior — AI 기반 개발자 온보딩 도구",
           summary:
-            "공개 GitHub 저장소를 문서, 인터랙티브 UML 다이어그램, 퀴즈로 변환하는 LLM 앱으로, 코드베이스 파악 시간을 수 시간에서 60초 이내로 줄였습니다.",
-          metric: "코드베이스 파악 시간: 수 시간 → 60초 이내",
+            "공개 GitHub 저장소를 문서, 인터랙티브 아키텍처 다이어그램, 퀴즈로 변환하는 LLM 앱입니다. IBM Bob 해커톤에서 2인 팀이 약 33시간 만에 만들었습니다.",
+          metric: "저장소 URL 하나로 만드는 네 가지 인터랙티브 다이어그램",
           objective:
             "낯선 코드베이스를 파악하는 데 걸리는 시간을 수 시간의 수동 파일 읽기에서 1분 이내로 단축하는 것이 목표였습니다.",
           problem:
