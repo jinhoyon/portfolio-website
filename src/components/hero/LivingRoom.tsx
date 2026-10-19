@@ -437,7 +437,8 @@ export default function LivingRoom({ className = "" }: { className?: string }) {
     place(buildBushPlant(), [2.85, 0, -2.95], 0.8);
     place(buildBushPlant(0.55), [-3.1, 0, 2.4], 0.9);
     place(buildLamp(), [-2.0, 0, -3.15], 0.6);
-    place(buildCoffeeTable(), [0.55, 0, 0.75], 0.45, 0);
+    // Stands on the rug (0.04 thick), not inside it: overlapping discs flicker (z-fighting).
+    place(buildCoffeeTable(), [0.55, 0.04, 0.75], 0.45, 0);
     void sofa;
 
     // Camera: orthographic, looking at the open corner from above.
