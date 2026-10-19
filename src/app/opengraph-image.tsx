@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 // Link-preview card (iMessage, Slack, LinkedIn, X). Without it, previews fall back to
 // cropping the first large image on the page, which is a project screenshot.
-export const alt = "Jinho (Roy) Yon — Software that makes complex things clear.";
+export const alt = "Jinho (Roy) Yon, software engineer building fullstack and AI products";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -58,8 +58,8 @@ export default async function Image() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 84, fontWeight: 600, lineHeight: 1.08, letterSpacing: -2.5, maxWidth: 900 }}>
-            <Words text="Software that makes complex things clear." fontSize={84} />
+          <div style={{ display: "flex", fontSize: 84, fontWeight: 600, lineHeight: 1.08, letterSpacing: -2.5, maxWidth: 1040 }}>
+            <Words text="Hi, I’m Roy. I build fullstack and AI products." fontSize={84} />
           </div>
           <div
             style={{
