@@ -154,19 +154,19 @@ export const translations = {
         { title: "Languages", items: ["Python", "Java", "TypeScript", "JavaScript", "SQL", "Kotlin", "HTML/CSS", "XML", "C/C++"] },
         {
           title: "Frontend",
-          items: ["React.js", "React Native", "Tailwind CSS", "Three.js", "D3.js", "Mermaid.js", "Android (Kotlin/XML)"],
+          items: ["React.js", "React Native", "Tailwind CSS", "Three.js", "D3.js", "Mermaid.js"],
         },
         {
           title: "Backend & Data",
-          items: ["Node.js", "Express.js", "Java Servlets", "Spring Boot", "MyBatis", "REST APIs", "MySQL", "APScheduler", "STOMP WebSocket"],
+          items: ["Node.js", "Express.js", "Java Servlets", "Spring Boot", "MyBatis", "MySQL", "APScheduler", "STOMP WebSocket"],
         },
         {
           title: "AI / LLM",
           items: ["Google Gemini", "Prompt Engineering", "LLM Output Validation"],
         },
         {
-          title: "DevOps & Tools",
-          items: ["Git & GitHub", "GitHub API (Octokit)", "Render", "Figma", "Claude Code", "VS Code", "Android Studio"],
+          title: "Tools",
+          items: ["Git & GitHub", "Figma", "Claude Code"],
         },
       ],
       usedIn: "Used in",
@@ -373,19 +373,19 @@ export const translations = {
         { title: "언어", items: ["Python", "Java", "TypeScript", "JavaScript", "SQL", "Kotlin", "HTML/CSS", "XML", "C/C++"] },
         {
           title: "프론트엔드",
-          items: ["React.js", "React Native", "Tailwind CSS", "Three.js", "D3.js", "Mermaid.js", "Android (Kotlin/XML)"],
+          items: ["React.js", "React Native", "Tailwind CSS", "Three.js", "D3.js", "Mermaid.js"],
         },
         {
           title: "백엔드 & 데이터",
-          items: ["Node.js", "Express.js", "Java Servlets", "Spring Boot", "MyBatis", "REST APIs", "MySQL", "APScheduler", "STOMP WebSocket"],
+          items: ["Node.js", "Express.js", "Java Servlets", "Spring Boot", "MyBatis", "MySQL", "APScheduler", "STOMP WebSocket"],
         },
         {
           title: "AI / LLM",
           items: ["Google Gemini", "Prompt Engineering", "LLM Output Validation"],
         },
         {
-          title: "DevOps & 도구",
-          items: ["Git & GitHub", "GitHub API (Octokit)", "Render", "Figma", "Claude Code", "VS Code", "Android Studio"],
+          title: "도구",
+          items: ["Git & GitHub", "Figma", "Claude Code"],
         },
       ],
       usedIn: "사용한 곳",
