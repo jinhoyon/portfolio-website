@@ -6,7 +6,7 @@ import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeom
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 // A cut-away living room on a layered floor slab, seen from above at an angle:
-// a Togo-style sofa with code-icon pillows, plants, a lamp, a coffee table with
+// a chunky leather sofa with code-icon pillows, plants, a lamp, a coffee table with
 // a laptop, and a print on the wall. Built from rounded primitives, no models.
 
 const ROOM = 8; // footprint, units
@@ -19,7 +19,7 @@ const C = {
   screed: "#f1ece4",
   insulation: "#cfc8bd",
   concrete: "#8b7d6b",
-  sofa: "#7c97ba",
+  sofa: "#93602f", // worn cognac leather
   rug: "#e4d3bf",
   table: "#c9a274",
   pot: "#f1ede6",
@@ -170,37 +170,154 @@ function mesh(geometry: THREE.BufferGeometry, material: THREE.Material, pos: [nu
   return m;
 }
 
-/** Togo-style sofa: a soft base wrapped in horizontal rolls, back leaning away. Front faces +z. */
+/**
+ * A puffy cushion: a superellipsoid (a rounded box whose faces bulge), half-sizes a, b, c.
+ * Lower exponents are boxier. Cushions pressed against each other form sunken seams; vertex
+ * colour darkens toward the seam sides listed in `seams` so the creases read at small sizes.
+ */
+function cushion(a: number, b: number, c: number, seams: ("x" | "y" | "z")[], e1 = 0.5, e2 = 0.45, bend = 0) {
+  const geo = new THREE.SphereGeometry(1, 40, 24);
+  const pos = geo.attributes.position;
+  const colors = new Float32Array(pos.count * 3);
+  const f = (w: number, m: number) => Math.sign(w) * Math.pow(Math.abs(w), m);
+  const half = { x: a, y: b, z: c };
+  for (let i = 0; i < pos.count; i++) {
+    const u = Math.asin(THREE.MathUtils.clamp(pos.getY(i), -1, 1));
+    const v = Math.atan2(pos.getZ(i), pos.getX(i));
+    const p = {
+      x: a * f(Math.cos(u), e1) * f(Math.cos(v), e2),
+      y: b * f(Math.sin(u), e1),
+      z: c * f(Math.cos(u), e1) * f(Math.sin(v), e2),
+    };
+    let shade = 1;
+    for (const axis of seams) {
+      const d = Math.abs(p[axis] / half[axis]);
+      shade -= 0.42 * THREE.MathUtils.smoothstep(d, 0.72, 1);
+    }
+    // Optional bow along x: the ends come forward.
+    if (bend) p.z += bend * (p.x / a) * (p.x / a);
+    pos.setXYZ(i, p.x, p.y, p.z);
+    const k = Math.max(shade, 0.45);
+    colors.set([k, k, k], i * 3);
+  }
+  geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// Fine leather grain, used as a bump map.
+const grainTexture = () => {
+  const tex = canvasTexture(256, (ctx, s) => {
+    const img = ctx.createImageData(s, s);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const n = 128 + (Math.random() - 0.5) * 70;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = n;
+      img.data[i + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  });
+  tex.colorSpace = THREE.NoColorSpace;
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(3, 2);
+  return tex;
+};
+
+// Three-seater footprint (local, front faces +z, back at -D/2).
+const SOFA = { W: 3.4, D: 1.15, seatY: 0.6 };
+
+// Worn leather: soft lighter and darker patches over the base colour.
+const wornLeatherTexture = () =>
+  canvasTexture(256, (ctx, s) => {
+    ctx.fillStyle = C.sofa;
+    ctx.fillRect(0, 0, s, s);
+    let seed = 7;
+    const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    for (let i = 0; i < 70; i++) {
+      const x = rand() * s;
+      const y = rand() * s;
+      const r = 10 + rand() * 40;
+      const light = rand() > 0.5;
+      const spot = ctx.createRadialGradient(x, y, 0, x, y, r);
+      spot.addColorStop(0, light ? "rgba(255, 214, 160, 0.16)" : "rgba(60, 30, 10, 0.14)");
+      spot.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = spot;
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+  });
+
+/**
+ * Chunky three-seater in worn cognac leather: a slim plinth on thin straight metal legs, two
+ * thick seat cushions, two puffy back cushions, and boxy arms as tall as the back.
+ */
 function buildSofa() {
   const g = new THREE.Group();
-  const fabric = new THREE.MeshPhysicalMaterial({
-    color: C.sofa,
-    roughness: 0.9,
-    sheen: 1,
-    sheenRoughness: 0.6,
-    sheenColor: new THREE.Color("#dbe6f3"),
+  const map = wornLeatherTexture();
+  map.wrapS = map.wrapT = THREE.RepeatWrapping;
+  const leather = new THREE.MeshPhysicalMaterial({
+    color: "#ffffff",
+    map,
+    roughness: 0.55,
+    clearcoat: 0.2,
+    clearcoatRoughness: 0.6,
+    bumpMap: grainTexture(),
+    bumpScale: 0.5,
   });
-  const width = 3.4;
-  g.add(mesh(rounded(width, 0.55, 1.55, 0.26), fabric, [0, 0.28, 0.05]));
-  // Back slab, leaning away, then the pleats stacked over it.
-  const back = mesh(rounded(width, 1.35, 0.55, 0.26), fabric, [0, 0.95, -0.52]);
-  back.rotation.x = -0.28;
-  g.add(back);
-  const roll = (r: number, y: number, z: number) => {
-    const m = mesh(new THREE.CapsuleGeometry(r, width - 2 * r, 8, 24), fabric, [0, y, z]);
-    m.rotation.z = Math.PI / 2;
+  const quilted = leather.clone();
+  quilted.vertexColors = true; // cushions carry seam shading in vertex colour
+  const metal = std("#9a9a9f", { roughness: 0.3, metalness: 0.85 });
+  const { W, D, seatY } = SOFA;
+  const hw = W / 2;
+  const back = -D / 2;
+  const add = (geo: THREE.BufferGeometry, mat: THREE.Material, pos: [number, number, number], rx = 0) => {
+    const m = mesh(geo, mat, pos);
+    m.rotation.x = rx;
     g.add(m);
+    return m;
   };
-  roll(0.25, 0.27, 0.78); // front, at the floor
-  roll(0.23, 0.55, 0.6); // seat edge
-  for (let k = 0; k < 4; k++) roll(0.26 - k * 0.012, 0.72 + k * 0.29, -0.42 - k * 0.1); // back pleats
+
+  // Thin straight legs and a slim plinth on them.
+  const legH = 0.2;
+  for (const x of [-hw + 0.2, 0, hw - 0.2]) {
+    for (const z of [back + 0.16, D / 2 - 0.16]) {
+      const rod = mesh(new THREE.CylinderGeometry(0.022, 0.022, legH, 10), metal, [x, legH / 2, z]);
+      g.add(rod);
+    }
+  }
+  add(new THREE.BoxGeometry(W - 0.12, 0.025, D - 0.12), metal, [0, legH + 0.0125, 0]);
+  const plinthH = 0.18;
+  add(rounded(W, plinthH, D, 0.07), leather, [0, legH + 0.025 + plinthH / 2, 0]);
+  const plinthTop = legH + 0.025 + plinthH;
+
+  // Boxy arms, as tall as the back.
+  const armW = 0.34;
+  const topY = seatY + 0.42;
+  const armH = topY - plinthTop;
+  for (const side of [-1, 1]) {
+    add(cushion(armW / 2, armH / 2, D / 2, ["y"], 0.3, 0.28), quilted, [side * (hw - armW / 2), plinthTop + armH / 2, 0]);
+  }
+
+  // Back: a frame panel between the arms, with two puffy cushions leaning on it.
+  const inner = W - 2 * armW;
+  const backT = 0.2;
+  add(rounded(inner + 0.04, armH, backT, 0.08), leather, [0, plinthTop + armH / 2, back + backT / 2]);
+  for (let i = 0; i < 2; i++) {
+    add(cushion(inner / 4 + 0.02, 0.21, 0.13, ["x", "y"], 0.42, 0.34), quilted, [-inner / 2 + (inner / 2) * (i + 0.5), seatY + 0.2, back + backT + 0.1], -0.1);
+  }
+
+  // Two thick seat cushions with soft, rolled front edges.
+  const seatH = seatY - plinthTop;
+  const seatD = D - backT - 0.02;
+  for (let i = 0; i < 2; i++) {
+    add(cushion(inner / 4 + 0.02, seatH / 2 + 0.02, seatD / 2, ["x"], 0.42, 0.3), quilted, [-inner / 2 + (inner / 2) * (i + 0.5), plinthTop + seatH / 2, back + backT + seatD / 2]);
+  }
   return g;
 }
 
-function buildPillow(color: string, icon: keyof typeof ICON_PATHS, iconColor: string) {
+function buildPillow(color: string, icon: keyof typeof ICON_PATHS | null, iconColor: string) {
   const g = new THREE.Group();
   const body = mesh(rounded(0.8, 0.8, 0.26, 0.12), new THREE.MeshPhysicalMaterial({ color, roughness: 0.85, sheen: 0.6 }), [0, 0, 0]);
   g.add(body);
+  if (!icon) return g;
   const decal = new THREE.Mesh(
     new THREE.PlaneGeometry(0.5, 0.5),
     new THREE.MeshStandardMaterial({ map: iconTexture(icon, iconColor), transparent: true, roughness: 0.9 })
@@ -418,28 +535,33 @@ export default function LivingRoom({ className = "" }: { className?: string }) {
       return object;
     };
 
-    const sofa = place(buildSofa(), [0.35, 0, -2.55], 0.25);
+    // Sofa with its back to the wall.
+    const SOFA_POS: [number, number, number] = [0.35, 0, -3.0];
+    const SOFA_SCALE = 1.15;
+    place(buildSofa(), SOFA_POS, 0.25).scale.setScalar(SOFA_SCALE);
     const pillows: THREE.Object3D[] = [];
-    const pillowSpecs: [string, keyof typeof ICON_PATHS, string, number, number][] = [
-      ["#27272a", "terminal", "#4ade80", -1.0, 0.12],
-      ["#f4f4f5", "database", "#2563eb", 0.05, -0.04],
-      ["#fcd34d", "braces", "#27272a", 1.05, -0.14],
+    // [colour, icon or none, icon colour, x along the sofa, tilt]
+    const pillowSpecs: [string, keyof typeof ICON_PATHS | null, string, number, number][] = [
+      ["#27272a", "terminal", "#4ade80", -0.85, 0.12],
+      ["#f4f4f5", "database", "#2563eb", 0, -0.04],
+      ["#fcd34d", "braces", "#27272a", 0.85, -0.12],
     ];
     pillowSpecs.forEach(([color, icon, ink, x, tilt], i) => {
       const p = buildPillow(color, icon, ink);
-      p.rotation.set(-0.32, tilt * 0.6, tilt);
+      p.rotation.set(-0.24, tilt * 0.6, tilt);
+      p.scale.setScalar(0.72 * SOFA_SCALE);
       p.userData.pillow = true;
       pillows.push(p);
-      place(p, [0.35 + x, 1.08, -2.55 - 0.02], 0.55 + i * 0.12);
+      // Resting on the seat, leaning on the back cushions.
+      place(p, [SOFA_POS[0] + x * SOFA_SCALE, (SOFA.seatY + 0.27) * SOFA_SCALE, SOFA_POS[2] - 0.13 * SOFA_SCALE], 0.55 + i * 0.12);
     });
-    place(buildArt(), [0.35, 3.1, -ROOM / 2 + WALL_T + 0.05], 0.15);
-    place(buildSnakePlant(), [-3.05, 0, -3.05], 0.7);
-    place(buildBushPlant(), [2.85, 0, -2.95], 0.8);
+    place(buildArt(), [0.35, 2.55, -ROOM / 2 + WALL_T + 0.05], 0.15);
+    place(buildSnakePlant(), [-3.2, 0, -3.15], 0.7);
+    place(buildBushPlant(), [3.2, 0, -3.2], 0.8); // far corner, clear of the arm
     place(buildBushPlant(0.55), [-3.1, 0, 2.4], 0.9);
-    place(buildLamp(), [-2.0, 0, -3.15], 0.6);
+    place(buildLamp(), [-2.4, 0, -3.2], 0.6);
     // Stands on the rug (0.04 thick), not inside it: overlapping discs flicker (z-fighting).
     place(buildCoffeeTable(), [0.55, 0.04, 0.75], 0.45, 0);
-    void sofa;
 
     // Camera: orthographic, looking at the open corner from above.
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
