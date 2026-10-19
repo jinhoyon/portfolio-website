@@ -6,8 +6,8 @@ import { ArrowDown, Mail } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations } from "@/lib/translations";
 
-// WebGL illustration: client-only and code-split so three.js stays out of the main bundle.
-const ParticleBust = dynamic(() => import("./hero/ParticleBust"), { ssr: false });
+// WebGL living room: client-only and code-split so three.js stays out of the main bundle.
+const LivingRoom = dynamic(() => import("./hero/LivingRoom"), { ssr: false });
 
 const container = {
   hidden: {},
@@ -33,7 +33,7 @@ export default function Hero() {
       id="top"
       className="relative h-[calc(100svh-4rem)] min-h-[560px] w-full overflow-hidden break-keep border-b border-zinc-200 bg-background"
     >
-      <ParticleBust className="absolute inset-0" />
+      <LivingRoom className="absolute inset-0" />
 
       {/* Fade the scene out behind the title so it stays legible. */}
       <div

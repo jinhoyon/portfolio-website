@@ -131,19 +131,25 @@ export const translations = {
       title: "Approach",
       values: [
         {
-          title: "Teaching Through Building",
+          title: "Code decides, AI explains.",
           description:
-            "Partnering with hardware, backend, and research teams — and writing the design/test documentation that turned research findings into behavior non-engineers could understand and use, across 2 peer-reviewed publications.",
+            "In Darfin, Java computes every risk status and Gemini only writes the explanation. A change in the model's wording can never change the verdict, and the result stays reproducible and testable.",
+          linkLabel: "How Darfin's risk engine works",
+          href: "/projects/darfin#risk-engine",
         },
         {
-          title: "Pragmatic AI Integration",
+          title: "Check model output before anything renders it.",
           description:
-            "Building with Claude Code and Gemini as daily tools, not just APIs — pairing structured data with LLM reasoning instead of over-engineering brittle parsers, e.g. redesigning a filing-analysis pipeline to combine rule-based fields with LLM-powered semantic analysis.",
+            "Seenior asks Gemini for diagrams as strict JSON with hard size caps, then repairs and parse-checks it before drawing, so one bad diagram can't take the page down.",
+          linkLabel: "How Seenior keeps diagrams renderable",
+          href: "/projects/seenior#diagrams",
         },
         {
-          title: "End-to-End Ownership",
+          title: "Write it down for people who aren't engineers.",
           description:
-            "Comfortable owning the full stack — relational schema design, payment lifecycles, and deployment — moving between Android/Kotlin, Java/Spring Boot, and React/Node.js as the problem demands.",
+            "At the Interactive Organisms Lab, my design and test documentation turned research findings into app behavior that hardware, backend, and UI teammates could build on.",
+          linkLabel: "See the lab role",
+          href: "/#experience",
         },
       ],
     },
@@ -350,19 +356,25 @@ export const translations = {
       title: "접근 방식",
       values: [
         {
-          title: "만들며 가르치기",
+          title: "코드가 판단하고, AI는 설명합니다.",
           description:
-            "하드웨어, 백엔드, 연구 팀과 협업하며 설계·테스트 문서를 직접 작성해, 연구 결과를 비개발 직군도 이해하고 활용할 수 있는 형태로 옮겼습니다. 이 과정은 동료 심사 논문 2편으로 이어졌습니다.",
+            "Darfin에서는 Java가 모든 리스크 상태를 계산하고 Gemini는 설명만 작성합니다. 모델의 문장이 바뀌어도 판정은 바뀌지 않고, 결과는 재현 가능하며 테스트할 수 있습니다.",
+          linkLabel: "Darfin 리스크 엔진 보기",
+          href: "/projects/darfin#risk-engine",
         },
         {
-          title: "실용적인 AI 통합",
+          title: "모델 출력은 그리기 전에 검사합니다.",
           description:
-            "Claude Code와 Gemini를 단순 API가 아닌 매일 쓰는 도구로 활용합니다. 취약한 파서를 과도하게 설계하는 대신 구조화된 데이터와 LLM 추론을 결합하는 방식을 선호하며, 공시 분석 파이프라인을 규칙 기반 필드와 LLM 기반 의미 분석을 결합해 재설계한 것이 대표적입니다.",
+            "Seenior는 Gemini에게 크기 제한이 있는 엄격한 JSON으로 다이어그램을 요청하고, 보정과 파싱 검사를 거친 뒤에만 화면에 그립니다. 잘못된 다이어그램 하나가 페이지 전체를 망가뜨리지 않습니다.",
+          linkLabel: "Seenior 다이어그램 보기",
+          href: "/projects/seenior#diagrams",
         },
         {
-          title: "엔드투엔드 오너십",
+          title: "개발자가 아닌 사람도 읽을 수 있게 씁니다.",
           description:
-            "관계형 스키마 설계부터 결제 생명주기, 배포까지 전 영역을 주도적으로 담당하며, 문제에 따라 Android/Kotlin, Java/Spring Boot, React/Node.js를 자유롭게 넘나듭니다.",
+            "Interactive Organisms Lab에서 작성한 설계·테스트 문서는 연구 결과를 하드웨어·백엔드·UI 팀원이 바로 구현할 수 있는 앱 동작으로 옮겼습니다.",
+          linkLabel: "연구실 경력 보기",
+          href: "/#experience",
         },
       ],
     },
