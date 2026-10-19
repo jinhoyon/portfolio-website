@@ -4,6 +4,8 @@ export const PROJECTS_META = [
     slug: "darfin",
     stack: ["React", "Spring Boot", "Java", "Python", "MariaDB", "Gemini 2.5 Flash"],
     imageAspect: "aspect-[1600/871]",
+    // Where the square polaroid crop of images[0] sits.
+    thumbPosition: "left top",
     images: [
       "/images/projects/darfin/landing.png",
       "/images/projects/darfin/watchlist.png",
@@ -19,6 +21,7 @@ export const PROJECTS_META = [
     slug: "seenior",
     stack: ["Next.js", "TypeScript", "Gemini API", "Octokit", "Mermaid.js", "XYFlow"],
     imageAspect: "aspect-[1600/873]",
+    thumbPosition: "center top",
     images: [
       "/images/projects/seenior/landing.png",
       "/images/projects/seenior/documentation.png",
@@ -31,6 +34,7 @@ export const PROJECTS_META = [
     slug: "fitsbug",
     stack: ["Java", "Servlets", "MyBatis", "MySQL", "REST APIs", "AJAX", "Toss Payments"],
     imageAspect: "aspect-16/9",
+    thumbPosition: "center top",
     images: [
       "/images/projects/fitsbug/app-overview.png",
       "/images/projects/fitsbug/schedule-and-revenue.png",
@@ -41,6 +45,7 @@ export const PROJECTS_META = [
     slug: "nail-pholish",
     stack: ["Kotlin", "XML", "Android Studio"],
     imageAspect: "aspect-16/9",
+    thumbPosition: "center top",
     images: [
       "/images/projects/nail-pholish/app-overview.png",
       "/images/projects/nail-pholish/measure-and-track.png",

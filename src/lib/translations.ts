@@ -25,6 +25,8 @@ export const translations = {
       title: "Projects",
       subtitle: "Two AI products, a fullstack marketplace, and an Android app from HCI research.",
       githubLabel: "GitHub Repo",
+      prev: "Previous project",
+      next: "Next project",
       viewDetails: "View Details",
       backToProjects: "Back to Projects",
       techStackLabel: "Tech Stack",
@@ -174,8 +176,25 @@ export const translations = {
     experience: {
       eyebrow: "Career",
       title: "Experience",
+      badgeName: "Jinho Yon",
+      prev: "Previous role",
+      next: "Next role",
       roles: [
         {
+          org: "unetic",
+          badgeRole: "Product Manager",
+          period: "Apr 2024 — Dec 2025",
+          title: "Product Manager, UC Davis Chapter Lead",
+          company: "UNETIC — Dear Klairs campus launch",
+          achievements: [
+            "Led the UC Davis chapter of UNETIC, a UC Berkeley startup helping Korean brands enter the US; ran on-campus events and sample drops for Dear Klairs that recruited 200+ student ambassadors.",
+            "Owned the project from client requirements to execution, proposing tailored activation plans and designing a campaign structure that reconciled the brand's goals with those of student organizations.",
+            "Worked directly with the CEO and CTO to adjust timeline and scope against client needs and internal business goals.",
+          ],
+        },
+        {
+          org: "iol",
+          badgeRole: "Research Assistant",
           period: "Mar 2025 — Sep 2025",
           title: "Software Developer, Research Assistant",
           company: "Interactive Organisms Lab — Dr. Katia Vega, UC Davis",
@@ -223,6 +242,8 @@ export const translations = {
       title: "프로젝트",
       subtitle: "AI 제품 두 개, 풀스택 마켓플레이스, HCI 연구로 만든 Android 앱입니다.",
       githubLabel: "GitHub 저장소",
+      prev: "이전 프로젝트",
+      next: "다음 프로젝트",
       viewDetails: "자세히 보기",
       backToProjects: "프로젝트 목록으로",
       techStackLabel: "기술 스택",
@@ -372,8 +393,25 @@ export const translations = {
     experience: {
       eyebrow: "커리어",
       title: "경력",
+      badgeName: "연진호",
+      prev: "이전 경력",
+      next: "다음 경력",
       roles: [
         {
+          org: "unetic",
+          badgeRole: "프로덕트 매니저",
+          period: "2024.04 — 2025.12",
+          title: "프로덕트 매니저, UC Davis 챕터 리드",
+          company: "UNETIC — Dear Klairs 미국 대학 캠퍼스 활성화",
+          achievements: [
+            "한국 브랜드의 미국 시장 진출을 돕는 UC Berkeley 기반 스타트업 UNETIC의 UC Davis 챕터 프로젝트를 이끌었습니다. 캠퍼스 오프라인 이벤트와 제품 샘플 배포를 기획·운영해 앰버서더 200명 이상을 모집했습니다.",
+            "클라이언트 요구사항 수집부터 실행까지 전 과정을 관리하며 맞춤형 실행안을 제안하고, 브랜드와 학생 단체의 서로 다른 목표를 조율해 캠페인 구조를 설계했습니다.",
+            "CEO·CTO와 협업하며 클라이언트 니즈와 내부 사업 목표에 맞춰 일정과 범위를 조율했습니다.",
+          ],
+        },
+        {
+          org: "iol",
+          badgeRole: "리서치 어시스턴트",
           period: "2025.03 — 2025.09",
           title: "소프트웨어 개발자, 리서치 어시스턴트",
           company: "UC Davis Interactive Organisms Lab — Katia Vega 교수",
