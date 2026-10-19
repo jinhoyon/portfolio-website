@@ -12,11 +12,14 @@ import { useEffect, useRef } from "react";
 export function useHangingSwing({
   tilt,
   draggable = true,
+  hoverSway = draggable,
   nudge = 0,
 }: {
   tilt: number;
   /** Off where a horizontal swipe should change the item instead. */
   draggable?: boolean;
+  /** Sway when the pointer arrives. Defaults to `draggable`. */
+  hoverSway?: boolean;
   /** Changing this replays the swing, e.g. when the item comes to the front. */
   nudge?: number;
 }) {
@@ -55,7 +58,7 @@ export function useHangingSwing({
     },
     onPanEnd: settle,
     onHoverStart: () => {
-      if (!active || dragging.current) return;
+      if (!hoverSway || reduce || dragging.current) return;
       animate(angle, [angle.get(), tilt - 5, tilt + 3, tilt], { duration: 1.1, ease: "easeOut" });
     },
   };

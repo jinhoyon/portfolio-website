@@ -38,7 +38,7 @@ export default function Projects() {
   return (
     <section id="projects" className="border-b border-zinc-200">
       <div className="mx-auto max-w-6xl px-6 py-20">
-        <SectionHeader eyebrow={t.eyebrow} title={t.title} subtitle={t.subtitle} />
+        <SectionHeader eyebrow={t.eyebrow} title={t.title} />
 
         {/* Desktop: every project hangs on one line; click a photo to open it below. */}
         <div className="relative hidden h-[350px] md:block">
@@ -153,14 +153,14 @@ export default function Projects() {
               <ProjectImageCarousel aspect="aspect-16/9" images={project.images} className="hidden border-0 border-zinc-200 md:block md:border-r" />
 
               <div className="flex flex-col p-8 md:p-10">
-                <span className="font-mono text-xs uppercase tracking-widest text-zinc-500">{project.category}</span>
-                <Link href={`/projects/${project.slug}`} className="group mt-3 focus-visible:outline-2 focus-visible:outline-offset-4">
-                  <h3 className="text-foreground">
-                    <span className="block text-2xl font-semibold tracking-tight transition-colors group-hover:text-zinc-600">{project.name}</span>
-                    <span className="mt-1 block text-base font-normal text-zinc-500">{project.tagline}</span>
+                {/* The polaroid already shows the name, so the heading leads with what the project is. */}
+                <Link href={`/projects/${project.slug}`} className="group focus-visible:outline-2 focus-visible:outline-offset-4">
+                  <h3 className="text-2xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-zinc-600">
+                    <span className="sr-only">{project.name} — </span>
+                    {project.tagline}
                   </h3>
                 </Link>
-                <p className="mt-5 text-[15px] leading-relaxed text-zinc-700">{project.summary}</p>
+                <p className="mt-4 text-[15px] leading-relaxed text-zinc-700">{project.summary}</p>
                 <p className="mt-4 text-xs leading-relaxed text-zinc-500">{project.stack.join(" · ")}</p>
 
                 <div className="mt-auto flex items-center gap-6 pt-8 text-sm font-medium">

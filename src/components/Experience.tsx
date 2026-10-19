@@ -23,9 +23,9 @@ function RoleBody({ role }: { role: Role }) {
   return (
     <>
       <span className="font-mono text-xs uppercase tracking-widest text-zinc-500">{role.period}</span>
-      <h3 className="mt-3 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{role.title}</h3>
-      <p className="mt-1 text-sm text-zinc-500">{role.company}</p>
-      <ul className="mt-5 flex flex-col gap-2.5">
+      {/* The badge shows the organization and role; the heading stays for screen readers. */}
+      <h3 className="sr-only">{role.title} — {role.company}</h3>
+      <ul className="mt-4 flex flex-col gap-2.5">
         {role.achievements.map((a) => (
           <li key={a} className="relative pl-4 text-[15px] leading-relaxed text-zinc-700 before:absolute before:left-0 before:text-zinc-300 before:content-['—']">
             {a}

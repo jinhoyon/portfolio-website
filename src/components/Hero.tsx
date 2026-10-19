@@ -1,8 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
-import { ArrowRight, Mail } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowDown, Mail } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations } from "@/lib/translations";
 
@@ -26,6 +26,7 @@ const item = {
 export default function Hero() {
   const { language } = useLanguage();
   const t = translations[language].hero;
+  const reduce = useReducedMotion();
 
   return (
     <section
@@ -41,7 +42,7 @@ export default function Hero() {
       />
 
       <motion.div
-        className="relative mx-auto flex h-full max-w-6xl flex-col justify-end gap-8 px-6 pb-12 sm:pb-16"
+        className="relative mx-auto flex h-full max-w-6xl flex-col justify-end gap-8 px-6 pb-20 sm:pb-24"
         initial="hidden"
         animate="show"
         variants={container}
@@ -55,15 +56,6 @@ export default function Hero() {
         </motion.div>
 
         <motion.div variants={item} className="flex flex-wrap items-center gap-6">
-          <motion.a
-            href="#projects"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-zinc-800 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-600"
-          >
-            {t.viewProjects}
-            <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
-          </motion.a>
           <a
             href="#contact"
             className="inline-flex items-center gap-2 text-sm font-medium text-zinc-600 transition-colors hover:text-foreground"
@@ -73,6 +65,24 @@ export default function Hero() {
           </a>
         </motion.div>
       </motion.div>
+
+      {/* Quiet scroll cue, centred at the foot of the first screen. */}
+      <motion.a
+        href="#projects"
+        className="absolute bottom-5 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 text-xs text-zinc-400 transition-colors hover:text-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
+      >
+        {t.scrollCue}
+        <motion.span
+          animate={reduce ? undefined : { y: [0, 4, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          className="flex"
+        >
+          <ArrowDown className="h-3.5 w-3.5" strokeWidth={1.5} />
+        </motion.span>
+      </motion.a>
     </section>
   );
 }
